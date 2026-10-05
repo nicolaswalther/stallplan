@@ -4,6 +4,8 @@
   --background: #f7f7f5;
   --foreground: #242724;
   --brand: #17633a;
+  --text-muted: #58645c;
+  --control-border: #7a877c;
 }
 
 * {
@@ -54,32 +56,38 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid #397b51;
+  outline: 3px solid #17633a;
   outline-offset: 3px;
 }
 
 @layer components {
   .field {
     width: 100%;
-    height: 36px;
+    height: 44px;
     padding: 0 10px;
-    border: 1px solid #dfe4db;
+    border: 1px solid var(--control-border);
     border-radius: 6px;
     background: #fff;
     color: #3c463d;
-    font-size: 13px;
+    font-size: 14px;
     transition: border-color 120ms;
   }
 
-  .field:hover { border-color: #becbbd; }
-  .field:focus { border-color: #7dad8d; outline: 2px solid #17633a18; outline-offset: 1px; }
+  .field:hover { border-color: #465249; }
+  .field:focus { border-color: #17633a; outline: 2px solid #17633a; outline-offset: 2px; }
+  .field::placeholder { color: var(--text-muted); opacity: 1; }
 }
+
+.wishes-questionnaire { scroll-padding-bottom: 110px; }
+.wishes-questionnaire summary { min-height: 32px; line-height: 24px; }
+.wish-actions { box-shadow: 0 -8px 16px -12px #243c2d40; }
 
 .plan-viewport { flex: 0 0 auto; height: 54dvh; min-height: 320px; }
 .workbench-context { min-height: 360px; }
 
 @media (max-width: 1023px) {
   .workbench-wishes .plan-viewport { height: 26dvh; min-height: 180px; }
+  .workbench-wishes:not(.workbench-plan-open) :is(.plan-viewport, .plan-toolbar, .plan-mark-controls) { display: none; }
 }
 
 @media (min-width: 1024px) {

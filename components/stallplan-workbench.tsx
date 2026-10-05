@@ -18,6 +18,8 @@ import { AREA_RULES, DOMAIN_RULES_VERSION, PROJECT_QUESTIONS, HERD_OVERRIDE_QUES
 import { EMPTY_PLANNING_PREFERENCES, countMissingPlanningAnswers, getPlanningGroups, getGroupAnswers, getPlanningProducts, isAnswerMissing, resolveAreaAnswers, resolveGroupAnswers } from "@/lib/domain/planning-preferences";
 import { buildPlanningSummaryHtml } from "@/lib/plan/summary";
 import { anchoredScroll, wheelZoom } from "@/lib/plan/viewport";
+import { assessAreaBoundary } from "@/lib/geometry/area-boundaries";
+import { areaReviewReason, canAcceptAreaTogether } from "@/lib/plan/area-review";
 import { detectProjectFacts } from "@/lib/analysis/project-facts";
 import { applyDetectedFacts } from "@/lib/domain/inferred-preferences";
 import { PlanningWishes } from "./planning-wishes";
@@ -54,9 +56,9 @@ function Button({ children, onClick, disabled, variant = "primary", className, l
   variant?: "primary" | "secondary" | "ghost"; className?: string; label?: string;
 }) {
   return <button type="button" onClick={onClick} disabled={disabled} aria-label={label} title={label}
-    className={cn("inline-flex items-center justify-center gap-2 rounded-md border text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-35", !className?.match(/\bh-/) && "h-9", !className?.match(/\bpx-/) && "px-3",
+    className={cn("inline-flex items-center justify-center gap-2 rounded-md border text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-35", !className?.match(/\bh-/) && "h-11", !className?.match(/\bpx-/) && "px-3",
       variant === "primary" ? "border-[#17633a] bg-[#17633a] text-white hover:bg-[#104e2e]"
-        : variant === "secondary" ? "border-[#dedfdd] bg-white text-[#303632] hover:bg-[#f7f8f7]"
+        : variant === "secondary" ? "border-[#7a877c] bg-white text-[#303632] hover:bg-[#f7f8f7]"
           : "border-transparent text-[#687069] hover:bg-[#f3f4f3]", className)}>{children}</button>;
 }
 
@@ -66,7 +68,7 @@ function UploadScreen({ onFile, error }: { onFile: (file: File) => void; error: 
   return <div className="flex min-h-[calc(100dvh-60px)] items-center justify-center px-5 py-12">
     <div className="w-full max-w-lg">
       <h1 className="text-[36px] leading-tight font-semibold tracking-[-0.045em] text-[#202421]">Stallplan hochladen</h1>
-      <p className="mt-3 text-sm text-[#777e78]">Plan prüfen, Wünsche angeben, Planung vorbereiten.</p>
+      <p className="mt-3 text-sm text-[var(--text-muted)]">Plan prüfen, Wünsche angeben, Planung vorbereiten.</p>
       <button type="button" onClick={() => inputRef.current?.click()}
         onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
         onDragOver={(event) => event.preventDefault()} onDragLeave={() => setDragging(false)}
@@ -75,9 +77,9 @@ function UploadScreen({ onFile, error }: { onFile: (file: File) => void; error: 
           dragging ? "border-[#17633a] bg-[#f8fbf8]" : "border-[#dce1dc] hover:border-[#91ad99] hover:bg-[#fdfefd]")}>
         <FileUp size={26} strokeWidth={1.5} className="text-[#17633a]" />
         <span className="mt-4 text-sm font-medium">Stallplan auswählen</span>
-        <span className="mt-1 text-xs text-[#8b918c]">PDF hier ablegen · bis 25 MB</span>
+        <span className="mt-1 text-xs text-[var(--text-muted)]">PDF hier ablegen · bis 25 MB</span>
       </button>
-      <div className="mt-6 flex items-center justify-between gap-2 text-[11px] text-[#8b918c]" aria-label="Ablauf">
+      <div className="mt-6 flex items-center justify-between gap-2 text-[11px] text-[var(--text-muted)]" aria-label="Ablauf">
         <span>1 Plan prüfen</span><ChevronRight size={12} /><span>2 Wünsche</span><ChevronRight size={12} /><span>3 Übersicht</span>
       </div>
       <input ref={inputRef} className="hidden" type="file" accept="application/pdf,.pdf" aria-label="Stallplan hochladen"
@@ -102,6 +104,7 @@ export function StallplanWorkbench() {
   const [initialWishGroup, setInitialWishGroup] = useState<AreaType | null>(null);
   const [lastRemovedId, setLastRemovedId] = useState<string | null>(null);
   const [technicalOpen, setTechnicalOpen] = useState(false);
+  const [mobilePlanOpen, setMobilePlanOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>("areas");
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [selectedMeasurementId, setSelectedMeasurementId] = useState<string | null>(null);
@@ -153,7 +156,7 @@ export function StallplanWorkbench() {
   const missingRequired = countMissingPlanningAnswers(confirmedAreas, projectAnswers, preferences);
   const ready = !busy && confirmedAreas.length > 0 && !openAreas.length && !reviewMeasurements.length && !missingRequired;
   const wishesReady = !busy && planningGroups.length > 0 && !missingRequired;
-  const bulkAreas = openAreas.filter((area) => area.kind !== "unknown" && area.hasBbox && (area.confidence ?? 0) >= 0.8);
+  const bulkAreas = openAreas.filter(canAcceptAreaTogether);
   const planWidth = currentPage ? Math.max(180, Math.min(viewportSize.width - 40, (viewportSize.height - 40) * currentPage.width / currentPage.height)) * zoom : 0;
 
   useLayoutEffect(() => {
@@ -224,6 +227,10 @@ export function StallplanWorkbench() {
     if (window.matchMedia("(max-width: 1023px)").matches) navigationRef.current?.scrollIntoView({ block: "start" });
   }, [panel]);
   useEffect(() => {
+    if (panel !== "areas") return;
+    contextRef.current?.querySelector('[data-area-selected="true"]')?.scrollIntoView({ block: "nearest" });
+  }, [selectedAreaId, panel]);
+  useEffect(() => {
     if (!selectedMeasurementId || panel !== "measurements") return;
     const frame = requestAnimationFrame(() => {
       const viewport = viewportRef.current, highlight = selectedHighlightRef.current;
@@ -248,7 +255,7 @@ export function StallplanWorkbench() {
         documentKind: page.documentKind, textObjects: page.textItems, geometryObjects: page.lines ?? [], extractionWarnings: page.extractionWarnings })) }],
       areas: confirmedAreas.map((area) => ({ id: area.id, kind: area.kind, label: area.label, pageNumber: area.pageNumber,
         bbox: area.hasBbox ? area.bbox : null, source: area.source, confidence: area.confidence, evidence: area.evidence,
-        originalLabel: area.originalLabel, originalEvidence: area.originalEvidence, boundaryRefinement: area.boundaryRefinement,
+        originalLabel: area.originalLabel, originalEvidence: area.originalEvidence, boundaryRefinement: area.boundaryRefinement, boundaryAssessment: area.boundaryAssessment,
         relevantProducts: getPlanningProducts(area.kind, resolveAreaAnswers(area, projectAnswers, preferences).answers), requiredMeasurements: AREA_RULES[area.kind].measurements,
         answers: resolveAreaAnswers(area, projectAnswers, preferences).answers,
         answerProvenance: resolveAreaAnswers(area, projectAnswers, preferences, projectAnswerProvenance).provenance })),
@@ -288,7 +295,8 @@ export function StallplanWorkbench() {
       if (runRef.current !== generation) return;
       if (!response.ok) throw new Error(data.error || "Bereichsanalyse nicht verfügbar.");
       setAnalysis({ model: data.model, actualModels: data.actualModels, documentSummary: data.documentSummary, warnings: data.warnings, originalAnalysis: data.originalAnalysis });
-      setAreas((current) => mergeAreas(current, data.areas));
+      const assessed = data.areas.map((area) => ({ ...area, boundaryAssessment: assessAreaBoundary(area, parsedPages) }));
+      setAreas((current) => mergeAreas(current, assessed));
       setMeasurements((current) => mergeMeasurements(current, data.measurements));
       adoptFacts(data.projectFacts ?? detectProjectFacts(parsedPages, data.areas), true);
       // Optional analysis must not take selection away from someone already reviewing the plan.
@@ -305,7 +313,7 @@ export function StallplanWorkbench() {
   async function handleFile(nextFile: File) {
     if (nextFile.type !== "application/pdf" && !nextFile.name.toLowerCase().endsWith(".pdf")) { setError("Bitte eine PDF auswählen."); return; }
     if (nextFile.size > 25 * 1024 * 1024) { setError("Die PDF ist größer als 25 MB."); return; }
-    reset();
+    reset(); setMobilePlanOpen(false);
     const generation = runRef.current;
     setFile(nextFile); setBusy("reading");
     try {
@@ -402,11 +410,35 @@ export function StallplanWorkbench() {
     else setSelectedAreaId(null);
   }
   function enterWishes(kind: AreaType | null = null) {
+    zoomAnchorRef.current = null; setZoom(1);
+    setMarkMode(false); dragStartRef.current = null; setDraftBox(null);
     setInitialWishGroup(kind); selectGroup(kind); setPanel("details"); setTechnicalOpen(false);
   }
   function confirmSuggestions() {
     const ids = new Set(bulkAreas.map((area) => area.id));
     setAreas((current) => current.map((area) => ids.has(area.id) ? { ...area, status: "confirmed" } : area));
+    const next = openAreas.find((area) => !ids.has(area.id));
+    if (next) { selectArea(next); setAreaFilter("review"); }
+  }
+  function magnifyArea(area: DetectedArea) {
+    selectArea(area);
+    const viewport = viewportRef.current;
+    if (!viewport || !currentPage) return;
+    const baseWidth = planWidth / zoom;
+    const nextZoom = Math.max(1, Math.min(4, (viewport.clientWidth - 80) / (baseWidth * area.bbox.width),
+      (viewport.clientHeight - 80) / (baseWidth * currentPage.height / currentPage.width * area.bbox.height)));
+    zoomAnchorRef.current = { x: area.bbox.x + area.bbox.width / 2, y: area.bbox.y + area.bbox.height / 2,
+      cursorX: viewport.clientWidth / 2, cursorY: viewport.clientHeight / 2 };
+    setZoom(nextZoom);
+    // Recenter even when a second area needs the same zoom factor.
+    requestAnimationFrame(() => {
+      const canvas = planCanvasRef.current;
+      if (!canvas) return;
+      const box = canvas.getBoundingClientRect(), bounds = viewport.getBoundingClientRect();
+      viewport.scrollLeft += box.left + box.width * (area.bbox.x + area.bbox.width / 2) - bounds.left - viewport.clientWidth / 2;
+      viewport.scrollTop += box.top + box.height * (area.bbox.y + area.bbox.height / 2) - bounds.top - viewport.clientHeight / 2;
+      zoomAnchorRef.current = null;
+    });
   }
   function downloadOverview() {
     if (!handoff) return;
@@ -446,7 +478,7 @@ export function StallplanWorkbench() {
     if (gesture.target.hasPointerCapture(gesture.pointerId)) gesture.target.releasePointerCapture(gesture.pointerId);
   }
   function startMark(event: PointerEvent<HTMLDivElement>) {
-    if (!markMode) return;
+    if (!markMode || panel !== "areas" || event.button !== 0) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const point = { x: clamp01((event.clientX - rect.left) / rect.width), y: clamp01((event.clientY - rect.top) / rect.height) };
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -468,7 +500,11 @@ export function StallplanWorkbench() {
     }
     dragStartRef.current = null; setDraftBox(null);
   }
-  function toggleMark() { finishMark(true); setMarkMode((current) => !current); }
+  function toggleMark() {
+    finishMark(true);
+    if (panel !== "areas") { setPanel("areas"); setTechnicalOpen(false); setMarkMode(true); }
+    else setMarkMode((current) => !current);
+  }
   function downloadHandoff() {
     if (!handoff) return;
     const url = URL.createObjectURL(new Blob([JSON.stringify(handoff, null, 2)], { type: "application/json" }));
@@ -492,10 +528,10 @@ export function StallplanWorkbench() {
     <header className="flex h-[60px] items-center justify-between gap-4 border-b border-[#e4e7e2] bg-white px-4 sm:px-5">
       <div className="flex min-w-0 items-center gap-4">
         <div className="shrink-0 text-[18px] font-bold tracking-[0.04em] text-[#17633a]">PATURA<span className="ml-2 text-[13px] font-medium tracking-normal text-[#3c443e]">Stallplan</span></div>
-        {file && <span className="hidden truncate border-l border-[#e3e6e2] pl-4 text-xs text-[#777e78] md:block" title={file.name}>{file.name}</span>}
+        {file && <span className="hidden truncate border-l border-[#e3e6e2] pl-4 text-xs text-[var(--text-muted)] md:block" title={file.name}>{file.name}</span>}
       </div>
       {file && <div className="flex shrink-0 items-center gap-3">
-        {busy && <div role="status" aria-live="polite" className="hidden items-center gap-1.5 text-[11px] text-[#737b75] sm:flex">
+        {busy && <div role="status" aria-live="polite" className="hidden items-center gap-1.5 text-[11px] text-[var(--text-muted)] sm:flex">
           <Loader2 size={12} className="animate-spin" />{statusText}
         </div>}
         <Button variant="ghost" onClick={reset}>Neuer Plan</Button>
@@ -504,27 +540,28 @@ export function StallplanWorkbench() {
     {!file && <UploadScreen onFile={handleFile} error={error} />}
     {file && !currentPage && <div className="flex min-h-[calc(100dvh-60px)] flex-col items-center justify-center gap-3">
       <Loader2 size={24} strokeWidth={1.5} className="animate-spin text-[#17633a]" /><p role="status" className="text-sm text-[#687069]">PDF wird gelesen</p>
-      <p className="max-w-[70vw] truncate text-xs text-[#919792]">{file.name}</p>
+      <p className="max-w-[70vw] truncate text-xs text-[var(--text-muted)]">{file.name}</p>
     </div>}
-    {file && currentPage && <div className={cn("workbench-layout grid grid-cols-1", panel === "details" ? "workbench-wishes lg:grid-cols-[minmax(300px,0.38fr)_minmax(500px,0.62fr)]" : "lg:grid-cols-[minmax(0,1fr)_380px]")}>
+    {file && currentPage && <div className={cn("workbench-layout grid grid-cols-1", mobilePlanOpen && "workbench-plan-open", panel === "details" ? "workbench-wishes lg:grid-cols-[minmax(300px,0.38fr)_minmax(500px,0.62fr)]" : "lg:grid-cols-[minmax(0,1fr)_380px]")}>
       <section className="flex min-h-0 min-w-0 flex-col bg-[#eef0ed] lg:border-r lg:border-[#dfe3dc]" aria-label="Planansicht">
-        <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 border-b border-[#dfe3dc] bg-[#fafbf9] px-3 py-2">
+        {panel === "details" && <button type="button" aria-expanded={mobilePlanOpen} onClick={() => setMobilePlanOpen((open) => !open)} className="flex h-11 items-center justify-center gap-2 border-b border-[#cbd3cb] bg-[#f1f5f1] text-sm font-medium text-[#17633a] lg:hidden"><Maximize2 size={15} />{mobilePlanOpen ? "Plan ausblenden" : "Plan anzeigen"}</button>}
+        <div className="plan-toolbar flex min-h-[52px] flex-wrap items-center justify-between gap-2 border-b border-[#dfe3dc] bg-[#fafbf9] px-3 py-2">
           <div className="flex items-center gap-1">
-            <Button variant="ghost" className="h-7 w-7 px-0" label="Vorherige Seite" disabled={activePage <= 1} onClick={() => setActivePage((page) => Math.max(1, page - 1))}><ChevronLeft size={15} /></Button>
+            {pages.length > 1 && <Button variant="ghost" className="h-9 w-9 px-0" label="Vorherige Seite" disabled={activePage <= 1} onClick={() => setActivePage((page) => Math.max(1, page - 1))}><ChevronLeft size={15} /></Button>}
             <span className="min-w-20 text-center text-[11px] text-[#69726b]">Seite {activePage} / {pages.length}</span>
-            <Button variant="ghost" className="h-7 w-7 px-0" label="Nächste Seite" disabled={activePage >= pages.length} onClick={() => setActivePage((page) => Math.min(pages.length, page + 1))}><ChevronRight size={15} /></Button>
+            {pages.length > 1 && <Button variant="ghost" className="h-9 w-9 px-0" label="Nächste Seite" disabled={activePage >= pages.length} onClick={() => setActivePage((page) => Math.min(pages.length, page + 1))}><ChevronRight size={15} /></Button>}
             <span className="mx-1.5 hidden h-4 w-px bg-[#dfe3dc] sm:block" />
-            <Button variant="ghost" className="h-7 w-7 px-0" label="Verkleinern" disabled={zoom <= 0.5} onClick={() => setZoom((value) => Math.max(0.5, value - 0.5))}><Minus size={14} /></Button>
+            <Button variant="ghost" className="h-9 w-9 px-0" label="Verkleinern" disabled={zoom <= 0.5} onClick={() => setZoom((value) => Math.max(0.5, value - 0.5))}><Minus size={14} /></Button>
             <span className="min-w-10 text-center text-[11px] tabular-nums text-[#69726b]">{Math.round(zoom * 100)}%</span>
-            <Button variant="ghost" className="h-7 w-7 px-0" label="Vergrößern" disabled={zoom >= 4} onClick={() => setZoom((value) => Math.min(4, value + 0.5))}><Plus size={14} /></Button>
-            <Button variant="ghost" className="h-7 w-7 px-0" label="Seite einpassen" onClick={() => setZoom(1)}><Maximize2 size={13} /></Button>
+            <Button variant="ghost" className="h-9 w-9 px-0" label="Vergrößern" disabled={zoom >= 4} onClick={() => setZoom((value) => Math.min(4, value + 0.5))}><Plus size={14} /></Button>
+            <Button variant="ghost" className="h-9 w-9 px-0" label="Seite einpassen" onClick={() => setZoom(1)}><Maximize2 size={13} /></Button>
           </div>
-          <Button variant={markMode ? "primary" : "ghost"} className="h-7 px-2" onClick={toggleMark}><MousePointer2 size={13} />{markMode ? "Markieren beenden" : "Bereich markieren"}</Button>
+          <Button variant={markMode ? "primary" : "ghost"} className="h-9 px-2" onClick={toggleMark}><MousePointer2 size={13} />{markMode ? "Markieren beenden" : "Bereich markieren"}</Button>
         </div>
-        {markMode && <div className="flex items-center gap-2 border-b border-[#dfe3dc] bg-white px-4 py-2 text-xs">
+        {markMode && <div className="plan-mark-controls flex items-center gap-2 border-b border-[#dfe3dc] bg-white px-4 py-2 text-xs">
           <select aria-label="Bereichstyp für Markierung" value={manualKind} onChange={(event) => setManualKind(event.target.value as AreaType)} className="field h-8 max-w-44 text-xs">
             {areaTypeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select><span className="text-[#828a84]">Rechteck im Plan aufziehen</span>
+          </select><span className="text-[var(--text-muted)]">Rechteck im Plan aufziehen</span>
         </div>}
         <div ref={viewportRef} data-testid="plan-viewport" title="Mausrad: zoomen · Umschalt + Mausrad: verschieben" className="plan-viewport scrollbar-thin relative min-h-0 flex-1 overflow-auto overscroll-contain">
           <div className="flex min-h-full min-w-full items-center justify-center p-5" style={{ width: Math.max(viewportSize.width, planWidth + 40), height: Math.max(viewportSize.height, planWidth * currentPage.height / currentPage.width + 40) }}>
@@ -581,10 +618,10 @@ export function StallplanWorkbench() {
             const complete = step.panel === "areas" ? confirmedAreas.length > 0 && !openAreas.length && !busy : step.panel === "details" ? wishesReady : false;
             return <button key={step.panel} type="button" onClick={() => {
               if (step.panel === "details" && panel !== "details") enterWishes();
-              else { setPanel(step.panel); setTechnicalOpen(false); }
+              else { setPanel(step.panel); setTechnicalOpen(false); if (step.panel !== "areas") { setMarkMode(false); dragStartRef.current = null; setDraftBox(null); } }
             }} aria-current={panel === step.panel ? "step" : undefined}
-              className={cn("relative flex items-center justify-center gap-1.5 text-[11px] font-medium transition", panel === step.panel ? "text-[#17633a] after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-[#17633a]" : "text-[#858c85] hover:text-[#343d35]")}>
-              <span className={cn("flex h-4 w-4 items-center justify-center rounded-full text-[9px]", panel === step.panel || complete ? "bg-[#edf5ef] text-[#17633a]" : "bg-[#f0f2ef] text-[#858c85]")}>{complete ? <Check size={10} /> : index + 1}</span>{step.label}
+              className={cn("relative flex items-center justify-center gap-1.5 text-xs font-medium transition", panel === step.panel ? "bg-[#edf5ef] text-[#17633a] after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-[#17633a]" : "text-[var(--text-muted)] hover:text-[#343d35]")}>
+              <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[11px]", panel === step.panel || complete ? "bg-[#17633a] text-white" : "bg-[#f0f2ef] text-[var(--text-muted)]")}>{complete ? <Check size={10} /> : index + 1}</span>{step.label}
             </button>;
           })}
         </nav>
@@ -594,9 +631,9 @@ export function StallplanWorkbench() {
         <div ref={contextRef} className="scrollbar-thin min-h-0 flex-1 overflow-y-auto">
           {panel === "areas" && <div className="px-4 py-5">
             <PanelHeading title="Stimmt der Plan?" subtitle={openAreas.length ? `${openAreas.length} Vorschläge · ${confirmedAreas.length} übernommen` : `${confirmedAreas.length} Bereiche übernommen`} />
-            {bulkAreas.length > 0 && !busy && <Button variant="secondary" className="mt-4 w-full" onClick={confirmSuggestions}><Check size={13} />{bulkAreas.length} {bulkAreas.length === 1 ? "Vorschlag" : "Vorschläge"} übernehmen</Button>}
-            {busy && <div role="status" className="mt-4 flex items-center gap-2 text-xs text-[#818982]"><Loader2 size={13} className="animate-spin" />Bereiche werden ergänzt</div>}
-            {lastRemovedId && <div role="status" className="mt-4 flex items-center justify-between gap-2 text-[11px] text-[#818982]">
+            {bulkAreas.length > 0 && !busy && <Button className="mt-4 w-full" onClick={confirmSuggestions}><Check size={15} />{bulkAreas.length} {bulkAreas.length === 1 ? "Vorschlag" : "Vorschläge"} übernehmen</Button>}
+            {busy && <div role="status" className="mt-4 flex items-center gap-2 text-xs text-[var(--text-muted)]"><Loader2 size={13} className="animate-spin" />Bereiche werden ergänzt</div>}
+            {lastRemovedId && <div role="status" className="mt-4 flex items-center justify-between gap-2 text-[11px] text-[var(--text-muted)]">
               <span>Bereich entfernt</span><button type="button" onClick={undoRemoval} className="font-medium text-[#17633a]">Rückgängig</button>
             </div>}
             {activeAreas.length > 0 && <><FilterToggle value={areaFilter} onChange={setAreaFilter} count={openAreas.length} />
@@ -606,7 +643,7 @@ export function StallplanWorkbench() {
                   updateArea(area.id, { kind, label: AREA_RULES[kind].title + (area.label.match(/ · (?:Bereich )?\d+$/)?.[0] ?? ` · Bereich ${areas.indexOf(area) + 1}`), source: "manual", confidence: null, status: "confirmed",
                     evidence: [...area.evidence, `Typ korrigiert: ${AREA_RULES[area.kind].title} → ${AREA_RULES[kind].title} (ursprünglich ${sourceLabel(area.source)}${area.confidence !== null ? `, ${Math.round(area.confidence * 100)}%` : ""}).`] });
                 }}
-                onConfirm={() => reviewArea(area.id, "confirmed")} onReject={() => reviewArea(area.id, "rejected")} />)}</div>
+                onZoom={() => magnifyArea(area)} onConfirm={() => reviewArea(area.id, "confirmed")} onReject={() => reviewArea(area.id, "rejected")} />)}</div>
               {!visibleAreas.length && <EmptyState>Alle Bereiche sind übernommen.</EmptyState>}
             </>}
             {!busy && !activeAreas.length && <EmptyState>{areas.length ? "Keine Bereiche ausgewählt." : "Keine sicheren Bereiche erkannt."}<br /><button type="button" onClick={() => setMarkMode(true)} className="mt-3 font-medium text-[#17633a]">Bereich im Plan markieren <ArrowRight size={12} className="inline" /></button></EmptyState>}
@@ -618,11 +655,11 @@ export function StallplanWorkbench() {
             onClearAreaAnswers={clearAreaAnswers} onToggleEquipment={(kind, enabled) => updatePreferences((current) => ({
               ...current, additionalEquipment: { ...current.additionalEquipment, [kind]: enabled },
             }))}
-            onSelectGroup={selectGroup} onSelectArea={(id) => { const area = confirmedAreas.find((area) => area.id === id); if (area) selectArea(area); }}
+            onSelectGroup={selectGroup} onSelectArea={(id) => { const area = confirmedAreas.find((area) => area.id === id); if (area) { selectArea(area); setMobilePlanOpen(true); } }}
             onComplete={() => { setPanel("handoff"); setTechnicalOpen(false); }} />}
           {panel === "measurements" && <div className="px-4 py-5">
             <PanelHeading title="Maße" subtitle={`${usableMeasurements.length} erkannt${reviewMeasurements.length ? ` · ${reviewMeasurements.length} prüfen` : " · keine Prüfung nötig"}`} />
-            <div className="relative mt-4"><Ruler size={13} className="pointer-events-none absolute top-3 left-2.5 text-[#9ca29c]" /><input aria-label="Maße suchen" className="field h-9 pl-8 text-xs" placeholder="Wert oder Bezeichnung suchen" value={measurementSearch} onChange={(event) => setMeasurementSearch(event.target.value)} /></div>
+            <div className="relative mt-4"><Ruler size={13} className="pointer-events-none absolute top-3 left-2.5 text-[var(--text-muted)]" /><input aria-label="Maße suchen" className="field h-9 pl-8 text-xs" placeholder="Wert oder Bezeichnung suchen" value={measurementSearch} onChange={(event) => setMeasurementSearch(event.target.value)} /></div>
             <FilterToggle value={measurementFilter} onChange={setMeasurementFilter} count={reviewMeasurements.length} />
             <div className="mt-3 -mx-4 border-t border-[#eff1ed]">{visibleMeasurements.map((measurement) => <MeasurementRow key={measurement.id} measurement={measurement} selected={selectedMeasurementId === measurement.id}
               onSelect={() => { setSelectedMeasurementId(measurement.id); if (measurement.pageNumber) setActivePage(measurement.pageNumber); }}
@@ -633,8 +670,8 @@ export function StallplanWorkbench() {
           {panel === "handoff" && <div className="px-4 py-5">
             <PanelHeading title="Ihre Planungsübersicht" subtitle={busy ? "Analyse läuft noch" : wishesReady ? "Wünsche sind vollständig" : `${missingRequired} Angaben noch offen`} />
             <div className="mt-5 flex gap-2 text-xs text-[#657166]">{PROJECT_QUESTIONS.map((question) => projectAnswers[question.id] !== undefined && projectAnswers[question.id] !== "" && <span key={question.id} className="rounded bg-[#f3f5f1] px-2 py-1">{String(projectAnswers[question.id])}</span>)}</div>
-            {typeof projectAnswers.animalCount === "number" && projectAnswers.animalCount > 0 && <p className="mt-3 text-[11px] text-[#8a918b]">{formatValue(projectAnswers.animalCount)} Tiere insgesamt</p>}
-            {typeof projectAnswers.planningNotes === "string" && projectAnswers.planningNotes.trim() && <details className="mt-3 text-[11px] text-[#8a918b]"><summary className="cursor-pointer">Weitere Wünsche</summary><p className="mt-2 whitespace-pre-wrap break-words leading-5">{projectAnswers.planningNotes}</p></details>}
+            {typeof projectAnswers.animalCount === "number" && projectAnswers.animalCount > 0 && <p className="mt-3 text-[11px] text-[var(--text-muted)]">{formatValue(projectAnswers.animalCount)} Tiere insgesamt</p>}
+            {typeof projectAnswers.planningNotes === "string" && projectAnswers.planningNotes.trim() && <details className="mt-3 text-[11px] text-[var(--text-muted)]"><summary className="cursor-pointer">Weitere Wünsche</summary><p className="mt-2 whitespace-pre-wrap break-words leading-5">{projectAnswers.planningNotes}</p></details>}
             <div className="mt-4 divide-y divide-[#edf0ea]">{planningGroups.map((group) => {
               const groupAnswers = getGroupAnswers(group.kind, projectAnswers, preferences);
               const individual = groupUsesIndividualAnswers(group.kind, group.areaIds, group.additional);
@@ -642,13 +679,13 @@ export function StallplanWorkbench() {
                 .filter(({ resolved }) => Object.values(resolved.provenance).some((provenance) => provenance.scope === "area"));
               return <section key={group.id} className="py-4">
                 <button type="button" className="flex w-full items-center justify-between text-left" onClick={() => enterWishes(group.kind)}>
-                  <h3 className="text-[13px] font-medium">{group.title}<span className="ml-2 text-[10px] font-normal text-[#8a918b]">{group.areaIds.length ? `${group.areaIds.length} ${group.areaIds.length === 1 ? "Bereich" : "Bereiche"}` : "Zusätzlich"}</span></h3><span className="text-[11px] text-[#17633a]">Ändern</span>
+                  <h3 className="text-[13px] font-medium">{group.title}<span className="ml-2 text-[10px] font-normal text-[var(--text-muted)]">{group.areaIds.length ? `${group.areaIds.length} ${group.areaIds.length === 1 ? "Bereich" : "Bereiche"}` : "Zusätzlich"}</span></h3><span className="text-[11px] text-[#17633a]">Ändern</span>
                 </button>
-                {groupAnswers.animalGroup && !individual && <p className="mt-2 text-[10px] text-[#8a918b]">{String(groupAnswers.animalGroup)}</p>}
+                {groupAnswers.animalGroup && !individual && <p className="mt-2 text-xs text-[var(--text-muted)]">{String(groupAnswers.animalGroup)}</p>}
                 {individual ? <p className="mt-3 text-[11px] text-[#69766b]">Individuelle Vorgaben für alle Bereiche</p> : <dl className="mt-3 space-y-2">{getGroupQuestions(group.kind, groupAnswers).filter((question) => question.required || !emptyAnswer(question, groupAnswers[question.id])).map((question) => <div key={question.id} className="flex justify-between gap-4 text-[11px]">
-                  <dt className="text-[#8a918b]">{question.label}</dt><dd className="max-w-[60%] text-right text-[#566057]">{emptyAnswer(question, groupAnswers[question.id]) ? "Offen" : typeof groupAnswers[question.id] === "boolean" ? groupAnswers[question.id] ? "Ja" : "Nein" : String(groupAnswers[question.id])}</dd>
+                  <dt className="text-[var(--text-muted)]">{question.label}</dt><dd className="max-w-[60%] text-right text-[#566057]">{emptyAnswer(question, groupAnswers[question.id]) ? "Offen" : typeof groupAnswers[question.id] === "boolean" ? groupAnswers[question.id] ? "Ja" : "Nein" : String(groupAnswers[question.id])}</dd>
                 </div>)}</dl>}
-                {overrides.length > 0 && <details className="mt-3 text-[11px] text-[#8a918b]"><summary className="cursor-pointer">{overrides.length} {overrides.length === 1 ? "individuelle Vorgabe" : "individuelle Vorgaben"}</summary>
+                {overrides.length > 0 && <details className="mt-3 text-[11px] text-[var(--text-muted)]"><summary className="cursor-pointer">{overrides.length} {overrides.length === 1 ? "individuelle Vorgabe" : "individuelle Vorgaben"}</summary>
                   <div className="mt-3 space-y-3">{overrides.map(({ area, resolved }) => <div key={area.id} className="border-l-2 border-[#d5e1d4] pl-3">
                     <div className="mb-2 font-medium text-[#687669]">{area.label}</div>
                     <dl className="space-y-1.5">{[...getGroupQuestions(area.kind, resolved.answers), ...HERD_OVERRIDE_QUESTIONS].filter((question) => resolved.provenance[question.id]?.scope === "area").map((question) => <div key={question.id} className="flex justify-between gap-3">
@@ -659,20 +696,20 @@ export function StallplanWorkbench() {
               </section>;
             })}</div>
             {!planningGroups.length && <EmptyState>Noch keine Bereiche oder Ausstattung ausgewählt.</EmptyState>}
-            {(openAreas.length > 0 || missingRequired > 0 || busy) && <div className="mt-3 border-t border-[#edf0ea] pt-4 text-[11px] leading-5 text-[#8a918b]">
-              {openAreas.length > 0 && <button type="button" onClick={() => setPanel("areas")} className="block text-[#a17c35]">{openAreas.length} Bereiche noch offen</button>}
-              {missingRequired > 0 && <button type="button" onClick={() => enterWishes()} className="block text-[#a17c35]">{missingRequired} Wünsche noch offen</button>}
+            {(openAreas.length > 0 || missingRequired > 0 || busy) && <div className="mt-3 border-t border-[#edf0ea] pt-4 text-[11px] leading-5 text-[var(--text-muted)]">
+              {openAreas.length > 0 && <button type="button" onClick={() => setPanel("areas")} className="block text-[#754b12]">{openAreas.length} Bereiche noch offen</button>}
+              {missingRequired > 0 && <button type="button" onClick={() => enterWishes()} className="block text-[#754b12]">{missingRequired} Wünsche noch offen</button>}
               <p className="mt-1">Die Übersicht kann bereits als Entwurf gespeichert werden.</p>
             </div>}
-            <p className="mt-4 text-[11px] leading-5 text-[#929891]">Die Fachplanung prüft Maße und wählt passende Systeme. Es wird noch keine Anfrage versendet.</p>
+            <p className="mt-4 text-[11px] leading-5 text-[var(--text-muted)]">Die Fachplanung prüft Maße und wählt passende Systeme. Es wird noch keine Anfrage versendet.</p>
           </div>}
         </div>
         <div className="shrink-0 border-t border-[#e4e7e2] px-4 py-3">
           {panel === "areas" && <Button className="w-full" disabled={!confirmedAreas.length && !planningGroups.length} onClick={() => enterWishes()}>Weiter zu Wünschen <ArrowRight size={13} /></Button>}
           {panel === "handoff" && <Button className="w-full" disabled={!handoff} onClick={downloadOverview}><Download size={14} />Planungsübersicht herunterladen</Button>}
           {panel === "measurements" && <Button variant="secondary" className="w-full" onClick={() => { setPanel("handoff"); setTechnicalOpen(false); }}>Zurück zur Übersicht</Button>}
-          <button type="button" aria-expanded={technicalOpen} onClick={() => setTechnicalOpen((current) => !current)} className="mt-3 flex w-full items-center justify-center gap-1.5 py-1 text-[10px] text-[#929991]"><Settings2 size={11} />Technische Details</button>
-          {technicalOpen && <div className="scrollbar-thin mt-2 max-h-64 overflow-y-auto border-t border-[#edf0ea] pt-3 text-[11px] text-[#8a918b]">
+          <button type="button" aria-expanded={technicalOpen} onClick={() => setTechnicalOpen((current) => !current)} className="mt-3 flex w-full items-center justify-center gap-1.5 py-1 text-xs text-[var(--text-muted)]"><Settings2 size={11} />Technische Details</button>
+          {technicalOpen && <div className="scrollbar-thin mt-2 max-h-64 overflow-y-auto border-t border-[#edf0ea] pt-3 text-[11px] text-[var(--text-muted)]">
             <div className="mb-3 flex justify-between"><span>{usableMeasurements.length} Maße erkannt</span><button type="button" className="font-medium text-[#17633a]" onClick={() => { setPanel("measurements"); setTechnicalOpen(false); }}>Maße ansehen</button></div>
             {reviewMeasurements.length > 0 && <p className="mb-3 text-[10px]">{reviewMeasurements.length} Maße werden von der Fachplanung geprüft.</p>}
             <div className="flex gap-2"><Button variant="secondary" className="h-8 flex-1 px-2" disabled={!handoff} onClick={downloadHandoff}><Download size={11} />JSON herunterladen</Button><Button variant="ghost" className="h-8 px-2" disabled={!handoff} onClick={copyHandoff}>{copied ? <Check size={11} /> : <Clipboard size={11} />}{copied ? "Kopiert" : "Kopieren"}</Button></div>
@@ -688,30 +725,32 @@ export function StallplanWorkbench() {
 }
 
 function PanelHeading({ title, subtitle }: { title: string; subtitle: string }) {
-  return <div><h2 className="text-[17px] font-semibold tracking-[-0.025em]">{title}</h2><p className="mt-1 text-xs leading-5 text-[#8a918b]">{subtitle}</p></div>;
+  return <div><h2 className="text-[17px] font-semibold tracking-[-0.025em]">{title}</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{subtitle}</p></div>;
 }
 function EmptyState({ children }: { children: ReactNode }) {
-  return <p className="py-10 text-center text-xs leading-6 text-[#8a918b]">{children}</p>;
+  return <p className="py-10 text-center text-xs leading-6 text-[var(--text-muted)]">{children}</p>;
 }
 function FilterToggle({ value, onChange, count }: { value: "all" | "review"; onChange: (value: "all" | "review") => void; count: number }) {
   return <div className="mt-4 flex gap-4 text-[11px]">
-    <button type="button" onClick={() => onChange("all")} aria-pressed={value === "all"} className={cn("py-1 font-medium", value === "all" ? "text-[#303a32]" : "text-[#929991]")}>Alle</button>
-    <button type="button" onClick={() => onChange("review")} aria-pressed={value === "review"} className={cn("py-1 font-medium", value === "review" ? "text-[#17633a]" : "text-[#929991]")}>Nur prüfen <span className="ml-1 tabular-nums">{count}</span></button>
+    <button type="button" onClick={() => onChange("all")} aria-pressed={value === "all"} className={cn("py-1 font-medium", value === "all" ? "text-[#303a32]" : "text-[var(--text-muted)]")}>Alle</button>
+    <button type="button" onClick={() => onChange("review")} aria-pressed={value === "review"} className={cn("py-1 font-medium", value === "review" ? "text-[#17633a]" : "text-[var(--text-muted)]")}>Nur prüfen <span className="ml-1 tabular-nums">{count}</span></button>
   </div>;
 }
-function AreaRow({ area, selected, onSelect, onKind, onConfirm, onReject }: {
+function AreaRow({ area, selected, onSelect, onKind, onConfirm, onReject, onZoom }: {
   area: DetectedArea; selected: boolean; onSelect: () => void; onKind: (kind: AreaType) => void;
-  onConfirm: () => void; onReject: () => void;
+  onConfirm: () => void; onReject: () => void; onZoom: () => void;
 }) {
-  return <div className={cn("border-b border-[#edf0ea] px-4 py-3", selected && "bg-[#f7faf6]", area.status === "rejected" && "opacity-50")}>
+  return <div data-area-selected={selected} className={cn("border-b border-[#edf0ea] px-4 py-3", selected && "bg-[#edf5ef] shadow-[inset_3px_0_0_#17633a]", area.status === "rejected" && "opacity-50")}>
     <button type="button" onClick={onSelect} className="flex w-full items-start justify-between gap-3 text-left">
-      <div className="min-w-0"><div className="truncate text-[13px] font-medium">{area.label}</div><div className="mt-1 text-[10px] text-[#969d96]">Seite {area.pageNumber}</div></div>
-      {area.status === "confirmed" ? <Check size={14} className="mt-0.5 shrink-0 text-[#3c8755]" /> : <span className={cn("mt-1 text-[10px]", area.status === "rejected" ? "text-[#939a93]" : "text-[#a17c35]")}>{area.status === "rejected" ? "Ausgeschlossen" : "Prüfen"}</span>}
+      <div className="min-w-0"><div className="truncate text-sm font-medium">{area.label}</div><div className="mt-1 text-xs text-[var(--text-muted)]">Seite {area.pageNumber}</div></div>
+      {area.status === "confirmed" ? <Check size={14} className="mt-0.5 shrink-0 text-[#3c8755]" /> : <span className={cn("mt-1 text-[10px]", area.status === "rejected" ? "text-[var(--text-muted)]" : "text-[#754b12]")}>{area.status === "rejected" ? "Ausgeschlossen" : "Prüfen"}</span>}
     </button>
     {selected && <div className="mt-3">
       <>
+        {areaReviewReason(area) && <p className="mb-3 border-l-2 border-[#8c5b12] pl-2 text-xs leading-5 text-[#754b12]">{areaReviewReason(area)}</p>}
+        {area.hasBbox && <button type="button" onClick={onZoom} className="mb-3 inline-flex min-h-9 items-center gap-2 text-xs font-medium text-[#17633a]"><Maximize2 size={14} />Bereich vergrößern</button>}
         <select aria-label="Bereichstyp" className="field h-8 text-xs" value={area.kind} onChange={(event) => onKind(event.target.value as AreaType)}>{areaTypeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-        {area.evidence.length > 0 && <details className="mt-2 text-[11px] leading-5 text-[#8a918b]"><summary className="cursor-pointer">Quelle anzeigen</summary><p className="mt-1">{sourceLabel(area.source)}{area.confidence !== null && ` · ${Math.round(area.confidence * 100)}%`} · {area.evidence.join(" · ")}</p></details>}
+        {area.evidence.length > 0 && <details className="mt-2 text-[11px] leading-5 text-[var(--text-muted)]"><summary className="cursor-pointer">Quelle anzeigen</summary><p className="mt-1">{sourceLabel(area.source)}{area.confidence !== null && ` · ${Math.round(area.confidence * 100)}%`} · {area.evidence.join(" · ")}</p></details>}
         <div className="mt-3 flex items-center justify-between gap-2">
           {area.status === "unconfirmed" && <Button className="h-8 flex-1" onClick={onConfirm}><Check size={13} />Übernehmen</Button>}
           <Button variant="ghost" className="h-8" onClick={onReject}><Trash2 size={12} />{area.status === "unconfirmed" ? "Verwerfen" : "Löschen"}</Button>
@@ -734,10 +773,10 @@ function MeasurementRow({ measurement, selected, onSelect, onChange, onAccept, o
   }
   return <div className={cn("border-b border-[#edf0ea] px-4 py-3", selected && "bg-[#f5f8fc]", measurement.status === "rejected" && "opacity-45")}>
     <button type="button" onClick={onSelect} className="flex w-full items-start justify-between gap-2 text-left">
-      <div className="min-w-0"><div className="text-[13px] font-medium tabular-nums">{formatValue(measurement.value)}{measurement.unit === "unknown" ? <span className="ml-2 text-[10px] font-normal text-[#a17c35]">Einheit offen</span> : ` ${measurement.unit}`}</div>
-        <div className="mt-1 text-[10px] text-[#969d96]">{sourceLabel(measurement.source)}{measurement.pageNumber ? ` · Seite ${measurement.pageNumber}` : ""}{measurement.status === "rejected" && " · ausgeschlossen"}</div>
+      <div className="min-w-0"><div className="text-[13px] font-medium tabular-nums">{formatValue(measurement.value)}{measurement.unit === "unknown" ? <span className="ml-2 text-[10px] font-normal text-[#754b12]">Einheit offen</span> : ` ${measurement.unit}`}</div>
+        <div className="mt-1 text-xs text-[var(--text-muted)]">{sourceLabel(measurement.source)}{measurement.pageNumber ? ` · Seite ${measurement.pageNumber}` : ""}{measurement.status === "rejected" && " · ausgeschlossen"}</div>
       </div>
-      {uncertain && measurement.unit !== "unknown" && <span className="mt-0.5 text-[10px] text-[#a17c35]">Prüfen</span>}
+      {uncertain && measurement.unit !== "unknown" && <span className="mt-0.5 text-[10px] text-[#754b12]">Prüfen</span>}
     </button>
     {selected && <div className="mt-3">
       {measurement.label !== "Planmaß" && <p className="mb-2 text-[11px] text-[#6f7c73]">{measurement.label}</p>}
@@ -750,9 +789,9 @@ function MeasurementRow({ measurement, selected, onSelect, onChange, onAccept, o
       </div> : <div className="flex items-center justify-between gap-2">
         {uncertain && measurement.unit !== "unknown" && <button type="button" onClick={onAccept} className="text-xs font-medium text-[#17633a]">Passt</button>}
         <button type="button" onClick={startEdit} className="text-xs font-medium text-[#3978c2]">Korrigieren</button>
-        <button type="button" onClick={onExclude} className="text-[11px] text-[#8a918b]">{measurement.status === "rejected" ? "Wiederherstellen" : "Ausschließen"}</button>
+        <button type="button" onClick={onExclude} className="text-[11px] text-[var(--text-muted)]">{measurement.status === "rejected" ? "Wiederherstellen" : "Ausschließen"}</button>
       </div>}
-      <details className="mt-3 text-[11px] leading-5 text-[#8a918b]"><summary className="cursor-pointer">Quelle anzeigen</summary><p className="mt-1">{measurement.evidence}</p>
+      <details className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]"><summary className="cursor-pointer">Quelle anzeigen</summary><p className="mt-1">{measurement.evidence}</p>
         {measurement.unitInference && <p className="mt-1">Einheit: {measurement.unitInference.evidence}</p>}
         {measurement.originalValue !== undefined && <p className="mt-1">Original: {formatValue(measurement.originalValue)} {measurement.originalUnit === "unknown" ? "(Einheit offen)" : measurement.originalUnit}</p>}
       </details>

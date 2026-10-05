@@ -88,23 +88,23 @@ export function PlanningWishes({
   }
 
   return <div className="wishes-questionnaire mx-auto flex w-full max-w-2xl flex-col px-5 py-6 sm:px-8 sm:py-8" data-wishes-step={step.id}>
-    <div className="mb-8 flex items-start justify-between gap-4">
-      <div><p className="text-xs font-medium text-[#17633a]">Ihre Wünsche</p><p className="mt-1 text-xs text-[#8a918b]">Ein Abschnitt nach dem anderen.</p></div>
-      <label className="relative block min-w-0 max-w-[58%] text-xs text-[#788077]">
+    <div className="mb-3 flex items-center justify-between gap-4">
+      <p className="text-sm font-medium tabular-nums text-[#566057]">Schritt {currentIndex + 1} von {steps.length}</p>
+      <label className="relative block min-w-0 max-w-[58%] text-xs text-[var(--text-muted)]">
         <span className="sr-only">Abschnitt der Wünsche</span>
         <select aria-label="Abschnitt der Wünsche" value={step.id} onChange={(event) => {
           const next = steps.find((item) => item.id === event.target.value);
           if (next) navigate(next);
-        }} className="max-w-full appearance-none rounded-md border border-[#e3e7df] bg-white py-2 pl-3 pr-7 text-xs">
+        }} className="max-w-full appearance-none rounded-md border border-[#7a877c] bg-white py-2 pl-3 pr-7 text-xs">
           {steps.map((item, index) => <option key={item.id} value={item.id}>{index + 1}. {item.title}</option>)}
         </select><ChevronDown size={12} className="pointer-events-none absolute right-2.5 top-3" />
       </label>
     </div>
 
+    <div className="mb-7 flex gap-1" aria-hidden="true">{steps.map((item, index) => <span key={item.id} className={`h-1 flex-1 rounded-full ${index <= currentIndex ? "bg-[#17633a]" : "bg-[#dce3dd]"}`} />)}</div>
     <div className="mb-7">
-      <p className="mb-2 text-[11px] tabular-nums text-[#8a918b]">Schritt {currentIndex + 1} von {steps.length}</p>
       <h2 ref={headingRef} tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">{step.title}</h2>
-      <p className="mt-2 text-sm leading-6 text-[#788077]">{step.id === "project" ? "Diese Angaben gelten für den ganzen Stall."
+      <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">{step.id === "project" ? "Diese Angaben gelten für den ganzen Stall."
         : step.id === "equipment" ? "Was soll das Planungsteam zusätzlich berücksichtigen?"
           : groupAreas.length ? `Eine Vorgabe für ${groupAreas.length === 1 ? "diesen Bereich" : `alle ${groupAreas.length} Bereiche`}.`
             : "Zusätzlicher Wunsch. Den Aufstellort klärt das Planungsteam."}</p>
@@ -115,23 +115,23 @@ export function PlanningWishes({
         {[...PROJECT_QUESTIONS, ...PROJECT_CONTEXT_QUESTIONS.filter((question) => question.id === "animalCount" || question.id === "animalGroup" && cattleProject)].map((question) =>
           <WishQuestion key={question.id} question={question} value={projectAnswers[question.id]} onAnswer={onProjectAnswer} fact={inferredProjectFacts?.[question.id]} />)}
       </div>
-      <details className="border-t border-[#edf0ea] pt-5 text-sm text-[#788077]">
+      <details className="border-t border-[#edf0ea] pt-5 text-sm text-[var(--text-muted)]">
         <summary className="cursor-pointer">Weitere Wünsche notieren</summary>
         <div className="mt-4"><WishFields questions={PROJECT_CONTEXT_QUESTIONS.filter((question) => question.id === "planningNotes")} answers={projectAnswers} onAnswer={onProjectAnswer} showOptional /></div>
       </details>
     </div>}
 
     {group && <section data-planning-group={group.kind} className="space-y-6" aria-label={`Vorgaben ${group.title}`}>
-      {cattleProject && answers.animalGroup && <p className="text-xs text-[#788077]">Tiergruppe: <span className="text-[#566057]">{String(answers.animalGroup)}</span>
-        <span className="ml-2 text-[11px] text-[#959d95]">{preferences.groupAnswers[group.kind]?.animalGroup ? "Für diese Gruppe" : "Gilt im ganzen Stall"}</span></p>}
+      {cattleProject && answers.animalGroup && <p className="text-xs text-[var(--text-muted)]">Tiergruppe: <span className="text-[#566057]">{String(answers.animalGroup)}</span>
+        <span className="ml-2 text-[11px] text-[var(--text-muted)]">{preferences.groupAnswers[group.kind]?.animalGroup ? "Für diese Gruppe" : "Gilt im ganzen Stall"}</span></p>}
       <WishFields questions={questions} answers={answers} onAnswer={(id, value) => onGroupAnswer(group.kind, id, value)} />
 
-      <details className="border-t border-[#edf0ea] pt-5 text-sm text-[#788077]">
+      <details className="border-t border-[#edf0ea] pt-5 text-sm text-[var(--text-muted)]">
         <summary className="cursor-pointer">{cattleProject ? "Andere Tiergruppe oder Tieranzahl" : "Tieranzahl dieser Gruppe"}</summary>
         <div className="mt-5"><WishFields questions={HERD_OVERRIDE_QUESTIONS.filter((question) => question.id !== "animalGroup" || cattleProject)} answers={preferences.groupAnswers[group.kind] ?? {}} onAnswer={(id, value) => onGroupAnswer(group.kind, id, value)} showOptional /></div>
       </details>
 
-      {overrideArea && <details key={group.kind} className="border-t border-[#edf0ea] pt-5 text-sm text-[#788077]">
+      {overrideArea && (groupAreas.length > 1 || Object.values(preferences.areaOverrides[overrideArea.id] ?? {}).some((value) => value !== "")) && <details key={group.kind} className="border-t border-[#edf0ea] pt-5 text-sm text-[var(--text-muted)]">
         <summary className="cursor-pointer">Einzelnen Bereich anders einstellen</summary>
         <div className="mt-5 space-y-5">
           <div className="flex items-center gap-3">
@@ -156,19 +156,19 @@ export function PlanningWishes({
         const detected = groups.some((item) => item.kind === option.kind && item.areaIds.length > 0);
         const selected = detected || preferences.additionalEquipment[option.kind] === true;
         return <button key={option.kind} type="button" aria-label={`${option.title} ergänzen`} aria-pressed={selected} disabled={detected}
-          onClick={() => onToggleEquipment(option.kind, !selected)} className={`flex w-full items-center justify-between gap-4 rounded-lg border px-4 py-4 text-left transition-colors ${selected ? "border-[#a4bfa8] bg-[#f5f9f4]" : "border-[#e1e6dd] bg-white hover:border-[#b7c9b4]"}`}>
-          <span><span className="block text-sm font-medium">{option.title}</span><span className="mt-1 block text-xs text-[#8a918b]">{detected ? "Bereits im Plan berücksichtigt" : option.kind === "drinker" ? "Tränkestellen und Frostschutz" : option.kind === "brush" ? "Komfort für die Tiere" : "Absperrungen und Außenöffnungen"}</span></span>
-          <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${selected ? "border-[#17633a] bg-[#17633a] text-white" : "border-[#cfd6ca]"}`}>{selected && <Check size={13} />}</span>
+          onClick={() => onToggleEquipment(option.kind, !selected)} className={`flex w-full items-center justify-between gap-4 rounded-lg border px-4 py-4 text-left transition-colors ${selected ? "border-[#17633a] bg-[#edf5ef]" : "border-[#7a877c] bg-white hover:border-[#17633a]"}`}>
+          <span><span className="block text-sm font-medium">{option.title}</span><span className="mt-1 block text-xs text-[var(--text-muted)]">{detected ? "Bereits im Plan berücksichtigt" : option.kind === "drinker" ? "Tränkestellen und Frostschutz" : option.kind === "brush" ? "Komfort für die Tiere" : "Absperrungen und Außenöffnungen"}</span></span>
+          <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${selected ? "border-[#17633a] bg-[#17633a] text-white" : "border-[#7a877c]"}`}>{selected && <Check size={13} />}</span>
         </button>;
       })}
-      <p className="pt-2 text-xs leading-5 text-[#8a918b]">Ausgewählte Ausstattung folgt als nächster Abschnitt.</p>
+      <p className="pt-2 text-xs leading-5 text-[var(--text-muted)]">Ausgewählte Ausstattung folgt als nächster Abschnitt.</p>
     </div>}
 
-    <div className="mt-9 border-t border-[#e5e9e1] pt-5">
-      {openQuestions > 0 && step.id !== "equipment" && <p className="mb-4 text-xs text-[#8a918b]">{openQuestions} {openQuestions === 1 ? "Angabe noch offen" : "Angaben noch offen"}. Sie können trotzdem weitergehen.</p>}
+    <div className="wish-actions sticky bottom-0 z-10 -mx-5 mt-8 border-t border-[#cbd3cb] bg-white px-5 py-4 sm:-mx-8 sm:px-8">
+      {openQuestions > 0 && step.id !== "equipment" && <p className="mb-4 text-xs text-[var(--text-muted)]">{openQuestions} {openQuestions === 1 ? "Angabe noch offen" : "Angaben noch offen"}. Sie können trotzdem weitergehen.</p>}
       <div className="flex items-center justify-between gap-3">
-        <button type="button" className="inline-flex h-10 items-center gap-2 rounded-md px-3 text-sm text-[#788077] hover:bg-[#f5f7f2] disabled:opacity-0" disabled={currentIndex === 0} onClick={() => navigate(steps[currentIndex - 1])}><ArrowLeft size={14} />Zurück</button>
-        <button type="button" className="inline-flex h-10 items-center gap-2 rounded-md bg-[#17633a] px-5 text-sm font-medium text-white hover:bg-[#12532f]" onClick={() => currentIndex < steps.length - 1 ? navigate(steps[currentIndex + 1]) : onComplete()}>
+        <button type="button" className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm text-[#566057] hover:bg-[#f5f7f2] disabled:opacity-0" disabled={currentIndex === 0} onClick={() => navigate(steps[currentIndex - 1])}><ArrowLeft size={16} />Zurück</button>
+        <button type="button" className="inline-flex h-11 items-center gap-2 rounded-md bg-[#17633a] px-6 text-sm font-semibold text-white hover:bg-[#12532f]" onClick={() => currentIndex < steps.length - 1 ? navigate(steps[currentIndex + 1]) : onComplete()}>
           {currentIndex < steps.length - 1 ? "Weiter" : "Zur Übersicht"}<ArrowRight size={14} />
         </button>
       </div>
@@ -187,7 +187,7 @@ function WishFields({ questions, answers, onAnswer, showOptional = false, overri
     {overrideAnswers?.[question.id] !== undefined && overrideAnswers[question.id] !== "" && <button type="button" aria-label={`${question.label}: Gemeinsame Vorgabe verwenden`} className="mt-2 text-xs font-medium text-[#17633a]" onClick={() => onAnswer(question.id, "")}>Gemeinsame Vorgabe verwenden</button>}
   </div>;
   return <div className="space-y-6">{visible.map(field)}
-    {optional.length > 0 && <details className="text-sm text-[#788077]"><summary className="cursor-pointer">Weitere Angaben</summary><div className="mt-5 space-y-6">{optional.map(field)}</div></details>}
+    {optional.length > 0 && <details className="text-sm text-[var(--text-muted)]"><summary className="cursor-pointer">Weitere Angaben</summary><div className="mt-5 space-y-6">{optional.map(field)}</div></details>}
   </div>;
 }
 
@@ -200,13 +200,13 @@ function WishQuestion({ question, value, onAnswer, fact }: {
   const fromPlan = fact && (fact.value === undefined || fact.value === value);
   const factEvidence = fact ? Array.isArray(fact.evidence) ? fact.evidence.join(" · ") : fact.evidence : "";
   const shortChoices = question.type === "select" && (question.options?.length ?? 0) <= 3;
-  const label = <span className="block text-sm font-medium text-[#566057]">{question.label}{!question.required && <span className="ml-2 text-[10px] font-normal text-[#8a918b]">Optional</span>}{fromPlan && <span className="ml-2 whitespace-nowrap text-[10px] font-normal text-[#17633a]" title={factEvidence}>Aus dem Plan</span>}</span>;
+  const label = <span className="block text-sm font-medium text-[#566057]">{question.label}{!question.required && <span className="ml-2 text-[10px] font-normal text-[var(--text-muted)]">Optional</span>}{fromPlan && <span className="ml-2 whitespace-nowrap text-[10px] font-normal text-[#17633a]" title={factEvidence}>Aus dem Plan</span>}</span>;
   if (shortChoices || question.type === "boolean") {
     const options: AnswerValue[] = question.type === "boolean" ? [true, false] : question.options ?? [];
     return <fieldset><legend className="mb-2">{label}</legend><div className="flex flex-wrap gap-2">{options.map((option) => {
       const caption = typeof option === "boolean" ? option ? "Ja" : "Nein" : String(option);
       return <button key={String(option)} type="button" aria-label={`${question.label}: ${caption}`} aria-pressed={value === option} onClick={() => onAnswer(question.id, option)}
-        className={`min-h-10 flex-1 rounded-md border px-3 py-2 text-sm transition-colors ${value === option ? "border-[#7dad8d] bg-[#f1f7f1] text-[#17633a]" : "border-[#dfe4db] bg-white text-[#788077] hover:border-[#b8c8b4]"}`}>{caption}</button>;
+        className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm ${value === option ? "border-[#17633a] bg-[#17633a] font-medium text-white" : "border-[#7a877c] bg-white text-[#465249] hover:border-[#17633a] hover:bg-[#f1f7f1]"}`}>{value === option && <Check size={15} className="shrink-0" aria-hidden="true" />}{caption}</button>;
     })}</div></fieldset>;
   }
   return <div><label htmlFor={fieldId} className="block">{label}</label>
@@ -214,6 +214,6 @@ function WishQuestion({ question, value, onAnswer, fact }: {
     {question.id === "planningNotes" && <textarea id={fieldId} aria-label={question.label} rows={3} value={String(value ?? "")} className="field mt-2 h-auto min-h-24 resize-y py-3 leading-6" placeholder="Was soll das Planungsteam noch berücksichtigen?" onChange={(event) => onAnswer(question.id, event.target.value)} />}
     {question.id !== "planningNotes" && (question.type === "text" || question.type === "number") && <input id={fieldId} aria-label={question.label} aria-invalid={invalidNumber || undefined} aria-describedby={invalidNumber ? `${fieldId}-error` : undefined} type={question.type} min={question.type === "number" ? 1 : undefined} step={question.type === "number" ? 1 : undefined} value={String(value ?? "")} className="field mt-2 h-11" placeholder={!question.required ? "Optional" : undefined} onChange={(event) => onAnswer(question.id, question.type === "number" && event.target.value !== "" ? Number(event.target.value) : event.target.value)} />}
     {invalidNumber && <span id={`${fieldId}-error`} className="mt-2 block text-xs text-[#a33c3c]">Ganze Zahl größer als 0 eingeben.</span>}
-    {fromPlan && <details className="mt-2 text-[11px] text-[#8a918b]"><summary className="cursor-pointer">Erkannte Angabe</summary><span className="mt-1 block leading-5">{factEvidence}</span></details>}
+    {fromPlan && <details className="mt-2 text-[11px] text-[var(--text-muted)]"><summary className="cursor-pointer">Erkannte Angabe</summary><span className="mt-1 block leading-5">{factEvidence}</span></details>}
   </div>;
 }
