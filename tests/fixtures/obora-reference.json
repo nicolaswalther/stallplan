@@ -1,0 +1,6197 @@
+{
+  "schemaVersion": "1.0",
+  "document": {
+    "filename": "obora mariusz-przyziemie(1).pdf",
+    "sha256": "85c80c8338ddd03ce975a9bb52da8c2e9da5f63d8168258ee6543985ee9ff02e",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 1843,
+        "heightPoints": 1191,
+        "rotation": 270,
+        "vectorPaths": 13263,
+        "lineSegments": 17361,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual review of PDF, then exact PDF text geometry attached to reviewed labels. Production detection was not used.",
+    "measurementCoverage": "All 213 initial technical drawing spans were reviewed individually; 22 non-numeric/room-label spans excluded; multiple-number spans split using PDF word boxes.",
+    "areaCoverage": "All 16 rooms transcribed from visually reviewed outline-glyph schedule. Room geometry coarse; not an exact segmentation ground truth.",
+    "coordinateConvention": "Normalized viewport coordinates x,y,width,height; page rotation already applied."
+  },
+  "unitEvidence": {
+    "unit": "cm",
+    "confidence": 0.995,
+    "scale": 100,
+    "axisValue": 600,
+    "axisLengthPoints": 170.03991699,
+    "axisActualMeters": 5.99863,
+    "overallValue": 4224,
+    "overallLengthPoints": 1197.23999023,
+    "overallActualMeters": 42.235966,
+    "evidence": [
+      "Title block explicitly says 1:100.",
+      "600 axis segment is 170.04 pt = 59.986 mm on the physical PDF; at 1:100 this is 599.86 cm.",
+      "4224 outer dimension is 1197.24 pt = 4223.60 cm at 1:100.",
+      "Top chain: 2994 + 1230 = 4224.",
+      "Top chain: 26 + 2968 + 30 + 1174 + 26 = 4224.",
+      "Bottom wall chain: 26 + 4172 + 20 + 6 = 4224."
+    ]
+  },
+  "measurements": [
+    {
+      "id": "ref-m001",
+      "text": "258",
+      "value": 258,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.255981,
+        0.750454,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        471.774,
+        893.79,
+        479.693,
+        907.0
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 0
+    },
+    {
+      "id": "ref-m002",
+      "text": "350",
+      "value": 350,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.255981,
+        0.678111,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        471.774,
+        807.63,
+        479.693,
+        820.84
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 1
+    },
+    {
+      "id": "ref-m003",
+      "text": "12",
+      "value": 12,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.256046,
+        0.628811,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        471.894,
+        748.914,
+        479.813,
+        757.72
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 2
+    },
+    {
+      "id": "ref-m004",
+      "text": "486",
+      "value": 486,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.255981,
+        0.575643,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        471.774,
+        685.59,
+        479.693,
+        698.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 3
+    },
+    {
+      "id": "ref-m005",
+      "text": "12",
+      "value": 12,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.256046,
+        0.510221,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        471.894,
+        607.674,
+        479.813,
+        616.48
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 4
+    },
+    {
+      "id": "ref-m006",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.255981,
+        0.46733,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        471.774,
+        556.59,
+        479.693,
+        569.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 5
+    },
+    {
+      "id": "ref-m007",
+      "text": "500",
+      "value": 500,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.255981,
+        0.360328,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        471.774,
+        429.15,
+        479.693,
+        442.36
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 6
+    },
+    {
+      "id": "ref-m008",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.255981,
+        0.265114,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        471.774,
+        315.75,
+        479.693,
+        328.96
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 7
+    },
+    {
+      "id": "ref-m009",
+      "text": "258",
+      "value": 258,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.255981,
+        0.198716,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        471.774,
+        236.67,
+        479.693,
+        249.88
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 8
+    },
+    {
+      "id": "ref-m010",
+      "text": "427",
+      "value": 427,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599834,
+        0.149748,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.494,
+        178.35,
+        1113.413,
+        191.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 9
+    },
+    {
+      "id": "ref-m011",
+      "text": "24",
+      "value": 24,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599834,
+        0.215309,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1105.494,
+        256.434,
+        1113.413,
+        265.24
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 10
+    },
+    {
+      "id": "ref-m012",
+      "text": "195",
+      "value": 195,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599769,
+        0.229849,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.374,
+        273.75,
+        1113.293,
+        286.96
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 11
+    },
+    {
+      "id": "ref-m013",
+      "text": "230",
+      "value": 230,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599769,
+        0.280126,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.374,
+        333.63,
+        1113.293,
+        346.84
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 12
+    },
+    {
+      "id": "ref-m014",
+      "text": "195",
+      "value": 195,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599769,
+        0.331008,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.374,
+        394.23,
+        1113.293,
+        407.44
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 13
+    },
+    {
+      "id": "ref-m015",
+      "text": "24",
+      "value": 24,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599834,
+        0.36866,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1105.494,
+        439.074,
+        1113.413,
+        447.88
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 14
+    },
+    {
+      "id": "ref-m016",
+      "text": "253",
+      "value": 253,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599769,
+        0.389748,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.374,
+        464.19,
+        1113.293,
+        477.4
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 15
+    },
+    {
+      "id": "ref-m017",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599769,
+        0.46733,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.374,
+        556.59,
+        1113.293,
+        569.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 16
+    },
+    {
+      "id": "ref-m018",
+      "text": "12",
+      "value": 12,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599834,
+        0.526846,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1105.494,
+        627.474,
+        1113.413,
+        636.28
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 17
+    },
+    {
+      "id": "ref-m019",
+      "text": "486",
+      "value": 486,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599769,
+        0.575643,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.374,
+        685.59,
+        1113.293,
+        698.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 18
+    },
+    {
+      "id": "ref-m020",
+      "text": "12",
+      "value": 12,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599834,
+        0.645435,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1105.494,
+        768.714,
+        1113.413,
+        777.52
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 19
+    },
+    {
+      "id": "ref-m021",
+      "text": "608",
+      "value": 608,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.599769,
+        0.708842,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1105.374,
+        844.23,
+        1113.293,
+        857.44
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 20
+    },
+    {
+      "id": "ref-m022",
+      "text": "258",
+      "value": 258,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.61287,
+        0.191649,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1129.52,
+        228.254,
+        1142.73,
+        236.173
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 21
+    },
+    {
+      "id": "ref-m023",
+      "text": "12",
+      "value": 12,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.640087,
+        0.191649,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1179.68,
+        228.254,
+        1188.486,
+        236.173
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 22
+    },
+    {
+      "id": "ref-m024",
+      "text": "150",
+      "value": 150,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.645947,
+        0.191548,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1190.48,
+        228.134,
+        1203.69,
+        236.053
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 22
+    },
+    {
+      "id": "ref-m025",
+      "text": "12",
+      "value": 12,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.664959,
+        0.191649,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1225.52,
+        228.254,
+        1234.326,
+        236.173
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 23
+    },
+    {
+      "id": "ref-m026",
+      "text": "150",
+      "value": 150,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.670884,
+        0.191548,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1236.44,
+        228.134,
+        1249.65,
+        236.053
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 23
+    },
+    {
+      "id": "ref-m027",
+      "text": "12",
+      "value": 12,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.689897,
+        0.191649,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1271.48,
+        228.254,
+        1280.286,
+        236.173
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 24
+    },
+    {
+      "id": "ref-m028",
+      "text": "480",
+      "value": 480,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.721346,
+        0.191548,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1329.44,
+        228.134,
+        1342.65,
+        236.053
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 25
+    },
+    {
+      "id": "ref-m029",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.765752,
+        0.191548,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1411.28,
+        228.134,
+        1424.49,
+        236.053
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 26
+    },
+    {
+      "id": "ref-m030",
+      "text": "85",
+      "value": 85,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.752194,
+        0.264781,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1386.294,
+        315.354,
+        1394.213,
+        324.16
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 27
+    },
+    {
+      "id": "ref-m031",
+      "text": "60",
+      "value": 60,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.752194,
+        0.28201,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1386.294,
+        335.874,
+        1394.213,
+        344.68
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 28
+    },
+    {
+      "id": "ref-m032",
+      "text": "85",
+      "value": 85,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.752194,
+        0.299239,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1386.294,
+        356.394,
+        1394.213,
+        365.2
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 29
+    },
+    {
+      "id": "ref-m033",
+      "text": "88",
+      "value": 88,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.76803,
+        0.428727,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1415.48,
+        510.614,
+        1424.286,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 30
+    },
+    {
+      "id": "ref-m034",
+      "text": "15",
+      "value": 15,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.754292,
+        0.428727,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1390.16,
+        510.614,
+        1398.966,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 31
+    },
+    {
+      "id": "ref-m035",
+      "text": "1080",
+      "value": 1080,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.673359,
+        0.428727,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        1241.0,
+        510.614,
+        1258.613,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 32
+    },
+    {
+      "id": "ref-m036",
+      "text": "15",
+      "value": 15,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.585914,
+        0.428727,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1079.84,
+        510.614,
+        1088.646,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 33
+    },
+    {
+      "id": "ref-m037",
+      "text": "439",
+      "value": 439,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.555638,
+        0.428727,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1024.04,
+        510.614,
+        1037.25,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 34
+    },
+    {
+      "id": "ref-m038",
+      "text": "15",
+      "value": 15,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.516115,
+        0.428727,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        951.2,
+        510.614,
+        960.006,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 35
+    },
+    {
+      "id": "ref-m039",
+      "text": "2160",
+      "value": 2160,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.352295,
+        0.428727,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        649.28,
+        510.614,
+        666.893,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 36
+    },
+    {
+      "id": "ref-m040",
+      "text": "15",
+      "value": 15,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.181574,
+        0.428727,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        334.64,
+        510.614,
+        343.446,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 37
+    },
+    {
+      "id": "ref-m041",
+      "text": "345",
+      "value": 345,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.158459,
+        0.428727,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        292.04,
+        510.614,
+        305.25,
+        518.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 38
+    },
+    {
+      "id": "ref-m042",
+      "text": "1050",
+      "value": 1050,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.672447,
+        0.266409,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        1239.32,
+        317.294,
+        1256.933,
+        325.213
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 39
+    },
+    {
+      "id": "ref-m043",
+      "text": "295",
+      "value": 295,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.639812,
+        0.165567,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1179.174,
+        197.19,
+        1187.093,
+        210.4
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 40
+    },
+    {
+      "id": "ref-m044",
+      "text": "29",
+      "value": 29,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.638459,
+        0.15185,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1176.68,
+        180.854,
+        1185.486,
+        188.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 41
+    },
+    {
+      "id": "ref-m045",
+      "text": "31",
+      "value": 31,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.656755,
+        0.15185,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1210.4,
+        180.854,
+        1219.206,
+        188.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 42
+    },
+    {
+      "id": "ref-m046",
+      "text": "90",
+      "value": 90,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.647119,
+        0.15185,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1192.64,
+        180.854,
+        1201.446,
+        188.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 43
+    },
+    {
+      "id": "ref-m047",
+      "text": "120",
+      "value": 120,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.141074,
+        0.217644,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        260.0,
+        259.214,
+        273.21,
+        267.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 44
+    },
+    {
+      "id": "ref-m048",
+      "text": "250",
+      "value": 250,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.792122,
+        0.151025,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1459.88,
+        179.87,
+        1469.787,
+        185.81
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 45
+    },
+    {
+      "id": "ref-m049",
+      "text": "250",
+      "value": 250,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.792122,
+        0.15707,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1459.88,
+        187.07,
+        1469.787,
+        193.01
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 46
+    },
+    {
+      "id": "ref-m050",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.793359,
+        0.470017,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1462.16,
+        559.79,
+        1472.067,
+        565.73
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 47
+    },
+    {
+      "id": "ref-m051",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.793359,
+        0.475962,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1462.16,
+        566.87,
+        1472.067,
+        572.81
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 48
+    },
+    {
+      "id": "ref-m052",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.792447,
+        0.680193,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1460.48,
+        810.11,
+        1470.387,
+        816.05
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 49
+    },
+    {
+      "id": "ref-m053",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.792447,
+        0.686138,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1460.48,
+        817.19,
+        1470.387,
+        823.13
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 50
+    },
+    {
+      "id": "ref-m054",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.113011,
+        0.680193,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        208.28,
+        810.11,
+        218.187,
+        816.05
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 51
+    },
+    {
+      "id": "ref-m055",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.113011,
+        0.686138,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        208.28,
+        817.19,
+        218.187,
+        823.13
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 52
+    },
+    {
+      "id": "ref-m056",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.113402,
+        0.470017,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        209.0,
+        559.79,
+        218.907,
+        565.73
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 53
+    },
+    {
+      "id": "ref-m057",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.113402,
+        0.475962,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        209.0,
+        566.87,
+        218.907,
+        572.81
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 54
+    },
+    {
+      "id": "ref-m058",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.113337,
+        0.270319,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        208.88,
+        321.95,
+        218.787,
+        327.89
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 55
+    },
+    {
+      "id": "ref-m059",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.113337,
+        0.276264,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        208.88,
+        329.03,
+        218.787,
+        334.97
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 56
+    },
+    {
+      "id": "ref-m060",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.116332,
+        0.575407,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        214.4,
+        685.31,
+        224.307,
+        691.25
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 57
+    },
+    {
+      "id": "ref-m061",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.116332,
+        0.581352,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        214.4,
+        692.39,
+        224.307,
+        698.33
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 58
+    },
+    {
+      "id": "ref-m062",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.788866,
+        0.575407,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1453.88,
+        685.31,
+        1463.787,
+        691.25
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 59
+    },
+    {
+      "id": "ref-m063",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.788866,
+        0.581352,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1453.88,
+        692.39,
+        1463.787,
+        698.33
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 60
+    },
+    {
+      "id": "ref-m064",
+      "text": "2880",
+      "value": 2880,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.352295,
+        0.2385,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        649.28,
+        284.054,
+        666.893,
+        291.973
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 61
+    },
+    {
+      "id": "ref-m065",
+      "text": "79",
+      "value": 79,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.584482,
+        0.2385,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1077.2,
+        284.054,
+        1086.006,
+        291.973
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 62
+    },
+    {
+      "id": "ref-m066",
+      "text": "15",
+      "value": 15,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.57146,
+        0.2385,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1053.2,
+        284.054,
+        1062.006,
+        291.973
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 63
+    },
+    {
+      "id": "ref-m067",
+      "text": "4172",
+      "value": 4172,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.451655,
+        0.510641,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        832.4,
+        608.174,
+        850.013,
+        616.093
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 64
+    },
+    {
+      "id": "ref-m068",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.175974,
+        0.798903,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        324.32,
+        951.494,
+        337.53,
+        959.413
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 65,
+      "dimensionLine": {
+        "start": [
+          0.133391,
+          0.804366
+        ],
+        "end": [
+          0.225654,
+          0.804366
+        ],
+        "lengthPoints": 170.03992
+      }
+    },
+    {
+      "id": "ref-m069",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.268237,
+        0.798903,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        494.36,
+        951.494,
+        507.57,
+        959.413
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 66,
+      "dimensionLine": {
+        "start": [
+          0.225654,
+          0.804366
+        ],
+        "end": [
+          0.317916,
+          0.804366
+        ],
+        "lengthPoints": 170.04004
+      }
+    },
+    {
+      "id": "ref-m070",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.360499,
+        0.798903,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        664.4,
+        951.494,
+        677.61,
+        959.413
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 67,
+      "dimensionLine": {
+        "start": [
+          0.317916,
+          0.804366
+        ],
+        "end": [
+          0.410244,
+          0.804366
+        ],
+        "lengthPoints": 170.16003
+      }
+    },
+    {
+      "id": "ref-m071",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.452762,
+        0.798903,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        834.44,
+        951.494,
+        847.65,
+        959.413
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 68,
+      "dimensionLine": {
+        "start": [
+          0.410244,
+          0.804366
+        ],
+        "end": [
+          0.502507,
+          0.804366
+        ],
+        "lengthPoints": 170.03992
+      }
+    },
+    {
+      "id": "ref-m072",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.54509,
+        0.798903,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1004.6,
+        951.494,
+        1017.81,
+        959.413
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 69,
+      "dimensionLine": {
+        "start": [
+          0.502507,
+          0.804366
+        ],
+        "end": [
+          0.594769,
+          0.804366
+        ],
+        "lengthPoints": 170.04004
+      }
+    },
+    {
+      "id": "ref-m073",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.637352,
+        0.798903,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1174.64,
+        951.494,
+        1187.85,
+        959.413
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 70,
+      "dimensionLine": {
+        "start": [
+          0.594769,
+          0.804366
+        ],
+        "end": [
+          0.687032,
+          0.804366
+        ],
+        "lengthPoints": 170.03992
+      }
+    },
+    {
+      "id": "ref-m074",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.729615,
+        0.798903,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1344.68,
+        951.494,
+        1357.89,
+        959.413
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 71,
+      "dimensionLine": {
+        "start": [
+          0.687032,
+          0.804366
+        ],
+        "end": [
+          0.779295,
+          0.804366
+        ],
+        "lengthPoints": 170.04004
+      }
+    },
+    {
+      "id": "ref-m075",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.613299,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1130.31,
+        103.893,
+        1136.25,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 72
+    },
+    {
+      "id": "ref-m076",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.617141,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1137.39,
+        103.893,
+        1143.33,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 73
+    },
+    {
+      "id": "ref-m077",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.658812,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1214.19,
+        103.893,
+        1220.13,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 74
+    },
+    {
+      "id": "ref-m078",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.662653,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1221.27,
+        103.893,
+        1227.21,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 75
+    },
+    {
+      "id": "ref-m079",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.711096,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1310.55,
+        103.893,
+        1316.49,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 76
+    },
+    {
+      "id": "ref-m080",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.714938,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1317.63,
+        103.893,
+        1323.57,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 77
+    },
+    {
+      "id": "ref-m081",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.750749,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1383.63,
+        103.893,
+        1389.57,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 78
+    },
+    {
+      "id": "ref-m082",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.754591,
+        0.087232,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1390.71,
+        103.893,
+        1396.65,
+        113.8
+      ],
+      "orientation": "vertical",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 79
+    },
+    {
+      "id": "ref-m083",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.78229,
+        0.230521,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1441.76,
+        274.55,
+        1451.667,
+        280.49
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 80
+    },
+    {
+      "id": "ref-m084",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.78229,
+        0.236566,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1441.76,
+        281.75,
+        1451.667,
+        287.69
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 81
+    },
+    {
+      "id": "ref-m085",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.78229,
+        0.331679,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1441.76,
+        395.03,
+        1451.667,
+        400.97
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 82
+    },
+    {
+      "id": "ref-m086",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.78229,
+        0.337725,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1441.76,
+        402.23,
+        1451.667,
+        408.17
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 83
+    },
+    {
+      "id": "ref-m087",
+      "text": "2624",
+      "value": 2624,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.087213,
+        0.472701,
+        0.004297,
+        0.014788
+      ],
+      "bboxPoints": [
+        160.734,
+        562.987,
+        168.653,
+        580.6
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 100
+    },
+    {
+      "id": "ref-m088",
+      "text": "4224",
+      "value": 4224,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.451655,
+        0.827921,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        832.4,
+        986.054,
+        850.013,
+        993.973
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 101,
+      "dimensionLine": {
+        "start": [
+          0.131568,
+          0.833182
+        ],
+        "end": [
+          0.781183,
+          0.833182
+        ],
+        "lengthPoints": 1197.23999
+      }
+    },
+    {
+      "id": "ref-m089",
+      "text": "1198",
+      "value": 1198,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.68013,
+        0.219457,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        1253.48,
+        261.374,
+        1271.093,
+        269.293
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 102
+    },
+    {
+      "id": "ref-m090",
+      "text": "1230",
+      "value": 1230,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.681693,
+        0.045654,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        1256.36,
+        54.374,
+        1273.973,
+        62.293
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 103
+    },
+    {
+      "id": "ref-m091",
+      "text": "1218",
+      "value": 1218,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.681693,
+        0.061674,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        1256.36,
+        73.454,
+        1273.973,
+        81.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 104
+    },
+    {
+      "id": "ref-m092",
+      "text": "2994",
+      "value": 2994,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.35796,
+        0.061674,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        659.72,
+        73.454,
+        677.333,
+        81.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 105
+    },
+    {
+      "id": "ref-m093",
+      "text": "2994",
+      "value": 2994,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.357048,
+        0.045654,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        658.04,
+        54.374,
+        675.653,
+        62.293
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 106
+    },
+    {
+      "id": "ref-m094",
+      "text": "626",
+      "value": 626,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.104988,
+        0.709547,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        193.494,
+        845.07,
+        201.413,
+        858.28
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 109
+    },
+    {
+      "id": "ref-m095",
+      "text": "498",
+      "value": 498,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.104988,
+        0.575643,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        193.494,
+        685.59,
+        201.413,
+        698.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 110
+    },
+    {
+      "id": "ref-m096",
+      "text": "656",
+      "value": 656,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.104988,
+        0.438413,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        193.494,
+        522.15,
+        201.413,
+        535.36
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 111
+    },
+    {
+      "id": "ref-m097",
+      "text": "820",
+      "value": 820,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.104988,
+        0.262796,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        193.494,
+        312.99,
+        201.413,
+        326.2
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 112
+    },
+    {
+      "id": "ref-m098",
+      "text": "290",
+      "value": 290,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.104988,
+        0.130605,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        193.494,
+        155.55,
+        201.413,
+        168.76
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 113
+    },
+    {
+      "id": "ref-m099",
+      "text": "4212",
+      "value": 4212,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.451655,
+        0.819961,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        832.4,
+        976.574,
+        850.013,
+        984.493
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 114,
+      "dimensionLine": {
+        "start": [
+          0.780271,
+          0.825323
+        ],
+        "end": [
+          0.13248,
+          0.825323
+        ],
+        "lengthPoints": 1193.88
+      }
+    },
+    {
+      "id": "ref-m100",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.175974,
+        0.081624,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        324.32,
+        97.214,
+        337.53,
+        105.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 119,
+      "dimensionLine": {
+        "start": [
+          0.133391,
+          0.086986
+        ],
+        "end": [
+          0.225654,
+          0.086986
+        ],
+        "lengthPoints": 170.03992
+      }
+    },
+    {
+      "id": "ref-m101",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.268237,
+        0.081624,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        494.36,
+        97.214,
+        507.57,
+        105.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 120,
+      "dimensionLine": {
+        "start": [
+          0.225654,
+          0.086986
+        ],
+        "end": [
+          0.317916,
+          0.086986
+        ],
+        "lengthPoints": 170.04004
+      }
+    },
+    {
+      "id": "ref-m102",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.360499,
+        0.081624,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        664.4,
+        97.214,
+        677.61,
+        105.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 121,
+      "dimensionLine": {
+        "start": [
+          0.317916,
+          0.086986
+        ],
+        "end": [
+          0.410244,
+          0.086986
+        ],
+        "lengthPoints": 170.16003
+      }
+    },
+    {
+      "id": "ref-m103",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.452762,
+        0.081624,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        834.44,
+        97.214,
+        847.65,
+        105.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 122,
+      "dimensionLine": {
+        "start": [
+          0.410244,
+          0.086986
+        ],
+        "end": [
+          0.502507,
+          0.086986
+        ],
+        "lengthPoints": 170.03992
+      }
+    },
+    {
+      "id": "ref-m104",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.54509,
+        0.081624,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1004.6,
+        97.214,
+        1017.81,
+        105.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 123,
+      "dimensionLine": {
+        "start": [
+          0.502507,
+          0.086986
+        ],
+        "end": [
+          0.594769,
+          0.086986
+        ],
+        "lengthPoints": 170.04004
+      }
+    },
+    {
+      "id": "ref-m105",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.637352,
+        0.081624,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1174.64,
+        97.214,
+        1187.85,
+        105.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 124,
+      "dimensionLine": {
+        "start": [
+          0.594769,
+          0.086986
+        ],
+        "end": [
+          0.687032,
+          0.086986
+        ],
+        "lengthPoints": 170.03992
+      }
+    },
+    {
+      "id": "ref-m106",
+      "text": "600",
+      "value": 600,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.729615,
+        0.081624,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1344.68,
+        97.214,
+        1357.89,
+        105.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 125,
+      "dimensionLine": {
+        "start": [
+          0.687032,
+          0.086986
+        ],
+        "end": [
+          0.779295,
+          0.086986
+        ],
+        "lengthPoints": 170.04004
+      }
+    },
+    {
+      "id": "ref-m107",
+      "text": "26",
+      "value": 26,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.124536,
+        0.809785,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        229.52,
+        964.454,
+        238.326,
+        972.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 126
+    },
+    {
+      "id": "ref-m108",
+      "text": "4172",
+      "value": 4172,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.451655,
+        0.809885,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        832.4,
+        964.574,
+        850.013,
+        972.493
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 127
+    },
+    {
+      "id": "ref-m109",
+      "text": "20",
+      "value": 20,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.770179,
+        0.809785,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1419.44,
+        964.454,
+        1428.246,
+        972.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 128
+    },
+    {
+      "id": "ref-m110",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.783397,
+        0.809785,
+        0.002389,
+        0.006649
+      ],
+      "bboxPoints": [
+        1443.8,
+        964.454,
+        1448.203,
+        972.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 129
+    },
+    {
+      "id": "ref-m111",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.797243,
+        0.004297,
+        0.003697
+      ],
+      "bboxPoints": [
+        183.414,
+        949.517,
+        191.333,
+        953.92
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 130
+    },
+    {
+      "id": "ref-m112",
+      "text": "24",
+      "value": 24,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099584,
+        0.775813,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        183.534,
+        923.994,
+        191.453,
+        932.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 131
+    },
+    {
+      "id": "ref-m113",
+      "text": "276",
+      "value": 276,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.748237,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        183.414,
+        891.15,
+        191.333,
+        904.36
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 132
+    },
+    {
+      "id": "ref-m114",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.679723,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        183.414,
+        809.55,
+        191.333,
+        822.76
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 133
+    },
+    {
+      "id": "ref-m115",
+      "text": "90",
+      "value": 90,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.635158,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        183.414,
+        756.474,
+        191.333,
+        765.28
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 134
+    },
+    {
+      "id": "ref-m116",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.574937,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        183.414,
+        684.75,
+        191.333,
+        697.96
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 135
+    },
+    {
+      "id": "ref-m117",
+      "text": "93",
+      "value": 93,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.518181,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        183.414,
+        617.154,
+        191.333,
+        625.96
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 136
+    },
+    {
+      "id": "ref-m118",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.469648,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        183.414,
+        559.35,
+        191.333,
+        572.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 137
+    },
+    {
+      "id": "ref-m119",
+      "text": "539",
+      "value": 539,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.369799,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        183.414,
+        440.43,
+        191.333,
+        453.64
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 138
+    },
+    {
+      "id": "ref-m120",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.26995,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        183.414,
+        321.51,
+        191.333,
+        334.72
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 139
+    },
+    {
+      "id": "ref-m121",
+      "text": "278",
+      "value": 278,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.201134,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        183.414,
+        239.55,
+        191.333,
+        252.76
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 140
+    },
+    {
+      "id": "ref-m122",
+      "text": "24",
+      "value": 24,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099584,
+        0.177022,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        183.534,
+        210.834,
+        191.453,
+        219.64
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 141
+    },
+    {
+      "id": "ref-m123",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.099519,
+        0.159359,
+        0.004297,
+        0.003697
+      ],
+      "bboxPoints": [
+        183.414,
+        189.797,
+        191.333,
+        194.2
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 142
+    },
+    {
+      "id": "ref-m124",
+      "text": "302",
+      "value": 302,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.093919,
+        0.198313,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        173.094,
+        236.19,
+        181.013,
+        249.4
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 143
+    },
+    {
+      "id": "ref-m125",
+      "text": "2022",
+      "value": 2022,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.093919,
+        0.472903,
+        0.004297,
+        0.014788
+      ],
+      "bboxPoints": [
+        173.094,
+        563.227,
+        181.013,
+        580.84
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 144
+    },
+    {
+      "id": "ref-m126",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.093919,
+        0.751159,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        173.094,
+        894.63,
+        181.013,
+        907.84
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 145
+    },
+    {
+      "id": "ref-m127",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.126945,
+        0.072656,
+        0.002389,
+        0.006649
+      ],
+      "bboxPoints": [
+        233.96,
+        86.534,
+        238.363,
+        94.453
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 146
+    },
+    {
+      "id": "ref-m128",
+      "text": "20",
+      "value": 20,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.137819,
+        0.072656,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        254.0,
+        86.534,
+        262.806,
+        94.453
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 147
+    },
+    {
+      "id": "ref-m129",
+      "text": "2974",
+      "value": 2974,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.359523,
+        0.072656,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        662.6,
+        86.534,
+        680.213,
+        94.453
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 148
+    },
+    {
+      "id": "ref-m130",
+      "text": "104",
+      "value": 104,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.597179,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1100.6,
+        84.854,
+        1113.81,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 149
+    },
+    {
+      "id": "ref-m131",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.61287,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1129.52,
+        84.854,
+        1142.73,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 150
+    },
+    {
+      "id": "ref-m132",
+      "text": "196",
+      "value": 196,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.635659,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1171.52,
+        84.854,
+        1184.73,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 151
+    },
+    {
+      "id": "ref-m133",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.658448,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1213.52,
+        84.854,
+        1226.73,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 152
+    },
+    {
+      "id": "ref-m134",
+      "text": "240",
+      "value": 240,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.684753,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1262.0,
+        84.854,
+        1275.21,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 153
+    },
+    {
+      "id": "ref-m135",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.710733,
+        0.072656,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1309.88,
+        86.534,
+        1323.09,
+        94.453
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 154
+    },
+    {
+      "id": "ref-m136",
+      "text": "158",
+      "value": 158,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.730526,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1346.36,
+        84.854,
+        1359.57,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 155
+    },
+    {
+      "id": "ref-m137",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.750385,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1382.96,
+        84.854,
+        1396.17,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 156
+    },
+    {
+      "id": "ref-m138",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.765752,
+        0.071246,
+        0.007167,
+        0.006649
+      ],
+      "bboxPoints": [
+        1411.28,
+        84.854,
+        1424.49,
+        92.773
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 157
+    },
+    {
+      "id": "ref-m139",
+      "text": "20",
+      "value": 20,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.777146,
+        0.072656,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1432.28,
+        86.534,
+        1441.086,
+        94.453
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 158
+    },
+    {
+      "id": "ref-m140",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.783397,
+        0.072656,
+        0.002389,
+        0.006649
+      ],
+      "bboxPoints": [
+        1443.8,
+        86.534,
+        1448.203,
+        94.453
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 158
+    },
+    {
+      "id": "ref-m141",
+      "text": "120",
+      "value": 120,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.639812,
+        0.113577,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1179.174,
+        135.27,
+        1187.093,
+        148.48
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 159
+    },
+    {
+      "id": "ref-m142",
+      "text": "10",
+      "value": 10,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.618586,
+        0.102262,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1140.054,
+        121.794,
+        1147.973,
+        130.6
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 160
+    },
+    {
+      "id": "ref-m143",
+      "text": "317",
+      "value": 317,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.618586,
+        0.162947,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1140.054,
+        194.07,
+        1147.973,
+        207.28
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 161
+    },
+    {
+      "id": "ref-m144",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.618586,
+        0.113577,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1140.054,
+        135.27,
+        1147.973,
+        148.48
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 162
+    },
+    {
+      "id": "ref-m145",
+      "text": "290",
+      "value": 290,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.819975,
+        0.130605,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1511.214,
+        155.55,
+        1519.133,
+        168.76
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 163
+    },
+    {
+      "id": "ref-m146",
+      "text": "820",
+      "value": 820,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.819975,
+        0.262796,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1511.214,
+        312.99,
+        1519.133,
+        326.2
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 164
+    },
+    {
+      "id": "ref-m147",
+      "text": "656",
+      "value": 656,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.819975,
+        0.438413,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1511.214,
+        522.15,
+        1519.133,
+        535.36
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 165
+    },
+    {
+      "id": "ref-m148",
+      "text": "498",
+      "value": 498,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.819975,
+        0.575643,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1511.214,
+        685.59,
+        1519.133,
+        698.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 166
+    },
+    {
+      "id": "ref-m149",
+      "text": "626",
+      "value": 626,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.819975,
+        0.709547,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1511.214,
+        845.07,
+        1519.133,
+        858.28
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 167
+    },
+    {
+      "id": "ref-m150",
+      "text": "90",
+      "value": 90,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.680586,
+        0.111831,
+        0.003584,
+        0.004987
+      ],
+      "bboxPoints": [
+        1254.32,
+        133.19,
+        1260.925,
+        139.13
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 168
+    },
+    {
+      "id": "ref-m151",
+      "text": "205",
+      "value": 205,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.67974,
+        0.117775,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1252.76,
+        140.27,
+        1262.667,
+        146.21
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 169
+    },
+    {
+      "id": "ref-m152",
+      "text": "90",
+      "value": 90,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.630776,
+        0.111831,
+        0.003584,
+        0.004987
+      ],
+      "bboxPoints": [
+        1162.52,
+        133.19,
+        1169.125,
+        139.13
+      ],
+      "orientation": "horizontal",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 170
+    },
+    {
+      "id": "ref-m153",
+      "text": "205",
+      "value": 205,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.629929,
+        0.117775,
+        0.005376,
+        0.004987
+      ],
+      "bboxPoints": [
+        1160.96,
+        140.27,
+        1170.867,
+        146.21
+      ],
+      "orientation": "horizontal",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 171
+    },
+    {
+      "id": "ref-m154",
+      "text": "80",
+      "value": 80,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.647027,
+        0.123657,
+        0.003223,
+        0.005546
+      ],
+      "bboxPoints": [
+        1192.47,
+        147.275,
+        1198.41,
+        153.88
+      ],
+      "orientation": "vertical",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 172
+    },
+    {
+      "id": "ref-m155",
+      "text": "205",
+      "value": 205,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.650868,
+        0.122194,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1199.55,
+        145.533,
+        1205.49,
+        155.44
+      ],
+      "orientation": "vertical",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 173
+    },
+    {
+      "id": "ref-m156",
+      "text": "80",
+      "value": 80,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.667732,
+        0.123657,
+        0.003223,
+        0.005546
+      ],
+      "bboxPoints": [
+        1230.63,
+        147.275,
+        1236.57,
+        153.88
+      ],
+      "orientation": "vertical",
+      "role": "opening-width",
+      "reviewed": true,
+      "sourceSpanIndex": 174
+    },
+    {
+      "id": "ref-m157",
+      "text": "205",
+      "value": 205,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.671574,
+        0.122194,
+        0.003223,
+        0.008318
+      ],
+      "bboxPoints": [
+        1237.71,
+        145.533,
+        1243.65,
+        155.44
+      ],
+      "orientation": "vertical",
+      "role": "opening-height",
+      "reviewed": true,
+      "sourceSpanIndex": 175
+    },
+    {
+      "id": "ref-m158",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.126945,
+        0.061674,
+        0.002389,
+        0.006649
+      ],
+      "bboxPoints": [
+        233.96,
+        73.454,
+        238.363,
+        81.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 176
+    },
+    {
+      "id": "ref-m159",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.783397,
+        0.061674,
+        0.002389,
+        0.006649
+      ],
+      "bboxPoints": [
+        1443.8,
+        73.454,
+        1448.203,
+        81.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 177
+    },
+    {
+      "id": "ref-m160",
+      "text": "26",
+      "value": 26,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.783462,
+        0.054823,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1443.92,
+        65.294,
+        1452.726,
+        73.213
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 178
+    },
+    {
+      "id": "ref-m161",
+      "text": "1174",
+      "value": 1174,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.681953,
+        0.054823,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        1256.84,
+        65.294,
+        1274.453,
+        73.213
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 179
+    },
+    {
+      "id": "ref-m162",
+      "text": "30",
+      "value": 30,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.591905,
+        0.054823,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1090.88,
+        65.294,
+        1099.686,
+        73.213
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 180
+    },
+    {
+      "id": "ref-m163",
+      "text": "2968",
+      "value": 2968,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.359002,
+        0.054823,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        661.64,
+        65.294,
+        679.253,
+        73.213
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 181
+    },
+    {
+      "id": "ref-m164",
+      "text": "26",
+      "value": 26,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.124536,
+        0.054823,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        229.52,
+        65.294,
+        238.326,
+        73.213
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 182
+    },
+    {
+      "id": "ref-m165",
+      "text": "4212",
+      "value": 4212,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.451655,
+        0.038097,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        832.4,
+        45.374,
+        850.013,
+        53.293
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 183,
+      "dimensionLine": {
+        "start": [
+          0.13248,
+          0.043359
+        ],
+        "end": [
+          0.780271,
+          0.043359
+        ],
+        "lengthPoints": 1193.88
+      }
+    },
+    {
+      "id": "ref-m166",
+      "text": "4224",
+      "value": 4224,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.451655,
+        0.029734,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        832.4,
+        35.414,
+        850.013,
+        43.333
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 184,
+      "dimensionLine": {
+        "start": [
+          0.131568,
+          0.034996
+        ],
+        "end": [
+          0.781183,
+          0.034996
+        ],
+        "lengthPoints": 1197.23999
+      }
+    },
+    {
+      "id": "ref-m167",
+      "text": "3000",
+      "value": 3000,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.361476,
+        0.729281,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        666.2,
+        868.574,
+        683.813,
+        876.493
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 185
+    },
+    {
+      "id": "ref-m168",
+      "text": "15",
+      "value": 15,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.60115,
+        0.729281,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1107.92,
+        868.574,
+        1116.726,
+        876.493
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 186
+    },
+    {
+      "id": "ref-m169",
+      "text": "1157",
+      "value": 1157,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.691199,
+        0.729281,
+        0.009557,
+        0.006649
+      ],
+      "bboxPoints": [
+        1273.88,
+        868.574,
+        1291.493,
+        876.493
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 187
+    },
+    {
+      "id": "ref-m170",
+      "text": "24",
+      "value": 24,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.764059,
+        0.26651,
+        0.004778,
+        0.006649
+      ],
+      "bboxPoints": [
+        1408.16,
+        317.414,
+        1416.966,
+        325.333
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 188
+    },
+    {
+      "id": "ref-m171",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.090241,
+        0.004297,
+        0.003697
+      ],
+      "bboxPoints": [
+        1520.214,
+        107.477,
+        1528.133,
+        111.88
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 189
+    },
+    {
+      "id": "ref-m172",
+      "text": "24",
+      "value": 24,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824923,
+        0.09803,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1520.334,
+        116.754,
+        1528.253,
+        125.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 190
+    },
+    {
+      "id": "ref-m173",
+      "text": "92",
+      "value": 92,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.111833,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1520.214,
+        133.194,
+        1528.133,
+        142.0
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 191
+    },
+    {
+      "id": "ref-m174",
+      "text": "250",
+      "value": 250,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.150655,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        179.43,
+        1528.133,
+        192.64
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 192
+    },
+    {
+      "id": "ref-m175",
+      "text": "159",
+      "value": 159,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.199623,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        237.75,
+        1528.133,
+        250.96
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 193
+    },
+    {
+      "id": "ref-m176",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.230353,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        274.35,
+        1528.133,
+        287.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 194
+    },
+    {
+      "id": "ref-m177",
+      "text": "325",
+      "value": 325,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.280731,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        334.35,
+        1528.133,
+        347.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 195
+    },
+    {
+      "id": "ref-m178",
+      "text": "381",
+      "value": 381,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.388136,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        462.27,
+        1528.133,
+        475.48
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 196
+    },
+    {
+      "id": "ref-m179",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.469648,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        559.35,
+        1528.133,
+        572.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 197
+    },
+    {
+      "id": "ref-m180",
+      "text": "93",
+      "value": 93,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.518181,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1520.214,
+        617.154,
+        1528.133,
+        625.96
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 198
+    },
+    {
+      "id": "ref-m181",
+      "text": "400",
+      "value": 400,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.574937,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        684.75,
+        1528.133,
+        697.96
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 199
+    },
+    {
+      "id": "ref-m182",
+      "text": "90",
+      "value": 90,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.635158,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1520.214,
+        756.474,
+        1528.133,
+        765.28
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 200
+    },
+    {
+      "id": "ref-m183",
+      "text": "300",
+      "value": 300,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.679723,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        809.55,
+        1528.133,
+        822.76
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 201
+    },
+    {
+      "id": "ref-m184",
+      "text": "276",
+      "value": 276,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.748237,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        891.15,
+        1528.133,
+        904.36
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 202
+    },
+    {
+      "id": "ref-m185",
+      "text": "24",
+      "value": 24,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824923,
+        0.775813,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1520.334,
+        923.994,
+        1528.253,
+        932.8
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 203
+    },
+    {
+      "id": "ref-m186",
+      "text": "6",
+      "value": 6,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.797243,
+        0.004297,
+        0.003697
+      ],
+      "bboxPoints": [
+        1520.214,
+        949.517,
+        1528.133,
+        953.92
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 204
+    },
+    {
+      "id": "ref-m187",
+      "text": "30",
+      "value": 30,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.830848,
+        0.786594,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1531.254,
+        936.834,
+        1539.173,
+        945.64
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 205
+    },
+    {
+      "id": "ref-m188",
+      "text": "2866",
+      "value": 2866,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.830848,
+        0.438243,
+        0.004297,
+        0.014788
+      ],
+      "bboxPoints": [
+        1531.254,
+        521.947,
+        1539.173,
+        539.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 206
+    },
+    {
+      "id": "ref-m189",
+      "text": "30",
+      "value": 30,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.830848,
+        0.097325,
+        0.004297,
+        0.007394
+      ],
+      "bboxPoints": [
+        1531.254,
+        115.914,
+        1539.173,
+        124.72
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 207
+    },
+    {
+      "id": "ref-m190",
+      "text": "2498",
+      "value": 2498,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.835862,
+        0.416278,
+        0.004297,
+        0.014788
+      ],
+      "bboxPoints": [
+        1540.494,
+        495.787,
+        1548.413,
+        513.4
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 208
+    },
+    {
+      "id": "ref-m191",
+      "text": "2926",
+      "value": 2926,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.841527,
+        0.438243,
+        0.004297,
+        0.014788
+      ],
+      "bboxPoints": [
+        1550.934,
+        521.947,
+        1558.853,
+        539.56
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 209
+    },
+    {
+      "id": "ref-m192",
+      "text": "122",
+      "value": 122,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.835927,
+        0.106625,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1540.614,
+        126.99,
+        1548.533,
+        140.2
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 210
+    },
+    {
+      "id": "ref-m193",
+      "text": "306",
+      "value": 306,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.835862,
+        0.751864,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1540.494,
+        895.47,
+        1548.413,
+        908.68
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 211
+    },
+    {
+      "id": "ref-m194",
+      "text": "100",
+      "value": 100,
+      "unit": "cm",
+      "page": 1,
+      "bbox": [
+        0.824858,
+        0.331512,
+        0.004297,
+        0.011091
+      ],
+      "bboxPoints": [
+        1520.214,
+        394.83,
+        1528.133,
+        408.04
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 212
+    }
+  ],
+  "dimensionChains": [
+    {
+      "id": "top-axis-grid",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m100",
+        "ref-m101",
+        "ref-m102",
+        "ref-m103",
+        "ref-m104",
+        "ref-m105",
+        "ref-m106"
+      ],
+      "values": [
+        600,
+        600,
+        600,
+        600,
+        600,
+        600,
+        600
+      ]
+    },
+    {
+      "id": "bottom-axis-grid",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m068",
+        "ref-m069",
+        "ref-m070",
+        "ref-m071",
+        "ref-m072",
+        "ref-m073",
+        "ref-m074"
+      ],
+      "values": [
+        600,
+        600,
+        600,
+        600,
+        600,
+        600,
+        600
+      ]
+    },
+    {
+      "id": "top-total-outer",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m166"
+      ],
+      "values": [
+        4224
+      ]
+    },
+    {
+      "id": "top-total-wall",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m165"
+      ],
+      "values": [
+        4212
+      ]
+    },
+    {
+      "id": "top-building-parts",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m093",
+        "ref-m090"
+      ],
+      "values": [
+        2994,
+        1230
+      ]
+    },
+    {
+      "id": "top-inner-parts",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m092",
+        "ref-m091"
+      ],
+      "values": [
+        2994,
+        1218
+      ]
+    },
+    {
+      "id": "top-wall-detail",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m164",
+        "ref-m163",
+        "ref-m162",
+        "ref-m161",
+        "ref-m160"
+      ],
+      "values": [
+        26,
+        2968,
+        30,
+        1174,
+        26
+      ]
+    },
+    {
+      "id": "top-window-chain",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m127",
+        "ref-m128",
+        "ref-m129",
+        "ref-m130",
+        "ref-m131",
+        "ref-m132",
+        "ref-m133",
+        "ref-m134",
+        "ref-m135",
+        "ref-m136",
+        "ref-m137",
+        "ref-m138",
+        "ref-m139",
+        "ref-m140"
+      ],
+      "values": [
+        6,
+        20,
+        2974,
+        104,
+        100,
+        196,
+        100,
+        240,
+        100,
+        158,
+        100,
+        100,
+        20,
+        6
+      ]
+    },
+    {
+      "id": "bottom-wall-chain",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m107",
+        "ref-m108",
+        "ref-m109",
+        "ref-m110"
+      ],
+      "values": [
+        26,
+        4172,
+        20,
+        6
+      ]
+    },
+    {
+      "id": "bottom-total-wall",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m099"
+      ],
+      "values": [
+        4212
+      ]
+    },
+    {
+      "id": "bottom-total-outer",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m088"
+      ],
+      "values": [
+        4224
+      ]
+    },
+    {
+      "id": "left-axes",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m098",
+        "ref-m097",
+        "ref-m096",
+        "ref-m095",
+        "ref-m094"
+      ],
+      "values": [
+        290,
+        820,
+        656,
+        498,
+        626
+      ]
+    },
+    {
+      "id": "right-axes",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m145",
+        "ref-m146",
+        "ref-m147",
+        "ref-m148",
+        "ref-m149"
+      ],
+      "values": [
+        290,
+        820,
+        656,
+        498,
+        626
+      ]
+    },
+    {
+      "id": "left-openings",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m123",
+        "ref-m122",
+        "ref-m121",
+        "ref-m120",
+        "ref-m119",
+        "ref-m118",
+        "ref-m117",
+        "ref-m116",
+        "ref-m115",
+        "ref-m114",
+        "ref-m113",
+        "ref-m112",
+        "ref-m111"
+      ],
+      "values": [
+        6,
+        24,
+        278,
+        300,
+        539,
+        300,
+        93,
+        400,
+        90,
+        300,
+        276,
+        24,
+        6
+      ]
+    },
+    {
+      "id": "left-zone-aggregate",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m124",
+        "ref-m125",
+        "ref-m126"
+      ],
+      "values": [
+        302,
+        2022,
+        300
+      ]
+    },
+    {
+      "id": "left-overall",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m087"
+      ],
+      "values": [
+        2624
+      ]
+    },
+    {
+      "id": "right-openings",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m171",
+        "ref-m172",
+        "ref-m173",
+        "ref-m174",
+        "ref-m175",
+        "ref-m176",
+        "ref-m177",
+        "ref-m194",
+        "ref-m178",
+        "ref-m179",
+        "ref-m180",
+        "ref-m181",
+        "ref-m182",
+        "ref-m183",
+        "ref-m184",
+        "ref-m185",
+        "ref-m186"
+      ],
+      "values": [
+        6,
+        24,
+        92,
+        250,
+        159,
+        100,
+        325,
+        100,
+        381,
+        300,
+        93,
+        400,
+        90,
+        300,
+        276,
+        24,
+        6
+      ]
+    },
+    {
+      "id": "right-depth-wall",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m189",
+        "ref-m188",
+        "ref-m187"
+      ],
+      "values": [
+        30,
+        2866,
+        30
+      ]
+    },
+    {
+      "id": "right-depth-parts",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m192",
+        "ref-m190",
+        "ref-m193"
+      ],
+      "values": [
+        122,
+        2498,
+        306
+      ]
+    },
+    {
+      "id": "right-overall",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m191"
+      ],
+      "values": [
+        2926
+      ]
+    },
+    {
+      "id": "internal-left-depth",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m009",
+        "ref-m008",
+        "ref-m007",
+        "ref-m006",
+        "ref-m005",
+        "ref-m004",
+        "ref-m003",
+        "ref-m002",
+        "ref-m001"
+      ],
+      "values": [
+        258,
+        300,
+        500,
+        400,
+        12,
+        486,
+        12,
+        350,
+        258
+      ]
+    },
+    {
+      "id": "internal-right-depth",
+      "orientation": "vertical",
+      "measurementIds": [
+        "ref-m010",
+        "ref-m011",
+        "ref-m012",
+        "ref-m013",
+        "ref-m014",
+        "ref-m015",
+        "ref-m016",
+        "ref-m017",
+        "ref-m018",
+        "ref-m019",
+        "ref-m020",
+        "ref-m021"
+      ],
+      "values": [
+        427,
+        24,
+        195,
+        230,
+        195,
+        24,
+        253,
+        400,
+        12,
+        486,
+        12,
+        608
+      ]
+    },
+    {
+      "id": "internal-service-width",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m022",
+        "ref-m023",
+        "ref-m024",
+        "ref-m025",
+        "ref-m026",
+        "ref-m027",
+        "ref-m028",
+        "ref-m029"
+      ],
+      "values": [
+        258,
+        12,
+        150,
+        12,
+        150,
+        12,
+        480,
+        100
+      ]
+    },
+    {
+      "id": "central-cross-width",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m041",
+        "ref-m040",
+        "ref-m039",
+        "ref-m038",
+        "ref-m037",
+        "ref-m036",
+        "ref-m035",
+        "ref-m034",
+        "ref-m033"
+      ],
+      "values": [
+        345,
+        15,
+        2160,
+        15,
+        439,
+        15,
+        1080,
+        15,
+        88
+      ]
+    },
+    {
+      "id": "upper-lying-width",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m064",
+        "ref-m066",
+        "ref-m065"
+      ],
+      "values": [
+        2880,
+        15,
+        79
+      ]
+    },
+    {
+      "id": "lower-lying-width",
+      "orientation": "horizontal",
+      "measurementIds": [
+        "ref-m167",
+        "ref-m168",
+        "ref-m169"
+      ],
+      "values": [
+        3000,
+        15,
+        1157
+      ]
+    }
+  ],
+  "nonDimensions": [
+    {
+      "text": "1.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.712881,
+        0.118613,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 84
+    },
+    {
+      "text": "2.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.673619,
+        0.156699,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 85
+    },
+    {
+      "text": "3.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.648877,
+        0.141585,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 86
+    },
+    {
+      "text": "5.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.613131,
+        0.151359,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 87
+    },
+    {
+      "text": "4.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.660206,
+        0.113978,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 88
+    },
+    {
+      "text": "6.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.669387,
+        0.284155,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 89
+    },
+    {
+      "text": "8.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.34663,
+        0.203852,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 90
+    },
+    {
+      "text": "10.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.345589,
+        0.335339,
+        0.005376,
+        0.005984
+      ],
+      "sourceSpanIndex": 91
+    },
+    {
+      "text": "11.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.344417,
+        0.396195,
+        0.005376,
+        0.005984
+      ],
+      "sourceSpanIndex": 92
+    },
+    {
+      "text": "9.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.345654,
+        0.266925,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 93
+    },
+    {
+      "text": "12.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.34344,
+        0.575842,
+        0.005375,
+        0.005984
+      ],
+      "sourceSpanIndex": 94
+    },
+    {
+      "text": "13.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.342138,
+        0.685364,
+        0.005375,
+        0.005984
+      ],
+      "sourceSpanIndex": 95
+    },
+    {
+      "text": "14.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.342333,
+        0.746019,
+        0.005376,
+        0.005984
+      ],
+      "sourceSpanIndex": 96
+    },
+    {
+      "text": "15.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.635594,
+        0.700477,
+        0.005376,
+        0.005984
+      ],
+      "sourceSpanIndex": 97
+    },
+    {
+      "text": "16.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.727466,
+        0.700477,
+        0.005376,
+        0.005984
+      ],
+      "sourceSpanIndex": 98
+    },
+    {
+      "text": "7.",
+      "kind": "room-number",
+      "page": 1,
+      "bbox": [
+        0.677656,
+        0.390553,
+        0.003225,
+        0.005984
+      ],
+      "sourceSpanIndex": 99
+    },
+    {
+      "text": "0,15",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.575375,
+        0.005017,
+        0.00399
+      ],
+      "sourceSpanIndex": 213
+    },
+    {
+      "text": "0,00=136,6m n.p.m.",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.691648,
+        0.023003,
+        0.00399
+      ],
+      "sourceSpanIndex": 215
+    },
+    {
+      "text": "0,00=136,6m n.p.m.",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.467567,
+        0.023003,
+        0.00399
+      ],
+      "sourceSpanIndex": 218
+    },
+    {
+      "text": "0,00=136,6m n.p.m.",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.266761,
+        0.023003,
+        0.00399
+      ],
+      "sourceSpanIndex": 221
+    },
+    {
+      "text": "0,00=136,6m n.p.m.",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.732675,
+        0.118549,
+        0.023003,
+        0.00399
+      ],
+      "sourceSpanIndex": 224
+    },
+    {
+      "text": "0,95",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.704091,
+        0.284695,
+        0.005017,
+        0.00399
+      ],
+      "sourceSpanIndex": 227
+    },
+    {
+      "text": "0,18",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.224141,
+        0.005017,
+        0.00399
+      ],
+      "sourceSpanIndex": 229
+    },
+    {
+      "text": "0,18",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.30666,
+        0.005017,
+        0.00399
+      ],
+      "sourceSpanIndex": 231
+    },
+    {
+      "text": "0,18",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.413965,
+        0.005017,
+        0.00399
+      ],
+      "sourceSpanIndex": 233
+    },
+    {
+      "text": "0,18",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.452436,
+        0.727114,
+        0.005017,
+        0.00399
+      ],
+      "sourceSpanIndex": 235
+    },
+    {
+      "text": "0,18",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.669582,
+        0.416181,
+        0.005017,
+        0.00399
+      ],
+      "sourceSpanIndex": 237
+    },
+    {
+      "text": "0,00=136,6m n.p.m.",
+      "kind": "elevation",
+      "page": 1,
+      "bbox": [
+        0.747716,
+        0.343335,
+        0.023003,
+        0.00399
+      ],
+      "sourceSpanIndex": 239
+    },
+    {
+      "text": "1:100",
+      "kind": "scale",
+      "page": 1,
+      "bbox": [
+        0.883668,
+        0.975635,
+        0.014515,
+        0.008977
+      ],
+      "sourceSpanIndex": 248
+    },
+    {
+      "text": "20.04.2026",
+      "kind": "date",
+      "page": 1,
+      "bbox": [
+        0.916679,
+        0.975635,
+        0.02903,
+        0.008977
+      ],
+      "sourceSpanIndex": 249
+    },
+    {
+      "text": "Małachowo 9, 18-430 Wizna",
+      "kind": "address-or-parcel",
+      "page": 1,
+      "bbox": [
+        0.828779,
+        0.89048,
+        0.058552,
+        0.007182
+      ],
+      "sourceSpanIndex": 251
+    },
+    {
+      "text": "obręb ew.0007 Małachowo, jedn. ewid. 200708_2",
+      "kind": "address-or-parcel",
+      "page": 1,
+      "bbox": [
+        0.914921,
+        0.885929,
+        0.076619,
+        0.005386
+      ],
+      "sourceSpanIndex": 255
+    },
+    {
+      "text": "Wizna, działki nr ew. 18/10, 18/11, 20/1, 20/2",
+      "kind": "address-or-parcel",
+      "page": 1,
+      "bbox": [
+        0.914986,
+        0.892478,
+        0.069459,
+        0.005386
+      ],
+      "sourceSpanIndex": 256
+    },
+    {
+      "text": "94 DJP /max. obsada w gospodarstwie hodowlanym",
+      "kind": "animal-count",
+      "page": 1,
+      "bbox": [
+        0.814715,
+        0.834157,
+        0.107561,
+        0.007182
+      ],
+      "sourceSpanIndex": 260
+    },
+    {
+      "text": "145 DJP/ wraz z budową podrusztowego zbiornika",
+      "kind": "animal-count",
+      "page": 1,
+      "bbox": [
+        0.81439,
+        0.842822,
+        0.103951,
+        0.007182
+      ],
+      "sourceSpanIndex": 261
+    },
+    {
+      "text": "na płynne odchody zwierzęce o pojemności 2 500",
+      "kind": "volume-fragment",
+      "page": 1,
+      "bbox": [
+        0.814585,
+        0.851387,
+        0.10241,
+        0.007182
+      ],
+      "sourceSpanIndex": 262
+    },
+    {
+      "text": "m",
+      "kind": "volume-fragment",
+      "page": 1,
+      "bbox": [
+        0.814585,
+        0.859951,
+        0.003866,
+        0.007182
+      ],
+      "sourceSpanIndex": 263
+    },
+    {
+      "text": "3",
+      "kind": "volume-fragment",
+      "page": 1,
+      "bbox": [
+        0.818296,
+        0.8585,
+        0.001806,
+        0.005027
+      ],
+      "sourceSpanIndex": 264
+    },
+    {
+      "text": "bytowe o poj. 9 m",
+      "kind": "volume-fragment",
+      "page": 1,
+      "bbox": [
+        0.814585,
+        0.868616,
+        0.036372,
+        0.007182
+      ],
+      "sourceSpanIndex": 266
+    },
+    {
+      "text": "3",
+      "kind": "volume-fragment",
+      "page": 1,
+      "bbox": [
+        0.850852,
+        0.867064,
+        0.001806,
+        0.005027
+      ],
+      "sourceSpanIndex": 267
+    },
+    {
+      "text": "Nr rys.  2",
+      "kind": "drawing-number",
+      "page": 1,
+      "bbox": [
+        0.958481,
+        0.975635,
+        0.02353,
+        0.008977
+      ],
+      "sourceSpanIndex": 271
+    },
+    {
+      "text": "nr upr. MA/045/22",
+      "kind": "license-number",
+      "page": 1,
+      "bbox": [
+        0.866218,
+        0.90784,
+        0.031575,
+        0.006104
+      ],
+      "sourceSpanIndex": 282
+    },
+    {
+      "text": "nr upr. WAM/0058/POOK/17",
+      "kind": "license-number",
+      "page": 1,
+      "bbox": [
+        0.856972,
+        0.925875,
+        0.04999,
+        0.006104
+      ],
+      "sourceSpanIndex": 288
+    },
+    {
+      "text": "nr upr. WAM/0192/POOK/16",
+      "kind": "license-number",
+      "page": 1,
+      "bbox": [
+        0.856972,
+        0.94391,
+        0.04999,
+        0.006105
+      ],
+      "sourceSpanIndex": 290
+    }
+  ],
+  "areas": [
+    {
+      "id": "ref-room-1",
+      "roomNumber": 1,
+      "label": "pom. gospodarcze",
+      "labelGerman": "Wirtschaftsraum",
+      "type": "service",
+      "page": 1,
+      "bbox": [
+        0.686381,
+        0.102435,
+        0.090613,
+        0.104114
+      ],
+      "labelAnchor": [
+        0.712881,
+        0.118613,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 27.77,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-2",
+      "roomNumber": 2,
+      "label": "pom. gospodarcze",
+      "labelGerman": "Wirtschaftsraum",
+      "type": "service",
+      "page": 1,
+      "bbox": [
+        0.662507,
+        0.13686,
+        0.023874,
+        0.069689
+      ],
+      "labelAnchor": [
+        0.673619,
+        0.156699,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 4.42,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-3",
+      "roomNumber": 3,
+      "label": "WC",
+      "labelGerman": "WC",
+      "type": "service",
+      "page": 1,
+      "bbox": [
+        0.63809,
+        0.13686,
+        0.024417,
+        0.069689
+      ],
+      "labelAnchor": [
+        0.648877,
+        0.141585,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 4.42,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-4",
+      "roomNumber": 4,
+      "label": "komunikacja",
+      "labelGerman": "Durchgang",
+      "type": "walkway",
+      "page": 1,
+      "bbox": [
+        0.63809,
+        0.102435,
+        0.048291,
+        0.034425
+      ],
+      "labelAnchor": [
+        0.660206,
+        0.113978,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 3.74,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-5",
+      "roomNumber": 5,
+      "label": "pom. gospodarcze",
+      "labelGerman": "Wirtschaftsraum",
+      "type": "service",
+      "page": 1,
+      "bbox": [
+        0.597396,
+        0.102435,
+        0.040695,
+        0.104114
+      ],
+      "labelAnchor": [
+        0.613131,
+        0.151359,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 11.01,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-6",
+      "roomNumber": 6,
+      "label": "hala udojowa",
+      "labelGerman": "Melkhalle",
+      "type": "milking",
+      "page": 1,
+      "bbox": [
+        0.594683,
+        0.206549,
+        0.183397,
+        0.154492
+      ],
+      "labelAnchor": [
+        0.669387,
+        0.284155,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 75.86,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-7",
+      "roomNumber": 7,
+      "label": "legowiska",
+      "labelGerman": "Liegeboxen",
+      "type": "lying",
+      "page": 1,
+      "bbox": [
+        0.597396,
+        0.365239,
+        0.180684,
+        0.060453
+      ],
+      "labelAnchor": [
+        0.677656,
+        0.390553,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 27.32,
+      "geometryQuality": "coarse-room-extent",
+      "animalLivestockUnits": 9
+    },
+    {
+      "id": "ref-room-8",
+      "roomNumber": 8,
+      "label": "legowiska",
+      "labelGerman": "Liegeboxen",
+      "type": "lying",
+      "page": 1,
+      "bbox": [
+        0.135648,
+        0.173804,
+        0.459034,
+        0.061293
+      ],
+      "labelAnchor": [
+        0.34663,
+        0.203852,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 74.3,
+      "geometryQuality": "coarse-room-extent",
+      "animalLivestockUnits": 24
+    },
+    {
+      "id": "ref-room-9",
+      "roomNumber": 9,
+      "label": "komunikacja",
+      "labelGerman": "Laufgang",
+      "type": "walkway",
+      "page": 1,
+      "bbox": [
+        0.135648,
+        0.235097,
+        0.642431,
+        0.282955
+      ],
+      "labelAnchor": [
+        0.345654,
+        0.266925,
+        0.003225,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 297.77,
+      "geometryQuality": "coarse-room-extent",
+      "polygon": [
+        [
+          0.135648,
+          0.235097
+        ],
+        [
+          0.594683,
+          0.235097
+        ],
+        [
+          0.594683,
+          0.361041
+        ],
+        [
+          0.778079,
+          0.361041
+        ],
+        [
+          0.778079,
+          0.518052
+        ],
+        [
+          0.135648,
+          0.518052
+        ]
+      ],
+      "holes": [
+        [
+          [
+            0.18828,
+            0.306465
+          ],
+          [
+            0.525773,
+            0.306465
+          ],
+          [
+            0.525773,
+            0.425693
+          ],
+          [
+            0.18828,
+            0.425693
+          ]
+        ],
+        [
+          [
+            0.597396,
+            0.365239
+          ],
+          [
+            0.778079,
+            0.365239
+          ],
+          [
+            0.778079,
+            0.425693
+          ],
+          [
+            0.597396,
+            0.425693
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "ref-room-10",
+      "roomNumber": 10,
+      "label": "legowiska",
+      "labelGerman": "Liegeboxen",
+      "type": "lying",
+      "page": 1,
+      "bbox": [
+        0.190993,
+        0.306465,
+        0.332067,
+        0.059614
+      ],
+      "labelAnchor": [
+        0.345589,
+        0.335339,
+        0.005376,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 54.0,
+      "geometryQuality": "coarse-room-extent",
+      "animalLivestockUnits": 18
+    },
+    {
+      "id": "ref-room-11",
+      "roomNumber": 11,
+      "label": "legowiska",
+      "labelGerman": "Liegeboxen",
+      "type": "lying",
+      "page": 1,
+      "bbox": [
+        0.190993,
+        0.366079,
+        0.332067,
+        0.059614
+      ],
+      "labelAnchor": [
+        0.344417,
+        0.396195,
+        0.005376,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 54.0,
+      "geometryQuality": "coarse-room-extent",
+      "animalLivestockUnits": 18
+    },
+    {
+      "id": "ref-room-12",
+      "roomNumber": 12,
+      "label": "korytarz paszowy",
+      "labelGerman": "Futtergang",
+      "type": "feeding",
+      "page": 1,
+      "bbox": [
+        0.135648,
+        0.52225,
+        0.642431,
+        0.115029
+      ],
+      "labelAnchor": [
+        0.34344,
+        0.575842,
+        0.005375,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 202.76,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-13",
+      "roomNumber": 13,
+      "label": "komunikacja",
+      "labelGerman": "Laufgang",
+      "type": "walkway",
+      "page": 1,
+      "bbox": [
+        0.135648,
+        0.640638,
+        0.459034,
+        0.083963
+      ],
+      "labelAnchor": [
+        0.342138,
+        0.685364,
+        0.005375,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 105.22,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-14",
+      "roomNumber": 14,
+      "label": "legowiska",
+      "labelGerman": "Liegeboxen",
+      "type": "lying",
+      "page": 1,
+      "bbox": [
+        0.135648,
+        0.724601,
+        0.459034,
+        0.061293
+      ],
+      "labelAnchor": [
+        0.342333,
+        0.746019,
+        0.005376,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 77.4,
+      "geometryQuality": "coarse-room-extent",
+      "animalLivestockUnits": 25
+    },
+    {
+      "id": "ref-room-15",
+      "roomNumber": 15,
+      "label": "porodówka",
+      "labelGerman": "Abkalbebereich",
+      "type": "calving",
+      "page": 1,
+      "bbox": [
+        0.597396,
+        0.640638,
+        0.089528,
+        0.145256
+      ],
+      "labelAnchor": [
+        0.635594,
+        0.700477,
+        0.005376,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 34.84,
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-16",
+      "roomNumber": 16,
+      "label": "izolatka",
+      "labelGerman": "Isolation",
+      "type": "separation",
+      "page": 1,
+      "bbox": [
+        0.686923,
+        0.640638,
+        0.091156,
+        0.145256
+      ],
+      "labelAnchor": [
+        0.727466,
+        0.700477,
+        0.005376,
+        0.005984
+      ],
+      "labelSource": "visually-reviewed-vector-outline-schedule",
+      "areaSquareMeters": 35.63,
+      "geometryQuality": "coarse-room-extent"
+    }
+  ],
+  "outlineScheduleNonDimensions": [
+    {
+      "text": "1149,12 m2",
+      "kind": "area"
+    },
+    {
+      "text": "1090,46 m2",
+      "kind": "area"
+    },
+    {
+      "text": "6350,00 m3",
+      "kind": "volume"
+    },
+    {
+      "text": "94 DJP",
+      "kind": "animal-count"
+    },
+    {
+      "text": "74,30 m2",
+      "kind": "room-area"
+    },
+    {
+      "text": "24 DJP",
+      "kind": "animal-count"
+    }
+  ],
+  "limitations": [
+    "Unit confidence applies to this drawing, not arbitrary future PDFs.",
+    "Opening heights are real linear dimensions but are not in-plane widths.",
+    "Room schedule labels are vector outlines and require OCR or visual interpretation.",
+    "DJP are livestock units, not reliably a literal head count.",
+    "Room 9 has holes and nonrectangular extent; bbox overlap must not imply physical dimension ownership."
+  ]
+}

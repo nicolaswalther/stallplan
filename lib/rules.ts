@@ -1,7 +1,15 @@
-import type { AreaRule, AreaType } from "./types";
+import type { AreaRule, AreaType, DomainQuestion } from "./types";
+
+export const RULES_VERSION = "2026-10-05.1";
+export const DOMAIN_RULES_VERSION = RULES_VERSION;
 
 const animalSpecies = ["Rind", "Pferd", "Schaf / Ziege", "Schwein", "Sonstige"];
 const cattleGroups = ["Milchkühe", "Trockensteher", "Jungvieh", "Kälber", "Mastrinder", "Sonstige"];
+
+export const PROJECT_QUESTIONS: DomainQuestion[] = [
+  { id: "animalSpecies", label: "Tierart", type: "select", required: true, options: animalSpecies },
+  { id: "projectType", label: "Situation", type: "select", required: true, options: ["Neubau", "Umbau / Bestand", "noch offen"] },
+];
 
 export const AREA_RULES: Record<AreaType, AreaRule> = {
   feeding_area: {
@@ -80,3 +88,9 @@ export const areaTypeOptions = Object.entries(AREA_RULES).map(([value, rule]) =>
   value: value as AreaType,
   label: rule.title,
 }));
+
+/** Project facts are asked once. Technical dimensions stay in the measurement layer. */
+export function getAreaQuestions(kind: AreaType): DomainQuestion[] {
+  const projectIds = new Set(PROJECT_QUESTIONS.map((question) => question.id));
+  return AREA_RULES[kind].questions.filter((question) => !projectIds.has(question.id));
+}
