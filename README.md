@@ -32,10 +32,10 @@ npm run dev
 
 ```env
 OPENAI_API_KEY=...
-OPENAI_MODEL=gpt-6.1-sol
+OPENAI_MODEL=gpt-6-luna
 ```
 
-`OPENAI_MODEL` ist optional. Ohne Angabe wird `gpt-6.1-sol` verwendet.
+`OPENAI_MODEL` ist optional. Ohne Angabe wird `gpt-6-luna` verwendet. Falls Luna für einen Analyseschritt nicht verfügbar ist, fällt die API automatisch auf `gpt-6.1-sol` zurück.
 
 ## Aktueller Ablauf
 
