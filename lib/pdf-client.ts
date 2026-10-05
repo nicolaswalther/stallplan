@@ -1,7 +1,10 @@
 import type { PdfPageData } from "./types";
 
 export async function parsePdf(file: File): Promise<PdfPageData[]> {
-  const pdfjs = await import("pdfjs-dist/build/pdf.mjs");
+  // Use PDF.js' legacy browser build because the modern build intentionally
+  // relies on very new JavaScript APIs such as Map#getOrInsertComputed.
+  // Firefox ESR / older Chromium versions may not provide those APIs yet.
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
   const data = new Uint8Array(await file.arrayBuffer());
