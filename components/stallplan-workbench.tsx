@@ -23,13 +23,15 @@ import { areaReviewReason, canAcceptAreaTogether } from "@/lib/plan/area-review"
 import { detectProjectFacts } from "@/lib/analysis/project-facts";
 import { applyDetectedFacts } from "@/lib/domain/inferred-preferences";
 import { PlanningWishes } from "./planning-wishes";
+import { AreaOutline } from "./area-outline";
+import type { AnalysisUsage } from "@/lib/ai/usage";
 import type {
   AreaType, AnswerProvenance, DetectedArea, DomainQuestion, Measurement, NormalizedBox, PdfPageData, PlanningHandoff, PlanningPreferences, ProjectFacts,
 } from "@/lib/types";
 
 type Panel = "areas" | "details" | "measurements" | "handoff";
 type AnswerValue = string | number | boolean;
-type AnalysisMeta = { model: string; actualModels?: { areas?: string; measurements?: string }; documentSummary: string; warnings: string[]; originalAnalysis?: { documentSummary: string; warnings: string[] } };
+type AnalysisMeta = { model: string; actualModels?: { areas?: string; measurements?: string }; usage?: AnalysisUsage[]; documentSummary: string; warnings: string[]; originalAnalysis?: { documentSummary: string; warnings: string[] } };
 type ApiResponse = AnalysisMeta & { areas: DetectedArea[]; measurements: Measurement[]; projectFacts?: ProjectFacts; error?: string };
 
 const PRIMARY_STEPS: Array<{ panel: Panel; label: string }> = [
@@ -255,14 +257,14 @@ export function StallplanWorkbench() {
         documentKind: page.documentKind, textObjects: page.textItems, geometryObjects: page.lines ?? [], extractionWarnings: page.extractionWarnings })) }],
       areas: confirmedAreas.map((area) => ({ id: area.id, kind: area.kind, label: area.label, pageNumber: area.pageNumber,
         bbox: area.hasBbox ? area.bbox : null, source: area.source, confidence: area.confidence, evidence: area.evidence,
-        originalLabel: area.originalLabel, originalEvidence: area.originalEvidence, boundaryRefinement: area.boundaryRefinement, boundaryAssessment: area.boundaryAssessment,
+        originalLabel: area.originalLabel, originalEvidence: area.originalEvidence, boundaryRefinement: area.boundaryRefinement, boundaryAssessment: area.boundaryAssessment, footprint: area.footprint, contourProvenance: area.contourProvenance,
         relevantProducts: getPlanningProducts(area.kind, resolveAreaAnswers(area, projectAnswers, preferences).answers), requiredMeasurements: AREA_RULES[area.kind].measurements,
         answers: resolveAreaAnswers(area, projectAnswers, preferences).answers,
         answerProvenance: resolveAreaAnswers(area, projectAnswers, preferences, projectAnswerProvenance).provenance })),
       measurements,
       areaReviews: areas,
       review: { openAreaCount: openAreas.length, unresolvedMeasurementCount: reviewMeasurements.length, missingAnswerCount: missingRequired, pendingAnalysis: Boolean(busy), ready },
-      audit: { aiModel: analysis.model, actualModels: analysis.actualModels, rulesVersion: DOMAIN_RULES_VERSION, confirmedAreaCount: confirmedAreas.length, detectedMeasurementCount: measurements.length,
+      audit: { aiModel: analysis.model, actualModels: analysis.actualModels, usage: analysis.usage, rulesVersion: DOMAIN_RULES_VERSION, confirmedAreaCount: confirmedAreas.length, detectedMeasurementCount: measurements.length,
         customerCorrectedMeasurementCount: measurements.filter((measurement) => measurement.source === "customer").length },
     };
   }, [file, pages, analysis, projectAnswers, projectAnswerProvenance, projectFacts, confirmedAreas, preferences, planningGroups, measurements, areas, openAreas.length, reviewMeasurements.length, missingRequired, ready, busy]);
@@ -289,12 +291,12 @@ export function StallplanWorkbench() {
         body: JSON.stringify({ purpose: "automatic", fileName: nextFile.name, pages: parsedPages.map((page, index) => ({
           pageNumber: page.pageNumber, width: page.width, height: page.height, text: page.text, textItems: page.textItems,
           lines: page.lines, documentKind: page.documentKind, imageCount: page.imageCount, extractionWarnings: page.extractionWarnings,
-          ...(index < 4 ? { imageDataUrl: page.imageDataUrl } : {}),
+          ...(index < 4 ? { imageDataUrl: page.imageDataUrl, semanticDetails: page.semanticDetails } : {}),
         })) }) });
       const data = await response.json() as ApiResponse;
       if (runRef.current !== generation) return;
       if (!response.ok) throw new Error(data.error || "Bereichsanalyse nicht verfügbar.");
-      setAnalysis({ model: data.model, actualModels: data.actualModels, documentSummary: data.documentSummary, warnings: data.warnings, originalAnalysis: data.originalAnalysis });
+      setAnalysis({ model: data.model, actualModels: data.actualModels, usage: data.usage, documentSummary: data.documentSummary, warnings: data.warnings, originalAnalysis: data.originalAnalysis });
       const assessed = data.areas.map((area) => ({ ...area, boundaryAssessment: assessAreaBoundary(area, parsedPages) }));
       setAreas((current) => mergeAreas(current, assessed));
       setMeasurements((current) => mergeMeasurements(current, data.measurements));
@@ -575,25 +577,20 @@ export function StallplanWorkbench() {
                 const grouped = panel === "details" && selectedGroup?.kind === area.kind;
                 const editable = selected && panel === "areas" && !markMode;
                 const bbox = areaDraft?.id === area.id ? areaDraft.bbox : area.bbox;
-                return <div key={area.id} className={cn("absolute", selected && "z-10", markMode && "pointer-events-none")} style={boxStyle(bbox)}>
-                  <button type="button" disabled={markMode} onClick={(event) => { event.stopPropagation(); selectArea(area); if (panel !== "details") setPanel("areas"); }}
+                return <div key={area.id} className={cn("pointer-events-none absolute", selected && "z-10")} style={boxStyle(bbox)}>
+                  <AreaOutline area={area} bbox={bbox} selected={selected} grouped={grouped} editable={editable} disabled={markMode}
+                    onSelect={(event) => { event.stopPropagation(); selectArea(area); if (panel !== "details") setPanel("areas"); }}
                     onPointerDown={(event) => startAreaGesture(event, area, "move")} onPointerMove={moveAreaGesture}
                     onPointerUp={(event) => finishAreaGesture(event)} onPointerCancel={(event) => finishAreaGesture(event, true)}
-                    onLostPointerCapture={() => finishAreaGesture(undefined, true)}
-                    aria-label={`${AREA_RULES[area.kind].title}, ${area.status === "confirmed" ? "übernommen" : "prüfen"}`}
-                    data-testid={`area-overlay-${area.id}`}
-                    className={cn("absolute inset-0 h-full w-full border", editable && "cursor-move touch-none",
-                      selected ? "border-2 border-[#17633a] bg-[#17633a]/14"
-                        : grouped ? "border-[#17633a]/70 bg-[#17633a]/7" : area.status === "confirmed" ? "border-[#51966a]/60 bg-[#51966a]/4 hover:bg-[#51966a]/10" : "border-dashed border-[#ad812e]/80 bg-[#d9ad55]/6")}>
-                    {selected && <span title={area.label} className={cn("pointer-events-none absolute -top-6 max-w-60 truncate rounded bg-[#17633a] px-1.5 py-0.5 text-[10px] font-medium text-white", area.bbox.x > 0.5 ? "right-[-2px]" : "left-[-2px]")}>{area.label}</span>}
-                  </button>
+                    onLostPointerCapture={() => finishAreaGesture(undefined, true)} />
+                  {selected && <span title={area.label} className={cn("pointer-events-none absolute -top-6 max-w-60 truncate rounded bg-[#17633a] px-1.5 py-0.5 text-[10px] font-medium text-white", area.bbox.x > 0.5 ? "right-[-2px]" : "left-[-2px]")}>{area.label}</span>}
                   {editable && (["nw", "ne", "sw", "se"] as const).map((corner) => <button key={corner} type="button"
                     aria-label={`Bereich skalieren: ${corner === "nw" ? "oben links" : corner === "ne" ? "oben rechts" : corner === "sw" ? "unten links" : "unten rechts"}`}
                     data-testid={`area-resize-${corner}`}
                     onPointerDown={(event) => startAreaGesture(event, area, corner)} onPointerMove={moveAreaGesture}
                     onPointerUp={(event) => finishAreaGesture(event)} onPointerCancel={(event) => finishAreaGesture(event, true)}
                     onLostPointerCapture={() => finishAreaGesture(undefined, true)} onClick={(event) => event.stopPropagation()}
-                    className={cn("absolute z-20 h-4 w-4 touch-none rounded-full border-2 border-[#17633a] bg-white shadow-sm",
+                    className={cn("pointer-events-auto absolute z-20 h-4 w-4 touch-none rounded-full border-2 border-[#17633a] bg-white shadow-sm",
                       corner.startsWith("n") ? "-top-2" : "-bottom-2", corner.endsWith("w") ? "-left-2" : "-right-2",
                       corner === "nw" || corner === "se" ? "cursor-nwse-resize" : "cursor-nesw-resize")} />)}
                 </div>;
@@ -714,6 +711,11 @@ export function StallplanWorkbench() {
             {reviewMeasurements.length > 0 && <p className="mb-3 text-[10px]">{reviewMeasurements.length} Maße werden von der Fachplanung geprüft.</p>}
             <div className="flex gap-2"><Button variant="secondary" className="h-8 flex-1 px-2" disabled={!handoff} onClick={downloadHandoff}><Download size={11} />JSON herunterladen</Button><Button variant="ghost" className="h-8 px-2" disabled={!handoff} onClick={copyHandoff}>{copied ? <Check size={11} /> : <Clipboard size={11} />}{copied ? "Kopiert" : "Kopieren"}</Button></div>
             <details className="mt-3"><summary className="cursor-pointer">Analyse und Quellen</summary><p className="mt-2 leading-5">{currentPage.documentKind ? KIND_LABELS[currentPage.documentKind] : "PDF"} · {analysis?.actualModels?.areas ?? analysis?.model ?? "PDF"}</p>
+              {!!analysis?.usage?.length && <dl className="mt-3 space-y-2">{analysis.usage.map((usage, index) => <div key={index}>
+                <dt>{usage.step === "areas" ? "Bereiche" : "Rastermaße"} · {usage.model}</dt>
+                <dd>{usage.inputTokens.toLocaleString("de-DE")} Eingabe · {usage.outputTokens.toLocaleString("de-DE")} Ausgabe · {(usage.durationMs / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} s</dd>
+                {usage.estimatedCostUsd !== undefined && <dd>Ca. {usage.estimatedCostUsd.toLocaleString("de-DE", { minimumFractionDigits: 4, maximumFractionDigits: 6 })} USD · Preisstand {usage.pricingDate}</dd>}
+              </div>)}</dl>}
               {warnings.length > 0 && <ul className="mt-2 space-y-2 leading-5">{warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul>}
               <p className="mt-2 leading-5">{ready ? "Technische Prüfung abgeschlossen." : "Offene Prüfungen sind im Datensatz enthalten."}</p>
             </details>

@@ -47,3 +47,18 @@ test("legacy historical samples keep inheritance and tolerate absent provenance/
   assert.deepEqual(sample.planningContext.projectAnswerProvenance, {});
   assert.deepEqual(sample.planningContext.detectedFacts, {});
 });
+
+test("historical geometry preserves predicted holes and a separately reviewed planner footprint", () => {
+  const footprint = { parts: [{ outer: [{ x: .1, y: .1 }, { x: .8, y: .1 }, { x: .8, y: .8 }, { x: .1, y: .8 }],
+    holes: [[{ x: .3, y: .3 }, { x: .5, y: .3 }, { x: .5, y: .5 }, { x: .3, y: .5 }]] }] };
+  const current: PlanningHandoff = { ...handoff, schemaVersion: "1.4", areas: [{ ...handoff.areas[0], footprint, originalLabel: "9. komunikacja",
+    contourProvenance: { method: "vector-free-space", roomNumber: "9", textItemId: "r9", sourceLineIds: ["wall"], resolutionPoints: 1 } }] };
+  const annotation = { ...review.annotations[0], finalFootprint: footprint };
+  const sample = buildHistoricalSample(current, { ...review, annotations: [annotation] });
+  assert.deepEqual(sample.areas[0].prediction.footprint, footprint);
+  assert.deepEqual(sample.areas[0].planner.finalFootprint, footprint);
+  assert.equal(sample.areas[0].prediction.contourProvenance?.roomNumber, "9");
+  assert.equal(sample.areas[0].prediction.originalLabel, "9. komunikacja");
+  const invalid = { parts: [{ outer: [{ x: -.1, y: .1 }, { x: .8, y: .1 }, { x: .8, y: .8 }] }] };
+  assert.throws(() => buildHistoricalSample(current, { ...review, annotations: [{ ...annotation, finalFootprint: invalid }] }), /Invalid final footprint/);
+});

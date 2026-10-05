@@ -4,6 +4,7 @@ import type { Measurement, PdfPageData } from "../types";
 import { bboxSchema } from "../plan/request";
 import { positionedTextContext, withPageImages } from "./context";
 import { withModelFallback } from "./client";
+import { recordAnalysisUsage } from "./usage";
 import { extractDeterministicMeasurements } from "../deterministic";
 
 const unitSchema = z.enum(["m", "cm", "mm", "unknown"]);
@@ -73,6 +74,7 @@ Bounding-Box markiert ausschließlich den Maßtext (0..1, Ursprung links oben). 
 Vorhandener PDF-Text:
 ${positionedTextContext(selectedPages)}`;
   const run = await withModelFallback(model, async (selectedModel) => {
+    const started = performance.now();
     const response = await client.responses.create({
       model: selectedModel,
       max_output_tokens: 6_000,
@@ -81,7 +83,9 @@ ${positionedTextContext(selectedPages)}`;
       text: { format: { type: "json_schema", name: "stallplan_raster_measurements", strict: true, schema: z.toJSONSchema(measurementPayloadSchema) } },
     });
     if (!response.output_text) throw new Error("empty_measurement_result");
-    return { ...validateRasterMeasurements(JSON.parse(response.output_text), selectedPages), actualModel: response.model };
+    const usage = recordAnalysisUsage("measurements", response, performance.now() - started);
+    return { ...validateRasterMeasurements(JSON.parse(response.output_text), selectedPages), actualModel: response.model,
+      ...(usage ? { usage } : {}) };
   });
   return { ...run, model: run.result.actualModel };
 }

@@ -63,3 +63,18 @@ test("unfinished analysis remains explicit in a printable brief with real number
   assert.ok(html.includes("left:10%"));
   assert.ok(html.includes("<span>2</span>"));
 });
+
+test("printable plan retains polygon islands instead of filling the full enclosing rectangle", () => {
+  const handoff = brief();
+  handoff.areas[0].footprint = { parts: [{ outer: [{ x: .1, y: .1 }, { x: .6, y: .1 }, { x: .6, y: .2 }, { x: .1, y: .2 }],
+    holes: [[{ x: .2, y: .13 }, { x: .4, y: .13 }, { x: .4, y: .18 }, { x: .2, y: .18 }]] }] };
+  const html = buildPlanningSummaryHtml(handoff, [{ pageNumber: 1, imageDataUrl: "data:image/png;base64,AA==" }]);
+  assert.ok(html.includes('class="area polygon"'));
+  assert.ok(html.includes('fill-rule="evenodd"'));
+  assert.ok(html.includes('M0.2,0.3 L0.6,0.3 L0.6,0.8 L0.2,0.8 Z'));
+  // Invalid coordinates are never interpolated into SVG attributes.
+  handoff.areas[0].footprint.parts[0].outer[0].x = NaN;
+  const fallback = buildPlanningSummaryHtml(handoff, [{ pageNumber: 1, imageDataUrl: "data:image/png;base64,AA==" }]);
+  assert.ok(!fallback.includes('class="area polygon"'));
+  assert.ok(!fallback.includes('NaN'));
+});

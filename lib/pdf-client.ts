@@ -1,6 +1,7 @@
-import type { PdfPageData } from "./types";
+import type { PdfDetailImage, PdfPageData } from "./types";
 import { extractTextObjects } from "./pdf/text-extraction";
 import { classifyDocument, extractVectorLines } from "./pdf/vector-extraction";
+import { detectOutlineTextRegions } from "./geometry/semantic-regions";
 
 export async function parsePdf(file: File): Promise<PdfPageData[]> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
@@ -29,11 +30,29 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
         canvas.width = Math.floor(viewport.width);
         canvas.height = Math.floor(viewport.height);
         await page.render({ canvas, viewport }).promise;
-        pages.push({ pageNumber, width: rawViewport.width, height: rawViewport.height,
+        const pageData: PdfPageData = { pageNumber, width: rawViewport.width, height: rawViewport.height,
           text: textItems.map((item) => item.text).join(" "), textItems,
           lines: geometry.lines, imageCount: geometry.imageCount,
           documentKind: classifyDocument(textItems.length, geometry.lines.length, geometry.imageCount),
-          extractionWarnings: [...warnings, ...geometry.warnings], imageDataUrl: canvas.toDataURL("image/jpeg", 0.88) });
+          extractionWarnings: [...warnings, ...geometry.warnings], imageDataUrl: canvas.toDataURL("image/jpeg", 0.88) };
+        const semanticDetails: PdfDetailImage[] = [];
+        // Re-render actual native vector regions; enlarging the small JPEG would
+        // not recover the outlined letters. Keep the established PDF lifecycle.
+        if (pageNumber <= 4) for (const region of detectOutlineTextRegions(pageData).slice(0, 2)) {
+          try {
+            const longest = Math.max(region.bbox.width * rawViewport.width, region.bbox.height * rawViewport.height);
+            const detailViewport = page.getViewport({ scale: Math.min(6, 1400 / longest) });
+            const detailCanvas = document.createElement("canvas");
+            detailCanvas.width = Math.ceil(region.bbox.width * detailViewport.width);
+            detailCanvas.height = Math.ceil(region.bbox.height * detailViewport.height);
+            await page.render({ canvas: detailCanvas, viewport: detailViewport,
+              transform: [1, 0, 0, 1, -region.bbox.x * detailViewport.width, -region.bbox.y * detailViewport.height] }).promise;
+            const imageDataUrl = detailCanvas.toDataURL("image/png");
+            if (imageDataUrl.length > 3_000_000) throw new Error("detail_image_too_large");
+            semanticDetails.push({ kind: "outline-text", ...region, imageDataUrl });
+          } catch { pageData.extractionWarnings?.push("Ein Beschriftungsausschnitt konnte nicht gelesen werden; der Gesamtplan bleibt verfügbar."); }
+        }
+        pages.push({ ...pageData, ...(semanticDetails.length ? { semanticDetails } : {}) });
       } finally { page.cleanup(); }
     }
     return pages;

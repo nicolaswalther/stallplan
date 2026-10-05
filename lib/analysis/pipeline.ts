@@ -6,6 +6,8 @@ import { createAnalysisClient, DEFAULT_MODEL } from "../ai/client";
 import { imagePages } from "../ai/context";
 import { detectProjectFacts, reconcileProjectFacts } from "./project-facts";
 import { assessAreaBoundary, refineAreaBoundaries } from "../geometry/area-boundaries";
+import type { AnalysisUsage } from "../ai/usage";
+import { applyVectorRoomContours } from "./area-geometry";
 import type { AnalysisRequest } from "../plan/request";
 
 interface PipelineOptions { apiKey?: string; model?: string }
@@ -29,6 +31,7 @@ export async function analyzePlan(payload: AnalysisRequest, options: PipelineOpt
     warnings: [] as string[], areas: structuralAreas, measurements: [...structuralMeasurements],
     projectFacts: detectProjectFacts(payload.pages, structuralAreas),
     originalAnalysis: undefined as { documentSummary: string; warnings: string[] } | undefined,
+    usage: [] as AnalysisUsage[],
   };
   if (!options.apiKey) {
     result.warnings.push("KI nicht verfügbar. PDF-Analyse bleibt nutzbar.");
@@ -42,7 +45,9 @@ export async function analyzePlan(payload: AnalysisRequest, options: PipelineOpt
     rasterPages.length ? runners.measurements(client, model, payload.fileName, rasterPages) : Promise.resolve(null),
   ]);
   if (areas.status === "fulfilled" && areas.value) {
-    result.areas = mergeDetectedAreas(structuralAreas, areas.value.result.areas.map((area) => {
+    const geometric = applyVectorRoomContours(areas.value.result.areas, payload.pages);
+    result.areas = mergeDetectedAreas(structuralAreas, geometric.map((area) => {
+      if (area.contourProvenance) return area;
       const refined = refineAreaBoundaries(area, payload.pages);
       return { ...refined, boundaryAssessment: assessAreaBoundary(refined, payload.pages) };
     }));
@@ -51,6 +56,7 @@ export async function analyzePlan(payload: AnalysisRequest, options: PipelineOpt
     result.projectFacts = reconcileProjectFacts(payload.pages, result.areas, areas.value.result.projectFacts ?? {});
     result.warnings.push(...areas.value.result.warnings);
     result.actualModels.areas = areas.value.model;
+    if (areas.value.result.usage) result.usage.push(areas.value.result.usage);
     if (areas.value.fallback) result.warnings.push("Bereichsanalyse mit Ersatzmodell ausgeführt.");
   } else if (areas.status === "rejected") {
     reportStepFailure("areas", areas.reason);
@@ -60,6 +66,7 @@ export async function analyzePlan(payload: AnalysisRequest, options: PipelineOpt
     result.measurements.push(...measurements.value.result.measurements);
     result.warnings.push(...measurements.value.result.warnings);
     result.actualModels.measurements = measurements.value.model;
+    if (measurements.value.result.usage) result.usage.push(measurements.value.result.usage);
     if (measurements.value.fallback) result.warnings.push("Rastermaße mit Ersatzmodell geprüft.");
   } else if (measurements.status === "rejected") {
     reportStepFailure("raster-measurements", measurements.reason);

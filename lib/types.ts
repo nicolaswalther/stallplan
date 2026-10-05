@@ -1,3 +1,6 @@
+import type { AnalysisUsage } from "./ai/usage";
+import type { AreaFootprint } from "./plan/area-geometry";
+
 export const AREA_TYPES = [
   "feeding_area",
   "cubicles",
@@ -20,6 +23,14 @@ export type DocumentKind = "vector" | "raster" | "mixed";
 
 export interface PlanPoint { x: number; y: number }
 export interface PdfLine { id: string; start: PlanPoint; end: PlanPoint; strokeWidth?: number }
+export interface PdfDetailImage {
+  kind: "outline-text";
+  bbox: NormalizedBox;
+  imageDataUrl: string;
+  sourceLineIds: string[];
+  sourceLineCount: number;
+  rowCount: number;
+}
 export interface UnitInference { unit: LengthUnit; confidence: number; evidence: string }
 
 export interface NormalizedBox {
@@ -39,6 +50,7 @@ export interface PdfTextItem {
 }
 
 export interface PdfPageData {
+  semanticDetails?: PdfDetailImage[];
   pageNumber: number;
   width: number;
   height: number;
@@ -83,6 +95,18 @@ export interface Measurement {
 }
 
 export interface DetectedArea {
+  footprint?: AreaFootprint;
+  originalFootprint?: AreaFootprint;
+  contourProvenance?: {
+    method: "vector-free-space";
+    roomNumber: string;
+    textItemId: string;
+    sourceLineIds: string[];
+    resolutionPoints: number;
+    /** A literal table/room identifier resolved a conflicting model position. */
+    modelBoxConflict?: boolean;
+  };
+  originalContourProvenance?: DetectedArea["contourProvenance"];
   id: string;
   kind: AreaType;
   label: string;
@@ -112,7 +136,7 @@ export interface DetectedArea {
   originalBbox?: NormalizedBox;
   originalSource?: AreaSource;
   originalConfidence?: number | null;
-  geometryCorrections?: Array<{ at: string; bbox: NormalizedBox; source: "customer" }>;
+  geometryCorrections?: Array<{ at: string; bbox: NormalizedBox; footprint?: AreaFootprint; source: "customer" }>;
 }
 
 export type QuestionType = "text" | "number" | "select" | "boolean";
@@ -213,6 +237,8 @@ export interface PlanningHandoff {
     originalEvidence?: string[];
     boundaryRefinement?: DetectedArea["boundaryRefinement"];
     boundaryAssessment?: DetectedArea["boundaryAssessment"];
+    footprint?: AreaFootprint;
+    contourProvenance?: DetectedArea["contourProvenance"];
     relevantProducts: string[];
     requiredMeasurements: string[];
     answers: AnswerMap;
@@ -229,6 +255,7 @@ export interface PlanningHandoff {
   relationships?: Array<{ measurementId: string; areaId: string; relation: "inside"; confidence: number }>;
   review?: { openAreaCount: number; unresolvedMeasurementCount: number; missingAnswerCount: number; pendingAnalysis?: boolean; ready: boolean };
   audit: {
+    usage?: AnalysisUsage[];
     aiModel: string;
     actualModels?: { areas?: string; measurements?: string };
     rulesVersion?: string;

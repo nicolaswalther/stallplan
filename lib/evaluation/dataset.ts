@@ -1,4 +1,5 @@
 import type { NormalizedBox, PlanningHandoff } from "../types";
+import { isValidAreaFootprint, type AreaFootprint } from "../plan/area-geometry";
 
 export interface PlannerAnnotation {
   areaId: string;
@@ -7,6 +8,7 @@ export interface PlannerAnnotation {
   missingInformation: string[];
   questionsAsked: string[];
   finalGeometry?: NormalizedBox;
+  finalFootprint?: AreaFootprint;
 }
 
 /** Explicit planner annotations are the only source of final-system labels.
@@ -41,10 +43,16 @@ export function buildHistoricalSample(
       geometry.width <= 0 || geometry.height <= 0 || geometry.x + geometry.width > 1 || geometry.y + geometry.height > 1)) {
       throw new Error(`Invalid final geometry: ${annotation.areaId}`);
     }
+    const footprint = annotation.finalFootprint;
+    if (footprint && (!isValidAreaFootprint(footprint) || footprint.parts.some((part) =>
+      [part.outer, ...(part.holes ?? [])].some((ring) => ring.some((point) => point.x < 0 || point.y < 0 || point.x > 1 || point.y > 1))))) {
+      throw new Error(`Invalid final footprint: ${annotation.areaId}`);
+    }
     const relatedIds = new Set(source.relationships?.filter((item) => item.areaId === area.id).map((item) => item.measurementId));
     return {
       areaId: area.id,
-      prediction: { type: area.kind, geometry: area.bbox, labels: area.evidence, source: area.source,
+      prediction: { type: area.kind, pageNumber: area.pageNumber, geometry: area.bbox, footprint: area.footprint ?? null,
+        contourProvenance: area.contourProvenance ?? null, originalLabel: area.originalLabel ?? null, labels: area.evidence, source: area.source,
         confidence: area.confidence ?? null, review: source.areaReviews?.find((item) => item.id === area.id) ?? null },
       measurements: source.measurements.filter((item) => relatedIds.has(item.id)),
       // From 1.3 onward area answers have scope-aware inheritance. A project

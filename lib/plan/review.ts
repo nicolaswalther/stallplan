@@ -1,4 +1,5 @@
 import type { DetectedArea, Measurement, NormalizedBox } from "@/lib/types";
+import { transformAreaFootprint } from "./area-geometry";
 
 export type AreaGeometryGesture = "move" | "nw" | "ne" | "sw" | "se";
 const MIN_AREA_SIZE = 0.01;
@@ -26,10 +27,14 @@ export function applyAreaGeometryCorrection(area: DetectedArea, bbox: Normalized
     || bbox.x + bbox.width > 1 + 1e-9 || bbox.y + bbox.height > 1 + 1e-9) return area;
   if (Math.abs(bbox.x - area.bbox.x) + Math.abs(bbox.y - area.bbox.y)
     + Math.abs(bbox.width - area.bbox.width) + Math.abs(bbox.height - area.bbox.height) < 1e-6) return area;
+  const footprint = area.footprint ? transformAreaFootprint(area.footprint, area.bbox, bbox) : undefined;
   return { ...area, originalBbox: area.originalBbox ?? area.bbox, originalSource: area.originalSource ?? area.source,
+    originalFootprint: area.originalFootprint ?? area.footprint,
+    originalContourProvenance: area.originalContourProvenance ?? area.contourProvenance,
+    footprint, contourProvenance: undefined,
     originalConfidence: area.originalConfidence !== undefined ? area.originalConfidence : area.confidence,
     bbox, hasBbox: true, source: "manual", confidence: null, boundaryAssessment: undefined,
-    geometryCorrections: [...(area.geometryCorrections ?? []), { at: new Date().toISOString(), bbox, source: "customer" }] };
+    geometryCorrections: [...(area.geometryCorrections ?? []), { at: new Date().toISOString(), bbox, ...(footprint ? { footprint } : {}), source: "customer" }] };
 }
 
 /** Removed objects remain as tombstones so late analysis cannot recreate them. */

@@ -8,7 +8,7 @@ const LABELS: Array<{ kind: AreaType; pattern: RegExp }> = [
   { kind: "calving", pattern: /\b(abkalbe(?:bereich|bucht|buchten|box|boxen)?|porodowka|calving pen)\b/ },
   { kind: "isolation", pattern: /\b(kranken(?:bucht|buchten|box|boxen|bereich)|separations(?:bucht|bereich)|isolation(?:sbereich|sbucht)?|izolatka|isolatka|izolacja|kwarantanna|hospital pen|sick pen)\b/ },
   { kind: "pens", pattern: /\b(rinder(?:bucht|buchten|box|boxen)|jungvieh(?:bucht|buchten|box|boxen|bereich|stall)|kalber(?:bucht|buchten|box|boxen|bereich|stall)|tier(?:bucht|buchten)|gruppen(?:bucht|buchten)|mast(?:bucht|buchten)|jalownik|cieletnik|cattle pen|youngstock pen|calf pen)\b/ },
-  { kind: "gate", pattern: /\b(stalltor|toranlage|tierdurchgang|maschinendurchfahrt|personendurchgang|brama|furtka)\b/ },
+  { kind: "gate", pattern: /\b(tor|tore|tur|turen|door|gate|drzwi|stalltor|toranlage|tierdurchgang|maschinendurchfahrt|personendurchgang|brama|furtka)\b/ },
   { kind: "drinker", pattern: /\b(tranke(?:n|becken|trog)?|poidlo|poidla|poidelko|drinker|waterer|drinking trough)\b/ },
   { kind: "brush", pattern: /\b(kuhburste|viehburste|scheuerburste|burste|szczotka|szczotki|cow brush|cattle brush)\b/ },
 ];

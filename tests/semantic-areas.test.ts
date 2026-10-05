@@ -23,6 +23,16 @@ const candidate = (kind: AreaType, evidence: string[], confidence = 0.97) => ({
   bbox: { x: 0.4, y: 0.4, width: 0.015, height: 0.02 }, evidence,
 });
 
+test("a gate label mentioning its adjacent room cannot reclassify the gate as that room", () => {
+  const label = "Äußeres Tor der Isolationsbucht 16";
+  assert.equal(classifyUnambiguousAreaLabel(label), null);
+  const result = validateSemanticAreas({ documentSummary: "Stall", warnings: [], areas: [
+    { ...candidate("gate", ["Torzeichen an der Außenwandöffnung"]), label, originalLabel: label },
+  ] }, [enclosurePage("Stall")]);
+  assert.equal(result.areas[0].kind, "gate");
+  assert.equal(classifyUnambiguousAreaLabel("Tor"), "gate");
+});
+
 test("animal pens and isolation labels stay distinct from cubicle rows and calving", () => {
   const cases: Array<[string, AreaType]> = [
     ["Jungviehbucht", "pens"], ["Kälberboxen", "pens"], ["Rinderbuchten", "pens"],

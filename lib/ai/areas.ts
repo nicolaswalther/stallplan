@@ -5,8 +5,9 @@ import { bboxSchema } from "../plan/request";
 import { classifyUnambiguousAreaLabel } from "../analysis/areas";
 import { AREA_RULES } from "../rules";
 import { validateSemanticProjectFacts } from "../analysis/project-facts";
-import { areaTextContext, imagePages, withPageImages } from "./context";
+import { areaTextContext, imagePages, roomNumberContext, withAreaImages } from "./context";
 import { withModelFallback } from "./client";
+import { recordAnalysisUsage } from "./usage";
 
 export const areaPayloadSchema = z.object({
   documentSummary: z.string().max(2_000), warnings: z.array(z.string()).max(40),
@@ -114,18 +115,23 @@ gate umfasst innere Tierdurchgänge und äußere Stallöffnungen: verlange sicht
 drinker/brush nur bei konkretem Text-/Legendenbeleg oder charakteristischer Symbolgeometrie. Für Tränken z.B. Becken-/Trogkontur mit erkennbarem Wasseranschluss, für Bürsten Borsten-/Bürstenkopf-Geometrie. Blaue Farbe, ein beliebiges Rechteck oder ein Kreis allein reichen nicht. Den tatsächlich sichtbaren kleinen Gegenstand markieren, nie den ganzen Raum. Konkreten Beleg in evidence nennen; Confidence höchstens 0.89. Nicht eingezeichnete Wünsche sind keine erkannten Objekte.
 Wenn Geometrie nicht belastbar bestimmbar ist: hasBbox=false. Jede Entscheidung benötigt konkrete Dokumentevidenz.
 Bekannte polnische Beschriftungen: korytarz paszowy=Futtergang/feeding_area, ausdrücklich kein alley; legowiska=Liegeboxen; komunikacja=Laufgang/alley; porodówka=Abkalbung; izolatka=Isolation; jałownik=Jungviehbereich; cielętnik=Kälberbereich; poidło=Tränke; szczotka=Bürste. WC, Büro und Melkhalle nicht als Liegeboxen klassifizieren.
+Vergrößerte Beschriftungsausschnitte können Raumtabellen enthalten. Lies deren tatsächliche Bezeichnungen und ordne ausschließlich wirklich gelesene Raumnummern den direkten PDF-Raumkennzeichen im Grundriss zu. Eine eindeutige Raumtabellen-Bezeichnung hat Vorrang vor einer bloßen optischen Ähnlichkeit. Pro Nutzungsfläche genau ein Bereich; WC/Büro/Technik/Melkräume nicht als Stall-Nutzungsbereiche ausgeben. originalLabel enthält bei gelesener Nummer die wortgetreue Nummer und Bezeichnung. Die Ergebnisbox muss den zugehörigen PDF-Raumanker enthalten. Tabellen sind keine Planbereiche. Gänge können mehrere Arme und Aussparungen haben: keine fremden Räume als Gang markieren, einen vorhandenen Gang auch nicht auf den Bereich unmittelbar um seine Nummer verkürzen.
+${roomNumberContext(pages)}
 PDF-TEXTOBJEKTE (direkt ausgelesen, nicht neu schätzen):
 ${areaTextContext(pages)}`;
   const run = await withModelFallback(model, async (selectedModel) => {
+    const started = performance.now();
     const response = await client.responses.create({
       model: selectedModel,
       max_output_tokens: 4_500,
       ...(selectedModel.startsWith("gpt-6") ? { reasoning: { effort: "low" as const } } : {}),
-      input: [{ role: "system", content: "Klassifiziere funktionale Stallbereiche anhand belastbarer Dokumentevidenz. Antworte ausschließlich auf Deutsch. Originaltext aus dem Plan darf nur als Dokumentzitat erscheinen." }, { role: "user", content: withPageImages(prompt, pages) }],
+      input: [{ role: "system", content: "Klassifiziere funktionale Stallbereiche anhand belastbarer Dokumentevidenz. Antworte ausschließlich auf Deutsch. Originaltext aus dem Plan darf nur als Dokumentzitat erscheinen." }, { role: "user", content: withAreaImages(prompt, pages) }],
       text: { format: { type: "json_schema", name: "stallplan_areas", strict: true, schema: z.toJSONSchema(areaResponseSchema) } },
     });
     if (!response.output_text) throw new Error("empty_area_result");
-    return { ...validateSemanticAreas(JSON.parse(response.output_text), pages), actualModel: response.model };
+    const usage = recordAnalysisUsage("areas", response, performance.now() - started);
+    return { ...validateSemanticAreas(JSON.parse(response.output_text), pages), actualModel: response.model,
+      ...(usage ? { usage } : {}) };
   });
   return { ...run, model: run.result.actualModel };
 }
