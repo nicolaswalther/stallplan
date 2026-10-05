@@ -36,7 +36,7 @@ const requestSchema = z.object({
     .max(40),
 });
 
-const aiPayloadSchema = z.object({
+const areaPayloadSchema = z.object({
   documentSummary: z.string(),
   warnings: z.array(z.string()),
   areas: z.array(
@@ -50,6 +50,15 @@ const aiPayloadSchema = z.object({
       evidence: z.array(z.string()),
     }),
   ),
+});
+
+const measurementPayloadSchema = z.object({
+  unitBasis: z.object({
+    unit: z.enum(["m", "cm", "mm", "unknown"]),
+    confidence: z.number().min(0).max(1),
+    evidence: z.string(),
+  }),
+  warnings: z.array(z.string()),
   measurements: z.array(
     z.object({
       key: z.string(),
@@ -65,7 +74,7 @@ const aiPayloadSchema = z.object({
   ),
 });
 
-const responseJsonSchema = {
+const areaJsonSchema = {
   type: "object",
   properties: {
     documentSummary: { type: "string" },
@@ -97,6 +106,25 @@ const responseJsonSchema = {
         additionalProperties: false,
       },
     },
+  },
+  required: ["documentSummary", "warnings", "areas"],
+  additionalProperties: false,
+} as const;
+
+const measurementJsonSchema = {
+  type: "object",
+  properties: {
+    unitBasis: {
+      type: "object",
+      properties: {
+        unit: { type: "string", enum: ["m", "cm", "mm", "unknown"] },
+        confidence: { type: "number", minimum: 0, maximum: 1 },
+        evidence: { type: "string" },
+      },
+      required: ["unit", "confidence", "evidence"],
+      additionalProperties: false,
+    },
+    warnings: { type: "array", items: { type: "string" } },
     measurements: {
       type: "array",
       items: {
@@ -127,11 +155,14 @@ const responseJsonSchema = {
       },
     },
   },
-  required: ["documentSummary", "warnings", "areas", "measurements"],
+  required: ["unitBasis", "warnings", "measurements"],
   additionalProperties: false,
 } as const;
 
 type RequestPages = z.infer<typeof requestSchema>["pages"];
+type InputPart =
+  | { type: "input_text"; text: string }
+  | { type: "input_image"; image_url: string; detail: "high" };
 
 function buildPlainTextContext(pages: RequestPages) {
   const maxTotalChars = 20_000;
@@ -152,7 +183,7 @@ function buildPlainTextContext(pages: RequestPages) {
 function buildPositionedTextContext(pages: RequestPages) {
   const lines: string[] = [];
   let chars = 0;
-  const maxChars = 36_000;
+  const maxChars = 42_000;
 
   for (const page of pages) {
     const prioritized = [...page.textItems]
@@ -162,7 +193,7 @@ function buildPositionedTextContext(pages: RequestPages) {
         const bPriority = /\d/.test(b.text) ? 0 : 1;
         return aPriority - bPriority;
       })
-      .slice(0, 700);
+      .slice(0, 850);
 
     for (const item of prioritized) {
       const line = `S${page.pageNumber} x=${item.bbox.x.toFixed(3)} y=${item.bbox.y.toFixed(3)} w=${item.bbox.width.toFixed(3)} h=${item.bbox.height.toFixed(3)} :: ${item.text.replace(/\s+/g, " ").slice(0, 120)}`;
@@ -173,6 +204,47 @@ function buildPositionedTextContext(pages: RequestPages) {
   }
 
   return lines.join("\n");
+}
+
+function appendImages(content: InputPart[], pages: RequestPages) {
+  for (const page of pages.filter((item) => item.imageDataUrl).slice(0, 4)) {
+    content.push({ type: "input_text", text: `Seitenbild ${page.pageNumber}:` });
+    content.push({
+      type: "input_image",
+      image_url: page.imageDataUrl!,
+      detail: "high",
+    });
+  }
+  return content;
+}
+
+function shouldUseFallback(error: unknown) {
+  if (!error || typeof error !== "object" || !("status" in error)) return false;
+  const status = Number((error as { status?: number }).status);
+  return status === 400 || status === 403 || status === 404;
+}
+
+async function withModelFallback<T>(
+  preferredModel: string,
+  run: (model: string) => Promise<T>,
+): Promise<{ result: T; model: string; fallback: boolean }> {
+  try {
+    return {
+      result: await run(preferredModel),
+      model: preferredModel,
+      fallback: false,
+    };
+  } catch (error) {
+    if (preferredModel === "gpt-6-luna" && shouldUseFallback(error)) {
+      const fallbackModel = "gpt-6.1-sol";
+      return {
+        result: await run(fallbackModel),
+        model: fallbackModel,
+        fallback: true,
+      };
+    }
+    throw error;
+  }
 }
 
 export async function POST(request: Request) {
@@ -186,89 +258,132 @@ export async function POST(request: Request) {
 
     const payload = requestSchema.parse(await request.json());
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const model = process.env.OPENAI_MODEL || "gpt-6.1-sol";
-    const visualPages = payload.pages.filter((page) => page.imageDataUrl).slice(0, 4);
+    const preferredModel = process.env.OPENAI_MODEL?.trim() || "gpt-6-luna";
     const plainText = buildPlainTextContext(payload.pages);
     const positionedText = buildPositionedTextContext(payload.pages);
+    const visualPageCount = payload.pages.filter((page) => page.imageDataUrl).slice(0, 4).length;
 
-    const content: Array<
-      | { type: "input_text"; text: string }
-      | { type: "input_image"; image_url: string; detail: "high" }
-    > = [
-      {
-        type: "input_text",
-        text:
-          `Analysiere den Stallplan "${payload.fileName}" als technische Vorprüfung.\n\n` +
-          `AUFGABE 1 – BEREICHE\n` +
-          `Erkenne nur feeding_area, cubicles, alley, calving, gate oder unknown. Liefere möglichst genaue Bounding-Boxen relativ zur Seite (0..1, Ursprung links oben). Keine Produktauswahl und keine fertige Planung.\n\n` +
-          `AUFGABE 2 – MASSE (hohe Priorität)\n` +
-          `Extrahiere sämtliche belastbar lesbaren Planmaße. Nutze dafür zuerst die positionsbezogenen PDF-Textobjekte unten und gleiche sie mit dem Seitenbild ab. Kleine Maßtexte sollen nicht allein wegen schlechter visueller Lesbarkeit verloren gehen.\n` +
-          `- Ein Maß nur ausgeben, wenn der Wert tatsächlich im Plan steht.\n` +
-          `- Niemals eine Länge aus gezeichneter Geometrie, Pixeln oder Maßstab schätzen.\n` +
-          `- Bei fehlender Einheit nur dann übernehmen, wenn die Zeichnung die verwendete Einheit eindeutig global festlegt. Sonst weglassen.\n` +
-          `- Semantische Bezeichnung nur vergeben, wenn die Zuordnung klar ist; sonst label="Planmaß".\n` +
-          `- Die bbox eines Maßes soll auf den zugehörigen Maßtext zeigen.\n` +
-          `- Wiederholte gleiche Werte an unterschiedlichen Stellen dürfen getrennt vorkommen.\n\n` +
-          `ALLGEMEIN\n` +
-          `Fehlende Angaben niemals erfinden. Confidence konservativ setzen. Evidence kurz und konkret halten.\n\n` +
-          `PDF-TEXT:\n${plainText}\n\nPOSITIONIERTE PDF-TEXTOBJEKTE:\n${positionedText}`,
-      },
+    const areaContent = appendImages(
+      [
+        {
+          type: "input_text",
+          text:
+            `Analysiere den Stallplan "${payload.fileName}" ausschließlich auf funktionale Stallbereiche.\n\n` +
+            `Zulässige Typen: feeding_area, cubicles, alley, calving, gate, unknown.\n` +
+            `Erkenne möglichst vollständige zusammenhängende Bereiche und liefere präzise Bounding-Boxen relativ zur Seite (0..1, Ursprung links oben).\n` +
+            `Nutze Beschriftungen, typische Stallgeometrie und wiederkehrende Einrichtungsstrukturen.\n` +
+            `Keine Produkte auswählen. Keine fertige Planung. Keine Maße erzeugen. Keine fehlenden Informationen erfinden.\n` +
+            `Confidence konservativ setzen; unknown verwenden, wenn die Funktion nicht belastbar bestimmbar ist.\n\n` +
+            `PDF-TEXT:\n${plainText}\n\nPOSITIONIERTE PDF-TEXTOBJEKTE:\n${positionedText}`,
+        },
+      ],
+      payload.pages,
+    );
+
+    const measurementContent = appendImages(
+      [
+        {
+          type: "input_text",
+          text:
+            `Extrahiere aus dem technischen Plan "${payload.fileName}" ausschließlich belastbare Bemaßungen. Das ist eine spezialisierte Maßprüfung.\n\n` +
+            `WICHTIG:\n` +
+            `- Viele Architektur-/Stallpläne schreiben an Maßketten nur Zahlen ohne "cm" oder "mm". Solche Werte NICHT pauschal verwerfen.\n` +
+            `- Ermittle zuerst die dominante Zeichnungseinheit. Nutze dafür Titelblock, Maßketten, wiederholte Achsraster, Gesamtmaße und Plausibilität der Gebäudeabmessungen.\n` +
+            `- Eine Einheit darf aus einer konsistenten Maßkette abgeleitet werden, wenn die Evidenz stark ist. Wiederholte Modulwerte plus passendes Gesamtmaß sind starke Evidenz.\n` +
+            `- Niemals Längen aus Pixelabständen oder dem Darstellungsmaßstab des Bildes messen. Nur tatsächlich geschriebene Maßwerte übernehmen.\n` +
+            `- Zahlen aus Raumnummern, Positionsnummern, Datum, Zeichnungsnummer, Tierbestand, Höhenkoten, Flächen, Volumen und Titelblock nicht als Längenmaß übernehmen.\n` +
+            `- Wiederholte gleiche Maße an unterschiedlichen Positionen dürfen getrennt ausgegeben werden.\n` +
+            `- bbox soll den zugehörigen Maßtext markieren.\n` +
+            `- label nur semantisch benennen, wenn die Zuordnung klar ist; sonst "Planmaß".\n` +
+            `- Wenn die Einheit nicht belastbar bestimmbar ist, unitBasis=unknown und unitlose Werte weglassen.\n\n` +
+            `PDF-TEXT:\n${plainText}\n\nPOSITIONIERTE PDF-TEXTOBJEKTE (besonders wichtig):\n${positionedText}`,
+        },
+      ],
+      payload.pages,
+    );
+
+    const [areaRun, measurementRun] = await Promise.all([
+      withModelFallback(preferredModel, async (model) => {
+        const response = await client.responses.create({
+          model,
+          input: [
+            {
+              role: "system",
+              content:
+                "Du erkennst Funktionsbereiche in technischen Stallplänen. Antworte ausschließlich mit dem geforderten strukturierten Datensatz.",
+            },
+            { role: "user", content: areaContent },
+          ],
+          text: {
+            format: {
+              type: "json_schema",
+              name: "stallplan_areas",
+              strict: true,
+              schema: areaJsonSchema,
+            },
+          },
+        });
+
+        if (!response.output_text) throw new Error("Keine strukturierte Bereichsanalyse erhalten.");
+        return areaPayloadSchema.parse(JSON.parse(response.output_text));
+      }),
+      withModelFallback(preferredModel, async (model) => {
+        const response = await client.responses.create({
+          model,
+          input: [
+            {
+              role: "system",
+              content:
+                "Du bist auf die Extraktion technischer Bemaßungen spezialisiert. Unterscheide Maßketten strikt von sonstigen Zahlen im Plan.",
+            },
+            { role: "user", content: measurementContent },
+          ],
+          text: {
+            format: {
+              type: "json_schema",
+              name: "stallplan_measurements",
+              strict: true,
+              schema: measurementJsonSchema,
+            },
+          },
+        });
+
+        if (!response.output_text) throw new Error("Keine strukturierte Maßanalyse erhalten.");
+        return measurementPayloadSchema.parse(JSON.parse(response.output_text));
+      }),
+    ]);
+
+    const warnings = [
+      ...areaRun.result.warnings,
+      ...measurementRun.result.warnings,
     ];
 
-    for (const page of visualPages) {
-      content.push({ type: "input_text", text: `Seitenbild ${page.pageNumber}:` });
-      content.push({
-        type: "input_image",
-        image_url: page.imageDataUrl!,
-        detail: "high",
-      });
-    }
-
-    const response = await client.responses.create({
-      model,
-      reasoning: { effort: "medium" },
-      input: [
-        {
-          role: "system",
-          content:
-            "Du analysierst technische Stallpläne. Beobachtung und Schlussfolgerung müssen getrennt bleiben. Die Ausgabe ist ein überprüfbarer Datensatz, keine autonome Planung.",
-        },
-        { role: "user", content },
-      ],
-      text: {
-        format: {
-          type: "json_schema",
-          name: "stallplan_analysis",
-          strict: true,
-          schema: responseJsonSchema,
-        },
-      },
-    });
-
-    if (!response.output_text) {
-      throw new Error("Das Modell hat keine strukturierte Ausgabe geliefert.");
-    }
-
-    const parsed = aiPayloadSchema.parse(JSON.parse(response.output_text));
-    const warnings = [...parsed.warnings];
-
-    if (payload.pages.length > visualPages.length) {
+    if (payload.pages.length > visualPageCount) {
       warnings.push(
-        `Visuell wurden die ersten ${visualPages.length} Seiten analysiert; positionsbezogener PDF-Text wurde für alle Seiten berücksichtigt.`,
+        `Visuell wurden die ersten ${visualPageCount} Seiten analysiert; positionsbezogener PDF-Text wurde für alle Seiten berücksichtigt.`,
       );
     }
 
+    if (areaRun.fallback || measurementRun.fallback) {
+      warnings.push("GPT-6 Luna war für mindestens einen Analyseschritt nicht verfügbar; dieser Schritt wurde automatisch mit GPT-6.1 Sol ausgeführt.");
+    }
+
+    const model =
+      areaRun.model === measurementRun.model
+        ? areaRun.model
+        : `areas:${areaRun.model};measurements:${measurementRun.model}`;
+
     return NextResponse.json({
       model,
-      documentSummary: parsed.documentSummary,
+      documentSummary: areaRun.result.documentSummary,
       warnings,
-      areas: parsed.areas.map((area) => ({
+      areas: areaRun.result.areas.map((area) => ({
         ...area,
         id: crypto.randomUUID(),
         source: "ai" as const,
         status: "unconfirmed" as const,
       })),
-      measurements: parsed.measurements.map((measurement) => ({
+      measurements: measurementRun.result.measurements.map((measurement) => ({
         id: crypto.randomUUID(),
         key: measurement.key,
         label: measurement.label,
@@ -279,7 +394,11 @@ export async function POST(request: Request) {
         confidence: measurement.confidence,
         pageNumber: measurement.pageNumber,
         bbox: measurement.hasBbox ? measurement.bbox : null,
-        evidence: measurement.evidence,
+        evidence:
+          measurementRun.result.unitBasis.unit !== "unknown" &&
+          measurementRun.result.unitBasis.confidence >= 0.7
+            ? `${measurement.evidence} · Einheit: ${measurementRun.result.unitBasis.unit} (${measurementRun.result.unitBasis.evidence})`
+            : measurement.evidence,
       })),
     });
   } catch (error) {
