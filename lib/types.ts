@@ -8,7 +8,7 @@ export const AREA_TYPES = [
 ] as const;
 
 export type AreaType = (typeof AREA_TYPES)[number];
-export type AreaSource = "ai" | "manual" | "pdf-text";
+export type AreaSource = "ai" | "manual";
 export type ReviewStatus = "unconfirmed" | "confirmed" | "rejected";
 export type MeasurementSource = "pdf-text" | "ai" | "customer";
 
@@ -19,11 +19,17 @@ export interface NormalizedBox {
   height: number;
 }
 
+export interface PdfTextItem {
+  text: string;
+  bbox: NormalizedBox;
+}
+
 export interface PdfPageData {
   pageNumber: number;
   width: number;
   height: number;
   text: string;
+  textItems: PdfTextItem[];
   imageDataUrl: string;
 }
 
@@ -37,6 +43,7 @@ export interface Measurement {
   status: ReviewStatus;
   confidence: number | null;
   pageNumber: number | null;
+  bbox: NormalizedBox | null;
   evidence: string;
 }
 
@@ -58,9 +65,7 @@ export type QuestionType = "text" | "number" | "select" | "boolean";
 export interface DomainQuestion {
   id: string;
   label: string;
-  help?: string;
   type: QuestionType;
-  unit?: string;
   options?: string[];
   required: boolean;
 }
@@ -81,7 +86,7 @@ export interface AiAnalysisResult {
 }
 
 export interface PlanningHandoff {
-  schemaVersion: "1.0";
+  schemaVersion: "1.1";
   createdAt: string;
   project: {
     fileName: string;
@@ -107,6 +112,7 @@ export interface PlanningHandoff {
   audit: {
     aiModel: string;
     confirmedAreaCount: number;
-    confirmedMeasurementCount: number;
+    detectedMeasurementCount: number;
+    customerCorrectedMeasurementCount: number;
   };
 }

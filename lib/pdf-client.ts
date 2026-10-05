@@ -1,7 +1,10 @@
-import type { PdfPageData } from "./types";
+import type { PdfPageData, PdfTextItem } from "./types";
+
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
 
 export async function parsePdf(file: File): Promise<PdfPageData[]> {
-  // Use PDF.js' legacy browser build for broader browser compatibility.
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
@@ -16,14 +19,34 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
       const page = await pdf.getPage(pageNumber);
 
       try {
-        const textContent = await page.getTextContent();
-        const text = textContent.items
-          .map((item) => ("str" in item ? item.str : ""))
-          .filter(Boolean)
-          .join(" ");
-
         const rawViewport = page.getViewport({ scale: 1 });
-        const targetWidth = Math.min(1500, Math.max(900, rawViewport.width * 1.4));
+        const textContent = await page.getTextContent();
+
+        const textItems: PdfTextItem[] = textContent.items.flatMap((item) => {
+          if (!("str" in item) || !item.str.trim()) return [];
+
+          const transformed = pdfjs.Util.transform(rawViewport.transform, item.transform);
+          const fontHeight = Math.max(1, Math.hypot(transformed[2], transformed[3]));
+          const width = Math.max(1, item.width);
+
+          return [
+            {
+              text: item.str.trim(),
+              bbox: {
+                x: clamp01(transformed[4] / rawViewport.width),
+                y: clamp01((transformed[5] - fontHeight) / rawViewport.height),
+                width: clamp01(width / rawViewport.width),
+                height: clamp01(fontHeight / rawViewport.height),
+              },
+            },
+          ];
+        });
+
+        const text = textItems.map((item) => item.text).join(" ");
+
+        // A slightly denser render keeps small dimensions legible for Vision
+        // without sending huge multi-megabyte pages to the API.
+        const targetWidth = Math.min(2000, Math.max(1400, rawViewport.width * 1.8));
         const renderScale = targetWidth / rawViewport.width;
         const viewport = page.getViewport({ scale: renderScale });
 
@@ -41,7 +64,8 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
           width: rawViewport.width,
           height: rawViewport.height,
           text,
-          imageDataUrl: canvas.toDataURL("image/jpeg", 0.78),
+          textItems,
+          imageDataUrl: canvas.toDataURL("image/jpeg", 0.88),
         });
       } finally {
         page.cleanup();
@@ -50,8 +74,6 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
 
     return pages;
   } finally {
-    // In PDF.js 6 the documented lifecycle owner is PDFDocumentLoadingTask.
-    // Destroying it releases the worker and document resources safely.
     await loadingTask.destroy();
   }
 }

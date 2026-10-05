@@ -1,32 +1,24 @@
 "use client";
 
 import {
-  AlertTriangle,
-  ArrowRight,
-  Bot,
-  BoxSelect,
+  AlertCircle,
   Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Clipboard,
   Download,
-  FileSearch,
-  FileText,
-  Layers3,
-  LoaderCircle,
+  FileUp,
+  Loader2,
   MousePointer2,
   Plus,
   Ruler,
-  ShieldCheck,
   Sparkles,
-  Trash2,
-  UploadCloud,
   X,
 } from "lucide-react";
-import { ChangeEvent, PointerEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, PointerEvent, ReactNode, useMemo, useRef, useState } from "react";
 
-import { extractDeterministicMeasurements, findPlanTerms } from "@/lib/deterministic";
+import { extractDeterministicMeasurements } from "@/lib/deterministic";
 import { parsePdf } from "@/lib/pdf-client";
 import { AREA_RULES, areaTypeOptions } from "@/lib/rules";
 import type {
@@ -39,8 +31,10 @@ import type {
   PlanningHandoff,
 } from "@/lib/types";
 
-type AnalysisMeta = Pick<AiAnalysisResult, "documentSummary" | "warnings"> & { model: string };
+type Panel = "areas" | "details" | "measurements" | "handoff";
+type BusyPhase = "reading" | "analyzing" | null;
 type AnswerValue = string | number | boolean;
+type AnalysisMeta = Pick<AiAnalysisResult, "documentSummary" | "warnings"> & { model: string };
 
 type ApiResponse = {
   model: string;
@@ -51,14 +45,6 @@ type ApiResponse = {
   error?: string;
 };
 
-const steps = [
-  { id: 1, title: "Plan", subtitle: "PDF hochladen", icon: UploadCloud },
-  { id: 2, title: "Analyse", subtitle: "Text + Vision", icon: FileSearch },
-  { id: 3, title: "Bereiche", subtitle: "prüfen & markieren", icon: BoxSelect },
-  { id: 4, title: "Angaben", subtitle: "Fragen & Maße", icon: Ruler },
-  { id: 5, title: "Übergabe", subtitle: "Planungsdatensatz", icon: Clipboard },
-];
-
 function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
@@ -67,33 +53,64 @@ function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
-function sourceLabel(source: DetectedArea["source"] | Measurement["source"]) {
-  if (source === "ai") return "KI";
-  if (source === "manual") return "Manuell";
-  if (source === "customer") return "Kunde";
-  return "PDF-Text";
+function center(box: NormalizedBox) {
+  return {
+    x: box.x + box.width / 2,
+    y: box.y + box.height / 2,
+  };
 }
 
-function confidenceLabel(confidence: number | null) {
-  if (confidence === null) return "–";
-  return `${Math.round(confidence * 100)} %`;
+function sameMeasurement(a: Measurement, b: Measurement) {
+  if (a.pageNumber !== b.pageNumber || a.unit !== b.unit) return false;
+  if (Math.abs(a.value - b.value) > Math.max(0.001, Math.abs(a.value) * 0.002)) return false;
+
+  if (a.bbox && b.bbox) {
+    const ac = center(a.bbox);
+    const bc = center(b.bbox);
+    return Math.hypot(ac.x - bc.x, ac.y - bc.y) < 0.06;
+  }
+
+  return true;
 }
 
-function statusTone(status: DetectedArea["status"]) {
-  if (status === "confirmed") return "border-emerald-200 bg-emerald-50 text-emerald-800";
-  if (status === "rejected") return "border-red-200 bg-red-50 text-red-700";
-  return "border-amber-200 bg-amber-50 text-amber-800";
+function mergeMeasurements(base: Measurement[], incoming: Measurement[]) {
+  const merged = [...base];
+
+  for (const candidate of incoming) {
+    const index = merged.findIndex((measurement) => sameMeasurement(measurement, candidate));
+
+    if (index === -1) {
+      merged.push(candidate);
+      continue;
+    }
+
+    const current = merged[index];
+    merged[index] = {
+      ...current,
+      label:
+        candidate.label && candidate.label.toLowerCase() !== "planmaß"
+          ? candidate.label
+          : current.label,
+      evidence:
+        candidate.evidence && !current.evidence.includes(candidate.evidence)
+          ? [current.evidence, candidate.evidence].filter(Boolean).join(" · ")
+          : current.evidence,
+      bbox: current.bbox ?? candidate.bbox,
+    };
+  }
+
+  return merged;
 }
 
-function sourceTone(source: string) {
-  if (source === "ai") return "border-violet-200 bg-violet-50 text-violet-700";
-  if (source === "customer" || source === "manual") return "border-emerald-200 bg-emerald-50 text-emerald-700";
-  return "border-slate-200 bg-slate-50 text-slate-700";
-}
+function Badge({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "green" | "amber" }) {
+  const tones = {
+    neutral: "border-[#e5e7e5] bg-[#f7f8f7] text-[#667067]",
+    green: "border-[#cfe2d5] bg-[#eff7f1] text-[#17633a]",
+    amber: "border-[#eddcb6] bg-[#fff8e9] text-[#875f18]",
+  };
 
-function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold", className)}>
+    <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium", tones[tone])}>
       {children}
     </span>
   );
@@ -101,34 +118,31 @@ function Badge({ children, className }: { children: React.ReactNode; className?:
 
 function Button({
   children,
+  onClick,
+  disabled,
   variant = "primary",
   className,
-  disabled,
-  onClick,
-  type = "button",
 }: {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "ghost" | "danger";
-  className?: string;
-  disabled?: boolean;
+  children: ReactNode;
   onClick?: () => void;
-  type?: "button" | "submit";
+  disabled?: boolean;
+  variant?: "primary" | "secondary" | "ghost";
+  className?: string;
 }) {
-  const styles = {
-    primary: "bg-[#17633a] text-white hover:bg-[#104b2b] border-[#17633a]",
-    secondary: "bg-white text-[#243028] hover:bg-[#f4f7f4] border-[#d8e0d9]",
-    ghost: "bg-transparent text-[#536159] hover:bg-[#edf2ee] border-transparent",
-    danger: "bg-white text-red-700 hover:bg-red-50 border-red-200",
+  const variants = {
+    primary: "border-[#17633a] bg-[#17633a] text-white hover:bg-[#104e2e]",
+    secondary: "border-[#dedfdd] bg-white text-[#303632] hover:bg-[#f7f8f7]",
+    ghost: "border-transparent bg-transparent text-[#687069] hover:bg-[#f4f5f4]",
   };
 
   return (
     <button
-      type={type}
-      disabled={disabled}
+      type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
-        "inline-flex h-9 items-center justify-center gap-2 rounded-lg border px-3.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-45",
-        styles[variant],
+        "inline-flex h-9 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40",
+        variants[variant],
         className,
       )}
     >
@@ -137,20 +151,18 @@ function Button({
   );
 }
 
-function EmptyUpload({ onFile }: { onFile: (file: File) => void }) {
+function UploadScreen({ onFile, error }: { onFile: (file: File) => void; error: string | null }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
   return (
-    <div className="flex min-h-[560px] items-center justify-center p-8">
-      <div className="w-full max-w-2xl">
-        <div className="mb-8 text-center">
-          <Badge className="mb-4 border-[#bfd8c7] bg-[#eaf5ed] text-[#17633a]">PDF MVP · Hybridanalyse</Badge>
-          <h1 className="text-3xl font-bold tracking-[-0.03em] text-[#172019]">Stallplan vorbereiten, nicht erraten.</h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[#657168]">
-            Der Plan wird zuerst klassisch ausgelesen. Die KI schlägt anschließend nur semantische Bereiche vor. Jede relevante Angabe bleibt bestätigungspflichtig.
-          </p>
+    <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-5 py-12">
+      <div className="w-full max-w-xl text-center">
+        <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl border border-[#dfe4df] bg-white shadow-sm">
+          <Sparkles size={19} className="text-[#17633a]" />
         </div>
+        <h1 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-[#202421]">Stallplan hochladen</h1>
+        <p className="mt-2 text-sm text-[#747b75]">Bereiche und Maße werden automatisch analysiert.</p>
 
         <button
           type="button"
@@ -168,16 +180,17 @@ function EmptyUpload({ onFile }: { onFile: (file: File) => void }) {
             if (dropped) onFile(dropped);
           }}
           className={cn(
-            "group flex w-full flex-col items-center rounded-2xl border-2 border-dashed bg-white px-8 py-16 text-center shadow-[0_18px_50px_rgba(29,48,35,0.06)] transition",
-            dragging ? "border-[#17633a] bg-[#f3faf5]" : "border-[#cdd7cf] hover:border-[#7dad8c] hover:bg-[#fbfdfb]",
+            "mt-8 flex w-full flex-col items-center rounded-2xl border bg-white px-8 py-12 shadow-[0_12px_35px_rgba(20,30,23,0.05)] transition",
+            dragging ? "border-[#5d9270] bg-[#fbfdfb]" : "border-[#e0e3e0] hover:border-[#bfcac1]",
           )}
         >
-          <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e9f4ec] text-[#17633a] transition group-hover:scale-105">
-            <UploadCloud size={28} />
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f1f6f2] text-[#17633a]">
+            <FileUp size={19} />
           </span>
-          <span className="text-base font-bold text-[#1e2922]">PDF hier ablegen oder auswählen</span>
-          <span className="mt-2 text-sm text-[#768078]">Empfohlen: Vektor-PDF mit Text- und Maßinformationen · max. 25 MB</span>
+          <span className="mt-4 text-sm font-semibold text-[#303632]">PDF auswählen</span>
+          <span className="mt-1 text-xs text-[#8b918c]">oder hier ablegen · max. 25 MB</span>
         </button>
+
         <input
           ref={inputRef}
           className="hidden"
@@ -189,22 +202,12 @@ function EmptyUpload({ onFile }: { onFile: (file: File) => void }) {
           }}
         />
 
-        <div className="mt-5 grid grid-cols-3 gap-3 text-left">
-          {[
-            [Layers3, "Deterministisch", "Text, Seiten und Maße werden separat extrahiert."],
-            [Sparkles, "Semantisch", "Vision erkennt nur Kandidaten und liefert Confidence."],
-            [ShieldCheck, "Nachvollziehbar", "Quelle und Bestätigungsstatus bleiben erhalten."],
-          ].map(([Icon, title, text]) => {
-            const IconComponent = Icon as typeof Layers3;
-            return (
-              <div key={String(title)} className="rounded-xl border border-[#dde4de] bg-white/70 p-4">
-                <IconComponent size={17} className="mb-2 text-[#17633a]" />
-                <div className="text-xs font-bold text-[#243028]">{String(title)}</div>
-                <div className="mt-1 text-[11px] leading-4 text-[#758078]">{String(text)}</div>
-              </div>
-            );
-          })}
-        </div>
+        {error && (
+          <div className="mt-4 flex items-center justify-center gap-2 text-sm text-[#a33c3c]">
+            <AlertCircle size={15} />
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -214,13 +217,14 @@ export function StallplanWorkbench() {
   const [file, setFile] = useState<File | null>(null);
   const [pages, setPages] = useState<PdfPageData[]>([]);
   const [activePage, setActivePage] = useState(1);
-  const [workflowStep, setWorkflowStep] = useState(1);
   const [analysis, setAnalysis] = useState<AnalysisMeta | null>(null);
   const [areas, setAreas] = useState<DetectedArea[]>([]);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [answers, setAnswers] = useState<Record<string, Record<string, AnswerValue>>>({});
+  const [panel, setPanel] = useState<Panel>("areas");
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
-  const [busy, setBusy] = useState<"parsing" | "analyzing" | null>(null);
+  const [selectedMeasurementId, setSelectedMeasurementId] = useState<string | null>(null);
+  const [busy, setBusy] = useState<BusyPhase>(null);
   const [error, setError] = useState<string | null>(null);
   const [markMode, setMarkMode] = useState(false);
   const [manualKind, setManualKind] = useState<AreaType>("feeding_area");
@@ -228,22 +232,34 @@ export function StallplanWorkbench() {
   const [draftBox, setDraftBox] = useState<NormalizedBox | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const terms = useMemo(() => findPlanTerms(pages), [pages]);
   const currentPage = pages.find((page) => page.pageNumber === activePage) ?? pages[0];
   const confirmedAreas = areas.filter((area) => area.status === "confirmed");
+  const openAreas = areas.filter((area) => area.status === "unconfirmed");
   const selectedArea = areas.find((area) => area.id === selectedAreaId) ?? null;
+  const selectedMeasurement = measurements.find((measurement) => measurement.id === selectedMeasurementId) ?? null;
+  const safeAreaCount = openAreas.filter(
+    (area) => area.kind !== "unknown" && area.hasBbox && (area.confidence ?? 0) >= 0.82,
+  ).length;
 
-  const unlockedStep = useMemo(() => {
-    if (!pages.length) return 1;
-    if (!analysis) return 2;
-    if (!confirmedAreas.length) return 3;
-    return 5;
-  }, [pages.length, analysis, confirmedAreas.length]);
+  const missingRequired = useMemo(() => {
+    return confirmedAreas.reduce((count, area) => {
+      const areaAnswers = answers[area.id] ?? {};
+      return (
+        count +
+        AREA_RULES[area.kind].questions.filter((question) => {
+          if (!question.required) return false;
+          const value = areaAnswers[question.id];
+          return value === undefined || value === "";
+        }).length
+      );
+    }, 0);
+  }, [answers, confirmedAreas]);
 
   const handoff = useMemo<PlanningHandoff | null>(() => {
     if (!file || !pages.length || !analysis) return null;
+
     return {
-      schemaVersion: "1.0",
+      schemaVersion: "1.1",
       createdAt: new Date().toISOString(),
       project: {
         fileName: file.name,
@@ -269,55 +285,48 @@ export function StallplanWorkbench() {
       audit: {
         aiModel: analysis.model,
         confirmedAreaCount: confirmedAreas.length,
-        confirmedMeasurementCount: measurements.filter((measurement) => measurement.status === "confirmed").length,
+        detectedMeasurementCount: measurements.length,
+        customerCorrectedMeasurementCount: measurements.filter((measurement) => measurement.source === "customer").length,
       },
     };
   }, [analysis, answers, confirmedAreas, file, measurements, pages.length]);
 
-  async function handleFile(nextFile: File) {
-    if (nextFile.type !== "application/pdf" && !nextFile.name.toLowerCase().endsWith(".pdf")) {
-      setError("Für den MVP wird ausschließlich PDF unterstützt.");
-      return;
-    }
-    if (nextFile.size > 25 * 1024 * 1024) {
-      setError("Die PDF ist größer als 25 MB. Bitte zunächst eine kleinere Planversion verwenden.");
-      return;
-    }
-
-    try {
-      setBusy("parsing");
-      setError(null);
-      setFile(nextFile);
-      const parsedPages = await parsePdf(nextFile);
-      setPages(parsedPages);
-      setActivePage(1);
-      setAnalysis(null);
-      setAreas([]);
-      setAnswers({});
-      setSelectedAreaId(null);
-      setMeasurements(extractDeterministicMeasurements(parsedPages));
-      setWorkflowStep(2);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "PDF konnte nicht gelesen werden.");
-      setFile(null);
-      setPages([]);
-      setWorkflowStep(1);
-    } finally {
-      setBusy(null);
-    }
+  function reset() {
+    setFile(null);
+    setPages([]);
+    setAreas([]);
+    setMeasurements([]);
+    setAnswers({});
+    setAnalysis(null);
+    setActivePage(1);
+    setPanel("areas");
+    setSelectedAreaId(null);
+    setSelectedMeasurementId(null);
+    setMarkMode(false);
+    setError(null);
+    setBusy(null);
   }
 
-  async function runAnalysis() {
-    if (!file || !pages.length) return;
-
+  async function analyzePlan(nextFile: File, parsedPages: PdfPageData[], deterministic: Measurement[]) {
     try {
       setBusy("analyzing");
-      setError(null);
+
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileName: file.name, pages }),
+        body: JSON.stringify({
+          fileName: nextFile.name,
+          pages: parsedPages.map((page, index) => ({
+            pageNumber: page.pageNumber,
+            width: page.width,
+            height: page.height,
+            text: page.text,
+            textItems: page.textItems,
+            ...(index < 4 ? { imageDataUrl: page.imageDataUrl } : {}),
+          })),
+        }),
       });
+
       const data = (await response.json()) as ApiResponse;
       if (!response.ok) throw new Error(data.error || "KI-Analyse fehlgeschlagen.");
 
@@ -327,30 +336,92 @@ export function StallplanWorkbench() {
         warnings: data.warnings,
       });
       setAreas(data.areas);
-      setSelectedAreaId(data.areas[0]?.id ?? null);
-      setMeasurements((existing) => {
-        const merged = [...existing];
-        for (const candidate of data.measurements) {
-          const duplicate = merged.some(
-            (measurement) =>
-              measurement.pageNumber === candidate.pageNumber &&
-              measurement.unit === candidate.unit &&
-              Math.abs(measurement.value - candidate.value) < 0.001,
-          );
-          if (!duplicate) merged.push(candidate);
-        }
-        return merged;
-      });
-      setWorkflowStep(3);
+      setSelectedAreaId(data.areas.find((area) => area.status === "unconfirmed")?.id ?? data.areas[0]?.id ?? null);
+      setMeasurements(mergeMeasurements(deterministic, data.measurements));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "KI-Analyse fehlgeschlagen.");
+      setAnalysis({
+        model: "nicht verfügbar",
+        documentSummary: "Die PDF wurde gelesen. Die KI-Analyse konnte nicht abgeschlossen werden.",
+        warnings: [],
+      });
+      setMeasurements(deterministic);
     } finally {
       setBusy(null);
     }
   }
 
+  async function handleFile(nextFile: File) {
+    if (nextFile.type !== "application/pdf" && !nextFile.name.toLowerCase().endsWith(".pdf")) {
+      setError("Bitte eine PDF-Datei auswählen.");
+      return;
+    }
+
+    if (nextFile.size > 25 * 1024 * 1024) {
+      setError("Die PDF ist größer als 25 MB.");
+      return;
+    }
+
+    try {
+      setError(null);
+      setFile(nextFile);
+      setBusy("reading");
+      setAnalysis(null);
+      setAreas([]);
+      setAnswers({});
+      setMeasurements([]);
+      setPanel("areas");
+      setSelectedAreaId(null);
+      setSelectedMeasurementId(null);
+
+      const parsedPages = await parsePdf(nextFile);
+      const deterministic = extractDeterministicMeasurements(parsedPages);
+
+      setPages(parsedPages);
+      setActivePage(1);
+      setMeasurements(deterministic);
+      await analyzePlan(nextFile, parsedPages, deterministic);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "PDF konnte nicht gelesen werden.");
+      reset();
+    }
+  }
+
   function updateArea(id: string, patch: Partial<DetectedArea>) {
     setAreas((current) => current.map((area) => (area.id === id ? { ...area, ...patch } : area)));
+  }
+
+  function reviewArea(id: string, status: "confirmed" | "rejected") {
+    const updated = areas.map((area) => (area.id === id ? { ...area, status } : area));
+    setAreas(updated);
+
+    const next = updated.find((area) => area.status === "unconfirmed");
+    if (next) {
+      setSelectedAreaId(next.id);
+      setActivePage(next.pageNumber);
+    } else if (updated.some((area) => area.status === "confirmed")) {
+      setPanel("details");
+    }
+  }
+
+  function confirmSafeAreas() {
+    const updated = areas.map((area) =>
+      area.status === "unconfirmed" &&
+      area.kind !== "unknown" &&
+      area.hasBbox &&
+      (area.confidence ?? 0) >= 0.82
+        ? { ...area, status: "confirmed" as const }
+        : area,
+    );
+
+    setAreas(updated);
+    const next = updated.find((area) => area.status === "unconfirmed");
+    if (next) {
+      setSelectedAreaId(next.id);
+      setActivePage(next.pageNumber);
+    } else if (updated.some((area) => area.status === "confirmed")) {
+      setPanel("details");
+    }
   }
 
   function updateMeasurement(id: string, patch: Partial<Measurement>) {
@@ -360,13 +431,29 @@ export function StallplanWorkbench() {
   }
 
   function setAnswer(areaId: string, questionId: string, value: AnswerValue) {
-    setAnswers((current) => ({
-      ...current,
-      [areaId]: {
-        ...(current[areaId] ?? {}),
-        [questionId]: value,
-      },
-    }));
+    setAnswers((current) => {
+      const next = {
+        ...current,
+        [areaId]: {
+          ...(current[areaId] ?? {}),
+          [questionId]: value,
+        },
+      };
+
+      if (questionId === "animalSpecies") {
+        for (const area of confirmedAreas) {
+          const asksSpecies = AREA_RULES[area.kind].questions.some((question) => question.id === "animalSpecies");
+          if (asksSpecies && (next[area.id]?.animalSpecies === undefined || next[area.id]?.animalSpecies === "")) {
+            next[area.id] = {
+              ...(next[area.id] ?? {}),
+              animalSpecies: value,
+            };
+          }
+        }
+      }
+
+      return next;
+    });
   }
 
   function startMark(event: PointerEvent<HTMLDivElement>) {
@@ -384,6 +471,7 @@ export function StallplanWorkbench() {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = clamp01((event.clientX - rect.left) / rect.width);
     const y = clamp01((event.clientY - rect.top) / rect.height);
+
     setDraftBox({
       x: Math.min(dragStart.x, x),
       y: Math.min(dragStart.y, y),
@@ -404,21 +492,24 @@ export function StallplanWorkbench() {
       const area: DetectedArea = {
         id,
         kind: manualKind,
-        label: `${AREA_RULES[manualKind].title} (manuell)`,
+        label: AREA_RULES[manualKind].title,
         confidence: null,
         source: "manual",
         status: "confirmed",
         pageNumber: currentPage.pageNumber,
         bbox: draftBox,
         hasBbox: true,
-        evidence: ["Vom Benutzer im Plan markiert."],
+        evidence: ["Manuell markiert"],
       };
+
       setAreas((current) => [...current, area]);
       setSelectedAreaId(id);
+      setPanel("areas");
     }
 
     setDragStart(null);
     setDraftBox(null);
+    setMarkMode(false);
   }
 
   function downloadHandoff() {
@@ -427,7 +518,7 @@ export function StallplanWorkbench() {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `${(file?.name ?? "stallplan").replace(/\.pdf$/i, "")}-planungsanfrage.json`;
+    anchor.download = (file?.name ?? "stallplan").replace(/\.pdf$/i, "") + "-planungsanfrage.json";
     anchor.click();
     URL.revokeObjectURL(url);
   }
@@ -436,332 +527,263 @@ export function StallplanWorkbench() {
     if (!handoff) return;
     await navigator.clipboard.writeText(JSON.stringify(handoff, null, 2));
     setCopied(true);
-    window.setTimeout(() => setCopied(false), 1500);
+    window.setTimeout(() => setCopied(false), 1400);
   }
 
-  if (busy === "parsing" && !pages.length) {
-    return (
-      <main className="flex min-h-screen items-center justify-center">
-        <div className="rounded-2xl border border-[#dbe3dc] bg-white px-8 py-7 text-center shadow-xl shadow-black/5">
-          <LoaderCircle className="mx-auto animate-spin text-[#17633a]" size={30} />
-          <div className="mt-4 font-bold">PDF wird deterministisch ausgelesen</div>
-          <div className="mt-1 text-sm text-[#6d786f]">Seiten rendern, Text extrahieren und Maße erfassen.</div>
-        </div>
-      </main>
-    );
-  }
+  const statusText =
+    busy === "reading"
+      ? "PDF wird gelesen"
+      : busy === "analyzing"
+        ? "Bereiche und Maße werden erkannt"
+        : analysis
+          ? "Analyse fertig"
+          : "Bereit";
 
   return (
-    <main className="min-h-screen p-3 lg:p-5">
-      <div className="mx-auto flex min-h-[calc(100vh-40px)] max-w-[1800px] overflow-hidden rounded-[22px] border border-[#d8e0d9] bg-[#f9fbf9] shadow-[0_24px_80px_rgba(21,39,27,0.10)]">
-        <aside className="hidden w-[248px] shrink-0 border-r border-[#dce3dd] bg-[#f2f6f2] p-5 xl:flex xl:flex-col">
-          <div className="flex items-center gap-3 border-b border-[#dce3dd] pb-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#17633a] text-white shadow-sm">
-              <Layers3 size={21} />
-            </div>
-            <div>
-              <div className="text-sm font-extrabold tracking-[-0.02em]">PATURA</div>
-              <div className="text-xs text-[#657168]">Stallplan Assistant</div>
-            </div>
+    <main className="min-h-screen bg-[#f7f7f5] text-[#242724]">
+      <header className="flex h-16 items-center justify-between border-b border-[#e6e7e5] bg-white px-4 sm:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#17633a] text-white">
+            <Sparkles size={16} />
           </div>
+          <div className="min-w-0">
+            <div className="text-sm font-semibold tracking-[-0.01em]">PATURA Stallplan</div>
+            {file && <div className="truncate text-xs text-[#8a908b]">{file.name}</div>}
+          </div>
+        </div>
 
-          <nav className="mt-6 space-y-2">
-            {steps.map((step) => {
-              const Icon = step.icon;
-              const active = workflowStep === step.id;
-              const unlocked = step.id <= unlockedStep;
-              return (
+        {file && (
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-2 text-xs text-[#777e78] sm:flex">
+              {busy ? <Loader2 size={13} className="animate-spin" /> : <span className="h-2 w-2 rounded-full bg-[#3d9a5e]" />}
+              {statusText}
+            </div>
+            <Button variant="ghost" onClick={reset}>
+              Neuer Plan
+            </Button>
+          </div>
+        )}
+      </header>
+
+      {!file && <UploadScreen onFile={handleFile} error={error} />}
+
+      {file && currentPage && (
+        <div className="grid min-h-[calc(100vh-64px)] grid-cols-1 xl:grid-cols-[minmax(0,1fr)_390px]">
+          <section className="flex min-h-[560px] min-w-0 flex-col border-r border-[#e4e5e3] bg-[#f2f3f1]">
+            <div className="flex min-h-12 flex-wrap items-center justify-between gap-2 border-b border-[#e1e3e0] bg-white px-3 py-2 sm:px-4">
+              <div className="flex items-center gap-1">
                 <button
-                  key={step.id}
                   type="button"
-                  disabled={!unlocked}
-                  onClick={() => unlocked && setWorkflowStep(step.id)}
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition",
-                    active ? "bg-white shadow-sm ring-1 ring-[#dce4dd]" : "hover:bg-white/70",
-                    !unlocked && "cursor-not-allowed opacity-40",
-                  )}
+                  disabled={activePage <= 1}
+                  onClick={() => setActivePage((page) => Math.max(1, page - 1))}
+                  className="flex h-8 w-8 items-center justify-center rounded-md text-[#676e68] hover:bg-[#f3f4f3] disabled:opacity-30"
+                  aria-label="Vorherige Seite"
                 >
-                  <span
-                    className={cn(
-                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border",
-                      active
-                        ? "border-[#17633a] bg-[#17633a] text-white"
-                        : unlocked
-                          ? "border-[#cad6cc] bg-white text-[#46604d]"
-                          : "border-[#d8dfd9] bg-[#eef1ee] text-[#9aa39c]",
-                    )}
-                  >
-                    <Icon size={16} />
-                  </span>
-                  <span>
-                    <span className="block text-xs font-bold text-[#263029]">{step.title}</span>
-                    <span className="block text-[11px] text-[#7a857c]">{step.subtitle}</span>
-                  </span>
+                  <ChevronLeft size={16} />
                 </button>
-              );
-            })}
-          </nav>
-
-          <div className="mt-auto rounded-xl border border-[#d8e2d9] bg-white/70 p-3.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#334039]">
-              <ShieldCheck size={15} className="text-[#17633a]" /> Kontrollierte KI
-            </div>
-            <p className="mt-2 text-[11px] leading-4 text-[#748078]">
-              KI-Ergebnisse bleiben Vorschläge. Fachregeln, Quelle und Bestätigung werden separat gespeichert.
-            </p>
-          </div>
-        </aside>
-
-        <section className="flex min-w-0 flex-1 flex-col">
-          <header className="flex min-h-[72px] items-center justify-between border-b border-[#dce3dd] bg-white/85 px-5 backdrop-blur lg:px-7">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#758078]">
-                <span>Planungsassistent</span>
-                {file && <span className="text-[#abb3ad]">/</span>}
-                {file && <span className="truncate text-[#3e4b42]">{file.name}</span>}
+                <span className="min-w-[74px] text-center text-xs text-[#737a74]">
+                  {activePage} / {pages.length}
+                </span>
+                <button
+                  type="button"
+                  disabled={activePage >= pages.length}
+                  onClick={() => setActivePage((page) => Math.min(pages.length, page + 1))}
+                  className="flex h-8 w-8 items-center justify-center rounded-md text-[#676e68] hover:bg-[#f3f4f3] disabled:opacity-30"
+                  aria-label="Nächste Seite"
+                >
+                  <ChevronRight size={16} />
+                </button>
               </div>
-              <h1 className="mt-1 truncate text-lg font-extrabold tracking-[-0.02em] text-[#1d2720]">
-                {steps.find((step) => step.id === workflowStep)?.title ?? "Stallplan"}
-              </h1>
-            </div>
-            <div className="flex items-center gap-2">
-              {analysis && (
-                <Badge className="hidden border-violet-200 bg-violet-50 text-violet-700 sm:inline-flex">
-                  <Bot size={11} className="mr-1" /> {analysis.model}
-                </Badge>
-              )}
-              {file && (
-                <Button variant="secondary" onClick={() => setWorkflowStep(1)}>
-                  <Plus size={15} /> Neuer Plan
-                </Button>
-              )}
-            </div>
-          </header>
 
-          {error && (
-            <div className="mx-5 mt-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 lg:mx-7">
-              <AlertTriangle size={18} className="mt-0.5 shrink-0" />
-              <div className="flex-1">{error}</div>
-              <button type="button" onClick={() => setError(null)} className="text-red-500 hover:text-red-800">
-                <X size={16} />
-              </button>
-            </div>
-          )}
-
-          {workflowStep === 1 && (
-            <div className="flex-1">
-              <EmptyUpload onFile={handleFile} />
-            </div>
-          )}
-
-          {workflowStep > 1 && currentPage && (
-            <div className="flex min-h-0 flex-1 flex-col 2xl:flex-row">
-              <div className="flex min-w-0 flex-1 flex-col border-r border-[#dce3dd]">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dce3dd] bg-[#f7f9f7] px-4 py-3 lg:px-5">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="secondary"
-                      className="h-8 px-2.5"
-                      disabled={activePage <= 1}
-                      onClick={() => setActivePage((page) => Math.max(1, page - 1))}
-                    >
-                      <ChevronLeft size={15} />
-                    </Button>
-                    <div className="min-w-[94px] text-center text-xs font-bold text-[#536159]">
-                      Seite {activePage} / {pages.length}
-                    </div>
-                    <Button
-                      variant="secondary"
-                      className="h-8 px-2.5"
-                      disabled={activePage >= pages.length}
-                      onClick={() => setActivePage((page) => Math.min(pages.length, page + 1))}
-                    >
-                      <ChevronRight size={15} />
-                    </Button>
-                  </div>
-
-                  {analysis && workflowStep >= 3 && (
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={manualKind}
-                        onChange={(event) => setManualKind(event.target.value as AreaType)}
-                        className="h-8 rounded-lg border border-[#d6dfd8] bg-white px-2 text-xs font-semibold outline-none focus:border-[#75a383]"
-                      >
-                        {areaTypeOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant={markMode ? "primary" : "secondary"}
-                        className="h-8"
-                        onClick={() => setMarkMode((active) => !active)}
-                      >
-                        <MousePointer2 size={14} /> {markMode ? "Markieren aktiv" : "Bereich markieren"}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-
-                <div className="plan-grid flex min-h-[520px] flex-1 items-center justify-center overflow-auto bg-[#e8ece8] p-5 lg:p-7">
-                  <div
-                    className={cn(
-                      "relative w-full max-w-[1120px] overflow-hidden rounded-sm bg-white shadow-[0_12px_40px_rgba(30,42,33,0.16)]",
-                      markMode && "cursor-crosshair select-none",
-                    )}
-                    style={{ aspectRatio: `${currentPage.width} / ${currentPage.height}` }}
-                    onPointerDown={startMark}
-                    onPointerMove={moveMark}
-                    onPointerUp={finishMark}
-                    onPointerCancel={finishMark}
+              <div className="flex items-center gap-2">
+                {markMode && (
+                  <select
+                    value={manualKind}
+                    onChange={(event) => setManualKind(event.target.value as AreaType)}
+                    className="h-8 rounded-md border border-[#dcdedb] bg-white px-2 text-xs outline-none focus:border-[#8eb69a]"
                   >
-                    {/* PDF preview generated locally in the browser. */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={currentPage.imageDataUrl}
-                      alt={`Planseite ${currentPage.pageNumber}`}
-                      draggable={false}
-                      className="absolute inset-0 h-full w-full object-fill"
-                    />
-
-                    {areas
-                      .filter((area) => area.pageNumber === activePage && area.status !== "rejected" && area.hasBbox)
-                      .map((area) => {
-                        const active = selectedAreaId === area.id;
-                        return (
-                          <button
-                            key={area.id}
-                            type="button"
-                            disabled={markMode}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              setSelectedAreaId(area.id);
-                            }}
-                            className={cn(
-                              "absolute border-2 text-left transition",
-                              active
-                                ? "border-[#0f6b39] bg-[#1e8e4b]/20 shadow-[0_0_0_2px_rgba(255,255,255,0.75)]"
-                                : area.source === "manual"
-                                  ? "border-sky-500 bg-sky-300/15 hover:bg-sky-300/25"
-                                  : "border-amber-500 bg-amber-300/15 hover:bg-amber-300/25",
-                            )}
-                            style={{
-                              left: `${area.bbox.x * 100}%`,
-                              top: `${area.bbox.y * 100}%`,
-                              width: `${area.bbox.width * 100}%`,
-                              height: `${area.bbox.height * 100}%`,
-                            }}
-                          >
-                            <span className="absolute -top-6 left-[-2px] whitespace-nowrap rounded bg-[#18231c]/90 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                              {AREA_RULES[area.kind].title}
-                            </span>
-                          </button>
-                        );
-                      })}
-
-                    {draftBox && (
-                      <div
-                        className="pointer-events-none absolute border-2 border-dashed border-[#17633a] bg-[#17633a]/15"
-                        style={{
-                          left: `${draftBox.x * 100}%`,
-                          top: `${draftBox.y * 100}%`,
-                          width: `${draftBox.width * 100}%`,
-                          height: `${draftBox.height * 100}%`,
-                        }}
-                      />
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between gap-4 border-t border-[#dce3dd] bg-white px-5 py-2.5 text-[11px] text-[#6e7971]">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm border border-amber-500 bg-amber-200/70" /> KI-Vorschlag</span>
-                    <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm border border-sky-500 bg-sky-200/70" /> manuell</span>
-                  </div>
-                  <span>{Math.round(currentPage.width)} × {Math.round(currentPage.height)} pt</span>
-                </div>
+                    {areaTypeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <Button
+                  variant={markMode ? "primary" : "secondary"}
+                  className="h-8 text-xs"
+                  onClick={() => setMarkMode((active) => !active)}
+                >
+                  <MousePointer2 size={14} />
+                  {markMode ? "Im Plan aufziehen" : "Bereich markieren"}
+                </Button>
               </div>
+            </div>
 
-              <aside className="scrollbar-thin w-full shrink-0 overflow-y-auto bg-white 2xl:max-h-[calc(100vh-114px)] 2xl:w-[430px]">
-                {workflowStep === 2 && (
-                  <div className="p-5 lg:p-6">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eaf4ed] text-[#17633a]">
-                      <FileSearch size={22} />
-                    </div>
-                    <h2 className="mt-4 text-xl font-extrabold tracking-[-0.02em]">Deterministische Voranalyse fertig</h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6a766e]">
-                      Der Browser hat das PDF bereits gerendert und Text sowie eindeutig geschriebene Maße ausgelesen. Erst jetzt kommt Vision hinzu.
-                    </p>
+            <div className="flex flex-1 items-center justify-center overflow-auto p-3 sm:p-6 lg:p-8">
+              <div
+                className={cn(
+                  "relative w-full max-w-[1180px] overflow-hidden bg-white shadow-[0_10px_35px_rgba(22,28,23,0.10)]",
+                  markMode && "cursor-crosshair select-none",
+                )}
+                style={{ aspectRatio: String(currentPage.width) + " / " + String(currentPage.height) }}
+                onPointerDown={startMark}
+                onPointerMove={moveMark}
+                onPointerUp={finishMark}
+                onPointerCancel={finishMark}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={currentPage.imageDataUrl}
+                  alt={"Planseite " + currentPage.pageNumber}
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-fill"
+                />
 
-                    <div className="mt-5 grid grid-cols-2 gap-3">
-                      <Metric label="Seiten" value={String(pages.length)} />
-                      <Metric label="PDF-Text" value={`${pages.reduce((sum, page) => sum + page.text.length, 0).toLocaleString("de-DE")} Zeichen`} />
-                      <Metric label="Maßkandidaten" value={String(measurements.length)} />
-                      <Metric label="Fachbegriffe" value={String(terms.length)} />
-                    </div>
+                {areas
+                  .filter((area) => area.pageNumber === activePage && area.status !== "rejected" && area.hasBbox)
+                  .map((area) => {
+                    const selected = selectedAreaId === area.id && panel === "areas";
+                    return (
+                      <button
+                        key={area.id}
+                        type="button"
+                        disabled={markMode}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedAreaId(area.id);
+                          setPanel("areas");
+                        }}
+                        className={cn(
+                          "absolute border-2 transition",
+                          selected
+                            ? "border-[#17633a] bg-[#2f8a50]/18 shadow-[0_0_0_2px_rgba(255,255,255,0.75)]"
+                            : area.status === "confirmed"
+                              ? "border-[#5d9b70] bg-[#4c9d68]/10"
+                              : "border-[#bf923e] bg-[#e7b95e]/12",
+                        )}
+                        style={{
+                          left: String(area.bbox.x * 100) + "%",
+                          top: String(area.bbox.y * 100) + "%",
+                          width: String(area.bbox.width * 100) + "%",
+                          height: String(area.bbox.height * 100) + "%",
+                        }}
+                        aria-label={area.label}
+                      >
+                        {selected && (
+                          <span className="absolute -top-6 left-[-2px] whitespace-nowrap rounded-md bg-[#242724] px-1.5 py-0.5 text-[10px] font-medium text-white">
+                            {AREA_RULES[area.kind].title}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
 
-                    {terms.length > 0 && (
-                      <div className="mt-5 rounded-xl border border-[#dce4dd] bg-[#f7f9f7] p-4">
-                        <div className="text-xs font-bold text-[#364139]">Gefundene Begriffe</div>
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {terms.slice(0, 16).map((item, index) => (
-                            <Badge key={`${item.term}-${item.pageNumber}-${index}`} className="border-slate-200 bg-white text-slate-700">
-                              {item.term} · S. {item.pageNumber}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                {panel === "measurements" &&
+                  selectedMeasurement?.bbox &&
+                  selectedMeasurement.pageNumber === activePage && (
+                    <div
+                      className="pointer-events-none absolute border-2 border-[#3978c2] bg-[#3978c2]/10 shadow-[0_0_0_2px_rgba(255,255,255,0.8)]"
+                      style={{
+                        left: String(selectedMeasurement.bbox.x * 100) + "%",
+                        top: String(selectedMeasurement.bbox.y * 100) + "%",
+                        width: String(Math.max(selectedMeasurement.bbox.width, 0.018) * 100) + "%",
+                        height: String(Math.max(selectedMeasurement.bbox.height, 0.012) * 100) + "%",
+                      }}
+                    />
+                  )}
 
-                    <div className="mt-6 rounded-xl border border-violet-200 bg-violet-50 p-4">
-                      <div className="flex items-center gap-2 text-sm font-bold text-violet-900">
-                        <Sparkles size={16} /> KI-Schritt
-                      </div>
-                      <p className="mt-2 text-xs leading-5 text-violet-800/80">
-                        GPT analysiert Seitenbilder plus bereits extrahierten Text und gibt ausschließlich strukturierte Bereichs- und Maßvorschläge zurück. Keine Produktauswahl.
-                      </p>
-                    </div>
-
-                    <Button className="mt-5 w-full" disabled={busy === "analyzing"} onClick={runAnalysis}>
-                      {busy === "analyzing" ? <LoaderCircle size={16} className="animate-spin" /> : <Bot size={16} />}
-                      {busy === "analyzing" ? "Plan wird semantisch analysiert …" : "KI-Analyse starten"}
-                    </Button>
-                  </div>
+                {draftBox && (
+                  <div
+                    className="pointer-events-none absolute border-2 border-dashed border-[#17633a] bg-[#17633a]/10"
+                    style={{
+                      left: String(draftBox.x * 100) + "%",
+                      top: String(draftBox.y * 100) + "%",
+                      width: String(draftBox.width * 100) + "%",
+                      height: String(draftBox.height * 100) + "%",
+                    }}
+                  />
                 )}
 
-                {workflowStep === 3 && analysis && (
-                  <div className="p-5 lg:p-6">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <Badge className="border-violet-200 bg-violet-50 text-violet-700">{areas.length} Bereichsvorschläge</Badge>
-                        <h2 className="mt-3 text-xl font-extrabold tracking-[-0.02em]">Bereiche bestätigen</h2>
-                      </div>
-                      <Button variant="secondary" className="h-8" onClick={() => setMarkMode(true)}>
-                        <Plus size={14} /> Manuell
-                      </Button>
+                {busy === "analyzing" && (
+                  <div className="absolute inset-x-0 top-3 mx-auto flex w-fit items-center gap-2 rounded-full border border-black/5 bg-white/95 px-3 py-1.5 text-xs font-medium text-[#555c56] shadow-sm backdrop-blur">
+                    <Loader2 size={13} className="animate-spin" />
+                    Analyse läuft
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <aside className="flex min-h-[520px] flex-col bg-white">
+            <div className="border-b border-[#e7e8e6] px-4 pt-4">
+              <div className="grid grid-cols-4 rounded-lg bg-[#f3f4f3] p-1">
+                <PanelTab active={panel === "areas"} onClick={() => setPanel("areas")}>
+                  Bereiche
+                  {openAreas.length > 0 && <span className="ml-1 text-[#9a6b1c]">{openAreas.length}</span>}
+                </PanelTab>
+                <PanelTab active={panel === "details"} onClick={() => setPanel("details")} disabled={!confirmedAreas.length}>
+                  Angaben
+                  {missingRequired > 0 && <span className="ml-1 text-[#9a6b1c]">{missingRequired}</span>}
+                </PanelTab>
+                <PanelTab active={panel === "measurements"} onClick={() => setPanel("measurements")}>
+                  Maße
+                  {measurements.length > 0 && <span className="ml-1 text-[#6d746e]">{measurements.length}</span>}
+                </PanelTab>
+                <PanelTab active={panel === "handoff"} onClick={() => setPanel("handoff")} disabled={!confirmedAreas.length}>
+                  Übergabe
+                </PanelTab>
+              </div>
+              <div className="h-3" />
+            </div>
+
+            {error && (
+              <div className="mx-4 mt-4 flex items-start gap-2 rounded-lg border border-[#efd0d0] bg-[#fff6f6] px-3 py-2 text-xs leading-5 text-[#984141]">
+                <AlertCircle size={14} className="mt-0.5 shrink-0" />
+                <span className="flex-1">{error}</span>
+                <button type="button" onClick={() => setError(null)} aria-label="Fehler schließen">
+                  <X size={13} />
+                </button>
+              </div>
+            )}
+
+            <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto">
+              {panel === "areas" && (
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h2 className="text-base font-semibold tracking-[-0.02em]">Bereiche prüfen</h2>
+                      <p className="mt-1 text-xs text-[#808681]">
+                        {busy === "analyzing"
+                          ? "Vorschläge werden automatisch ergänzt."
+                          : areas.length
+                            ? String(openAreas.length) + " offen · " + String(confirmedAreas.length) + " bestätigt"
+                            : "Noch keine Bereiche erkannt."}
+                      </p>
                     </div>
-                    <p className="mt-2 text-sm leading-6 text-[#6a766e]">{analysis.documentSummary}</p>
-
-                    {analysis.warnings.length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        {analysis.warnings.map((warning) => (
-                          <div key={warning} className="flex gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900">
-                            <AlertTriangle size={14} className="mt-0.5 shrink-0" /> {warning}
-                          </div>
-                        ))}
-                      </div>
+                    {safeAreaCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={confirmSafeAreas}
+                        className="text-xs font-medium text-[#17633a] hover:underline"
+                      >
+                        {safeAreaCount} sichere übernehmen
+                      </button>
                     )}
+                  </div>
 
-                    <div className="mt-5 space-y-3">
-                      {areas.length === 0 && (
-                        <div className="rounded-xl border border-dashed border-[#cdd8cf] bg-[#f9fbf9] p-5 text-center text-sm text-[#6f7a72]">
-                          Keine belastbaren Bereiche erkannt. Nutze „Bereich markieren“ direkt im Plan.
-                        </div>
-                      )}
+                  {busy === "reading" && (
+                    <LoadingBlock title="PDF wird gelesen" subtitle="Text und Planmaße werden extrahiert." />
+                  )}
+
+                  {busy === "analyzing" && areas.length === 0 && (
+                    <LoadingBlock title="Plan wird analysiert" subtitle="Bereiche und Maße werden automatisch erkannt." />
+                  )}
+
+                  {areas.length > 0 && (
+                    <div className="mt-4 space-y-2">
                       {areas.map((area) => (
-                        <AreaReviewCard
+                        <AreaRow
                           key={area.id}
                           area={area}
                           selected={selectedAreaId === area.id}
@@ -769,243 +791,314 @@ export function StallplanWorkbench() {
                             setSelectedAreaId(area.id);
                             setActivePage(area.pageNumber);
                           }}
-                          onChange={(patch) => updateArea(area.id, patch)}
-                          onDelete={() => {
-                            setAreas((current) => current.filter((item) => item.id !== area.id));
-                            if (selectedAreaId === area.id) setSelectedAreaId(null);
-                          }}
+                          onKind={(kind) => updateArea(area.id, { kind, label: AREA_RULES[kind].title })}
+                          onConfirm={() => reviewArea(area.id, "confirmed")}
+                          onReject={() => reviewArea(area.id, "rejected")}
                         />
                       ))}
                     </div>
+                  )}
 
-                    {selectedArea && selectedArea.status !== "rejected" && (
-                      <div className="mt-5 rounded-xl border border-[#dbe3dc] bg-[#f7faf7] p-4">
-                        <div className="text-xs font-bold text-[#39463d]">PATURA-Fachlogik für {AREA_RULES[selectedArea.kind].title}</div>
-                        <div className="mt-3 text-[11px] font-bold uppercase tracking-wide text-[#849087]">Relevante Systeme</div>
-                        <div className="mt-1.5 flex flex-wrap gap-1.5">
-                          {AREA_RULES[selectedArea.kind].products.length ? (
-                            AREA_RULES[selectedArea.kind].products.map((product) => (
-                              <Badge key={product} className="border-[#cfe0d3] bg-white text-[#3f5c48]">{product}</Badge>
-                            ))
-                          ) : (
-                            <span className="text-xs text-[#7c867e]">Erst nach Klassifizierung verfügbar.</span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    <Button
-                      className="mt-5 w-full"
-                      disabled={!confirmedAreas.length}
-                      onClick={() => setWorkflowStep(4)}
+                  {!busy && areas.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setMarkMode(true)}
+                      className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#d4d8d4] px-4 py-8 text-sm text-[#6f766f] hover:bg-[#fafbfa]"
                     >
-                      Weiter zu Fragen & Maßen <ArrowRight size={16} />
-                    </Button>
+                      <Plus size={15} />
+                      Bereich manuell markieren
+                    </button>
+                  )}
+
+                  {analysis?.documentSummary && !busy && (
+                    <div className="mt-5 border-t border-[#eceeec] pt-4 text-xs leading-5 text-[#7d837e]">
+                      {analysis.documentSummary}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {panel === "details" && (
+                <div className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h2 className="text-base font-semibold tracking-[-0.02em]">Angaben</h2>
+                      <p className="mt-1 text-xs text-[#808681]">
+                        Nur fachlicher Kontext. Maße kommen aus dem Plan.
+                      </p>
+                    </div>
+                    {missingRequired === 0 ? (
+                      <Badge tone="green">vollständig</Badge>
+                    ) : (
+                      <Badge tone="amber">{missingRequired} offen</Badge>
+                    )}
                   </div>
-                )}
 
-                {workflowStep === 4 && analysis && (
-                  <div className="p-5 lg:p-6">
-                    <Badge className="border-emerald-200 bg-emerald-50 text-emerald-800">{confirmedAreas.length} bestätigte Bereiche</Badge>
-                    <h2 className="mt-3 text-xl font-extrabold tracking-[-0.02em]">Fachfragen & Maße</h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6a766e]">
-                      Fragen werden ausschließlich aus der Regelbasis des bestätigten Bereichstyps erzeugt.
-                    </p>
-
-                    <div className="mt-5 space-y-4">
-                      {confirmedAreas.map((area) => (
-                        <QuestionPanel
-                          key={area.id}
-                          area={area}
-                          answers={answers[area.id] ?? {}}
-                          onAnswer={(questionId, value) => setAnswer(area.id, questionId, value)}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="mt-7 flex items-center justify-between">
-                      <div>
-                        <h3 className="text-sm font-extrabold">Erkannte Maße</h3>
-                        <p className="mt-1 text-xs text-[#79847c]">Quelle und Bestätigung bleiben separat erhalten.</p>
-                      </div>
-                      <Badge className="border-slate-200 bg-slate-50 text-slate-700">{measurements.length}</Badge>
-                    </div>
-
-                    <div className="mt-3 space-y-2.5">
-                      {measurements.length === 0 && (
-                        <div className="rounded-xl border border-dashed border-[#d5ddd6] p-4 text-xs text-[#78837b]">
-                          Keine eindeutigen Maße erkannt. Fehlende Maße können später als Kundenangabe ergänzt werden.
-                        </div>
-                      )}
-                      {measurements.map((measurement) => (
-                        <MeasurementRow key={measurement.id} measurement={measurement} onChange={(patch) => updateMeasurement(measurement.id, patch)} />
-                      ))}
-                    </div>
-
-                    <Button className="mt-6 w-full" onClick={() => setWorkflowStep(5)}>
-                      Planungsdatensatz erstellen <ArrowRight size={16} />
-                    </Button>
+                  <div className="mt-4 space-y-3">
+                    {confirmedAreas.map((area) => (
+                      <QuestionCard
+                        key={area.id}
+                        area={area}
+                        answers={answers[area.id] ?? {}}
+                        onAnswer={(questionId, value) => setAnswer(area.id, questionId, value)}
+                        onFocus={() => {
+                          setSelectedAreaId(area.id);
+                          setActivePage(area.pageNumber);
+                        }}
+                      />
+                    ))}
                   </div>
-                )}
 
-                {workflowStep === 5 && handoff && (
-                  <div className="p-5 lg:p-6">
-                    <Badge className="border-emerald-200 bg-emerald-50 text-emerald-800"><CheckCircle2 size={12} className="mr-1" /> Übergabebereit</Badge>
-                    <h2 className="mt-3 text-xl font-extrabold tracking-[-0.02em]">Strukturierte Planungsanfrage</h2>
-                    <p className="mt-2 text-sm leading-6 text-[#6a766e]">
-                      Das Ergebnis enthält nur bestätigte Bereiche; erkannte Maße bleiben inklusive Quelle und Status vollständig nachvollziehbar.
-                    </p>
+                  <Button className="mt-5 w-full" onClick={() => setPanel("handoff")}>
+                    {missingRequired > 0 ? "Übergabe mit offenen Angaben" : "Übergabe erstellen"}
+                  </Button>
+                </div>
+              )}
 
-                    <div className="mt-5 grid grid-cols-2 gap-3">
-                      <Metric label="Bestätigte Bereiche" value={String(handoff.audit.confirmedAreaCount)} />
-                      <Metric label="Bestätigte Maße" value={String(handoff.audit.confirmedMeasurementCount)} />
+              {panel === "measurements" && (
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h2 className="text-base font-semibold tracking-[-0.02em]">Maße</h2>
+                      <p className="mt-1 text-xs text-[#808681]">Automatisch aus PDF-Text und Planbild.</p>
                     </div>
-
-                    <div className="mt-5 flex gap-2">
-                      <Button className="flex-1" onClick={downloadHandoff}><Download size={15} /> JSON herunterladen</Button>
-                      <Button variant="secondary" onClick={copyHandoff}>{copied ? <Check size={15} /> : <Clipboard size={15} />}</Button>
-                    </div>
-
-                    <div className="mt-5 overflow-hidden rounded-xl border border-[#d6dfd8] bg-[#172019]">
-                      <div className="flex items-center justify-between border-b border-white/10 px-3 py-2 text-[11px] font-bold text-white/60">
-                        <span>planning-request.json</span>
-                        <span>Schema v{handoff.schemaVersion}</span>
-                      </div>
-                      <pre className="scrollbar-thin max-h-[520px] overflow-auto p-3 text-[10px] leading-4 text-[#d9e7dc]">
-                        {JSON.stringify(handoff, null, 2)}
-                      </pre>
-                    </div>
-
-                    <div className="mt-5 rounded-xl border border-[#cfe0d3] bg-[#eef7f0] p-4 text-xs leading-5 text-[#355841]">
-                      <strong>Nächster Integrationspunkt:</strong> Dieses Objekt kann direkt an ein internes Stallplanungs-Backend, CRM oder einen späteren Dataset-Builder für historische Kundenplan/PATURA-Plan-Paare übergeben werden.
-                    </div>
+                    <Badge tone={measurements.length ? "green" : "neutral"}>{measurements.length} erkannt</Badge>
                   </div>
-                )}
-              </aside>
+
+                  {measurements.length === 0 && busy && (
+                    <LoadingBlock title="Maße werden gesucht" subtitle="PDF-Text und Bild werden abgeglichen." />
+                  )}
+
+                  {measurements.length === 0 && !busy && (
+                    <div className="mt-5 rounded-xl border border-dashed border-[#d8dbd8] px-4 py-7 text-center text-xs text-[#7b827c]">
+                      Keine belastbaren Planmaße erkannt.
+                    </div>
+                  )}
+
+                  <div className="mt-4 space-y-2">
+                    {measurements.map((measurement) => (
+                      <MeasurementRow
+                        key={measurement.id}
+                        measurement={measurement}
+                        selected={selectedMeasurementId === measurement.id}
+                        onSelect={() => {
+                          setSelectedMeasurementId(measurement.id);
+                          if (measurement.pageNumber) setActivePage(measurement.pageNumber);
+                        }}
+                        onChange={(patch) => updateMeasurement(measurement.id, patch)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {panel === "handoff" && (
+                <div className="p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eff7f1] text-[#17633a]">
+                    <CheckCircle2 size={19} />
+                  </div>
+                  <h2 className="mt-4 text-lg font-semibold tracking-[-0.03em]">Übergabe</h2>
+                  <p className="mt-1 text-xs leading-5 text-[#7c837d]">
+                    Strukturierter Datensatz für die Stallplanung.
+                  </p>
+
+                  <div className="mt-5 grid grid-cols-2 gap-2">
+                    <SummaryCard label="Bereiche" value={String(confirmedAreas.length)} />
+                    <SummaryCard label="Maße" value={String(measurements.length)} />
+                    <SummaryCard label="Offene Angaben" value={String(missingRequired)} />
+                    <SummaryCard label="Korrekturen" value={String(measurements.filter((item) => item.source === "customer").length)} />
+                  </div>
+
+                  {analysis?.warnings.length ? (
+                    <div className="mt-4 rounded-lg bg-[#fff9ed] px-3 py-2 text-[11px] leading-5 text-[#806126]">
+                      {analysis.warnings[0]}
+                    </div>
+                  ) : null}
+
+                  <Button className="mt-5 w-full" disabled={!handoff} onClick={downloadHandoff}>
+                    <Download size={15} />
+                    JSON herunterladen
+                  </Button>
+                  <Button className="mt-2 w-full" variant="secondary" disabled={!handoff} onClick={copyHandoff}>
+                    {copied ? <Check size={15} /> : <Clipboard size={15} />}
+                    {copied ? "Kopiert" : "JSON kopieren"}
+                  </Button>
+                </div>
+              )}
             </div>
-          )}
-        </section>
-      </div>
+          </aside>
+        </div>
+      )}
     </main>
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function PanelTab({
+  children,
+  active,
+  onClick,
+  disabled,
+}: {
+  children: ReactNode;
+  active: boolean;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
   return (
-    <div className="rounded-xl border border-[#dfe6e0] bg-[#f9fbf9] p-3.5">
-      <div className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#849087]">{label}</div>
-      <div className="mt-1.5 text-base font-extrabold tracking-[-0.02em] text-[#263129]">{value}</div>
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        "h-8 rounded-md px-1 text-[11px] font-medium transition",
+        active ? "bg-white text-[#2d322e] shadow-sm" : "text-[#777e78] hover:text-[#3e443f]",
+        disabled && "cursor-not-allowed opacity-35",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function LoadingBlock({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div className="mt-5 flex items-center gap-3 rounded-xl border border-[#e3e5e2] bg-[#fafbfa] p-4">
+      <Loader2 size={17} className="shrink-0 animate-spin text-[#17633a]" />
+      <div>
+        <div className="text-sm font-medium">{title}</div>
+        <div className="mt-0.5 text-xs text-[#868c87]">{subtitle}</div>
+      </div>
     </div>
   );
 }
 
-function AreaReviewCard({
+function AreaRow({
   area,
   selected,
   onSelect,
-  onChange,
-  onDelete,
+  onKind,
+  onConfirm,
+  onReject,
 }: {
   area: DetectedArea;
   selected: boolean;
   onSelect: () => void;
-  onChange: (patch: Partial<DetectedArea>) => void;
-  onDelete: () => void;
+  onKind: (kind: AreaType) => void;
+  onConfirm: () => void;
+  onReject: () => void;
 }) {
+  const confidence = area.confidence === null ? null : Math.round(area.confidence * 100);
+
   return (
-    <div className={cn("rounded-xl border p-3.5 transition", selected ? "border-[#8bb298] bg-[#f6faf7] ring-1 ring-[#cbe0d1]" : "border-[#dce3dd] bg-white")}>
-      <button type="button" onClick={onSelect} className="w-full text-left">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="truncate text-sm font-extrabold text-[#28332b]">{area.label}</div>
-            <div className="mt-1 flex flex-wrap gap-1.5">
-              <Badge className={sourceTone(area.source)}>{sourceLabel(area.source)}</Badge>
-              <Badge className={statusTone(area.status)}>{area.status === "confirmed" ? "bestätigt" : area.status === "rejected" ? "verworfen" : "offen"}</Badge>
-              <Badge className="border-slate-200 bg-slate-50 text-slate-600">S. {area.pageNumber}</Badge>
-            </div>
+    <div
+      className={cn(
+        "rounded-xl border px-3 py-3 transition",
+        selected ? "border-[#a9c8b2] bg-[#f8fbf8]" : "border-[#e3e5e2] bg-white",
+        area.status === "rejected" && "opacity-45",
+      )}
+    >
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex w-full items-center justify-between gap-3 text-left"
+      >
+        <div className="min-w-0">
+          <div className="truncate text-sm font-medium">{AREA_RULES[area.kind].title}</div>
+          <div className="mt-0.5 text-[11px] text-[#8a908b]">
+            Seite {area.pageNumber}
+            {confidence !== null ? " · " + String(confidence) + "%" : " · manuell"}
           </div>
-          {area.confidence !== null && <span className="text-xs font-bold text-[#707c74]">{confidenceLabel(area.confidence)}</span>}
         </div>
+        <span
+          className={cn(
+            "h-2.5 w-2.5 shrink-0 rounded-full",
+            area.status === "confirmed"
+              ? "bg-[#43945e]"
+              : area.status === "rejected"
+                ? "bg-[#b6bbb7]"
+                : "bg-[#d9a84e]",
+          )}
+        />
       </button>
 
-      <select
-        value={area.kind}
-        onChange={(event) => {
-          const kind = event.target.value as AreaType;
-          onChange({ kind, label: AREA_RULES[kind].title });
-        }}
-        className="mt-3 h-9 w-full rounded-lg border border-[#d5ddd6] bg-white px-2.5 text-xs font-semibold outline-none focus:border-[#75a383]"
-      >
-        {areaTypeOptions.map((option) => (
-          <option key={option.value} value={option.value}>{option.label}</option>
-        ))}
-      </select>
+      {selected && area.status !== "rejected" && (
+        <div className="mt-3 border-t border-[#e8ebe8] pt-3">
+          <select
+            value={area.kind}
+            onChange={(event) => onKind(event.target.value as AreaType)}
+            className="h-8 w-full rounded-md border border-[#dcdedb] bg-white px-2 text-xs outline-none focus:border-[#8eb69a]"
+          >
+            {areaTypeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-      {area.evidence.length > 0 && (
-        <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-[#778279]">{area.evidence.join(" · ")}</p>
+          {area.evidence[0] && (
+            <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-[#858b86]">{area.evidence[0]}</p>
+          )}
+
+          {area.status === "unconfirmed" && (
+            <div className="mt-3 grid grid-cols-[1fr_36px] gap-2">
+              <Button className="h-8 text-xs" onClick={onConfirm}>
+                <Check size={13} />
+                Übernehmen
+              </Button>
+              <Button className="h-8 px-0" variant="secondary" onClick={onReject}>
+                <X size={13} />
+              </Button>
+            </div>
+          )}
+        </div>
       )}
-
-      <div className="mt-3 flex gap-2">
-        <Button
-          variant={area.status === "confirmed" ? "primary" : "secondary"}
-          className="h-8 flex-1 text-xs"
-          onClick={() => onChange({ status: "confirmed" })}
-        >
-          <Check size={13} /> Bestätigen
-        </Button>
-        <Button
-          variant={area.status === "rejected" ? "danger" : "secondary"}
-          className="h-8 px-2.5"
-          onClick={() => onChange({ status: "rejected" })}
-        >
-          <X size={13} />
-        </Button>
-        {area.source === "manual" && (
-          <Button variant="ghost" className="h-8 px-2.5" onClick={onDelete}><Trash2 size={13} /></Button>
-        )}
-      </div>
     </div>
   );
 }
 
-function QuestionPanel({
+function QuestionCard({
   area,
   answers,
   onAnswer,
+  onFocus,
 }: {
   area: DetectedArea;
   answers: Record<string, AnswerValue>;
   onAnswer: (questionId: string, value: AnswerValue) => void;
+  onFocus: () => void;
 }) {
   const rule = AREA_RULES[area.kind];
+
   return (
-    <section className="rounded-xl border border-[#dce3dd] bg-[#fbfcfb] p-4">
-      <div className="flex items-start justify-between gap-3">
+    <section className="rounded-xl border border-[#e1e4e1] bg-white p-3.5" onFocus={onFocus}>
+      <div className="flex items-center justify-between gap-2">
         <div>
-          <div className="text-sm font-extrabold text-[#28332b]">{rule.title}</div>
-          <div className="mt-0.5 text-[11px] text-[#7a857d]">Seite {area.pageNumber} · {area.label}</div>
+          <div className="text-sm font-medium">{rule.title}</div>
+          <div className="mt-0.5 text-[11px] text-[#8a908b]">Seite {area.pageNumber}</div>
         </div>
-        <Badge className="border-[#cfe0d3] bg-[#edf6ef] text-[#3d6849]">{rule.questions.length} Fragen</Badge>
+        <Badge>{rule.questions.filter((question) => question.required).length} Pflicht</Badge>
       </div>
 
-      <div className="mt-4 space-y-3.5">
+      <div className="mt-4 space-y-3">
         {rule.questions.map((question) => (
           <label key={question.id} className="block">
-            <span className="flex items-center gap-1 text-xs font-bold text-[#465149]">
+            <span className="text-xs font-medium text-[#555c56]">
               {question.label}
-              {question.required && <span className="text-red-500">*</span>}
-              {question.unit && <span className="font-normal text-[#8a948d]">({question.unit})</span>}
+              {question.required && <span className="ml-0.5 text-[#a44b4b]">*</span>}
             </span>
-            {question.help && <span className="mt-1 block text-[11px] text-[#828d85]">{question.help}</span>}
 
             {question.type === "select" && (
               <select
                 value={String(answers[question.id] ?? "")}
                 onChange={(event) => onAnswer(question.id, event.target.value)}
-                className="mt-1.5 h-9 w-full rounded-lg border border-[#d5ddd6] bg-white px-2.5 text-xs outline-none focus:border-[#75a383]"
+                className="mt-1.5 h-9 w-full rounded-lg border border-[#dedfdd] bg-white px-2.5 text-sm outline-none transition focus:border-[#8db299]"
               >
-                <option value="">Bitte wählen</option>
-                {question.options?.map((option) => <option key={option} value={option}>{option}</option>)}
+                <option value="">Auswählen</option>
+                {question.options?.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
               </select>
             )}
 
@@ -1017,10 +1110,10 @@ function QuestionPanel({
                     type="button"
                     onClick={() => onAnswer(question.id, value)}
                     className={cn(
-                      "h-9 rounded-lg border text-xs font-bold transition",
+                      "h-9 rounded-lg border text-sm transition",
                       answers[question.id] === value
-                        ? "border-[#17633a] bg-[#eaf5ed] text-[#17633a]"
-                        : "border-[#d5ddd6] bg-white text-[#647068] hover:bg-[#f5f8f5]",
+                        ? "border-[#8fbaa0] bg-[#f0f7f2] text-[#17633a]"
+                        : "border-[#dedfdd] bg-white text-[#666d67] hover:bg-[#f8f9f8]",
                     )}
                   >
                     {value ? "Ja" : "Nein"}
@@ -1034,10 +1127,15 @@ function QuestionPanel({
                 type={question.type === "number" ? "number" : "text"}
                 value={String(answers[question.id] ?? "")}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  onAnswer(question.id, question.type === "number" && event.target.value !== "" ? Number(event.target.value) : event.target.value)
+                  onAnswer(
+                    question.id,
+                    question.type === "number" && event.target.value !== ""
+                      ? Number(event.target.value)
+                      : event.target.value,
+                  )
                 }
-                className="mt-1.5 h-9 w-full rounded-lg border border-[#d5ddd6] bg-white px-2.5 text-xs outline-none focus:border-[#75a383]"
-                placeholder={question.type === "number" ? "0" : "Angabe eintragen"}
+                className="mt-1.5 h-9 w-full rounded-lg border border-[#dedfdd] bg-white px-2.5 text-sm outline-none transition focus:border-[#8db299]"
+                placeholder={question.type === "number" ? "0" : "Angabe"}
               />
             )}
           </label>
@@ -1049,60 +1147,85 @@ function QuestionPanel({
 
 function MeasurementRow({
   measurement,
+  selected,
+  onSelect,
   onChange,
 }: {
   measurement: Measurement;
+  selected: boolean;
+  onSelect: () => void;
   onChange: (patch: Partial<Measurement>) => void;
 }) {
+  const source =
+    measurement.source === "pdf-text"
+      ? "PDF"
+      : measurement.source === "ai"
+        ? "KI"
+        : "Korrigiert";
+
   return (
-    <div className="rounded-xl border border-[#dce3dd] bg-white p-3.5">
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-xs font-bold text-[#3e4942]">{measurement.label}</div>
-          <div className="mt-1 flex gap-1.5">
-            <Badge className={sourceTone(measurement.source)}>{sourceLabel(measurement.source)}</Badge>
-            <Badge className={statusTone(measurement.status)}>{measurement.status === "confirmed" ? "bestätigt" : "offen"}</Badge>
-            {measurement.pageNumber && <Badge className="border-slate-200 bg-slate-50 text-slate-600">S. {measurement.pageNumber}</Badge>}
+    <div
+      className={cn(
+        "rounded-xl border p-3 transition",
+        selected ? "border-[#9bb7d7] bg-[#f8fbff]" : "border-[#e2e4e1] bg-white",
+      )}
+    >
+      <button type="button" onClick={onSelect} className="flex w-full items-start justify-between gap-3 text-left">
+        <div className="min-w-0">
+          <div className="truncate text-xs font-medium text-[#525953]">{measurement.label}</div>
+          <div className="mt-0.5 text-[11px] text-[#929792]">
+            {source}
+            {measurement.pageNumber ? " · Seite " + String(measurement.pageNumber) : ""}
           </div>
         </div>
-        {measurement.confidence !== null && measurement.source === "ai" && (
-          <span className="text-[11px] font-bold text-[#7a857d]">{confidenceLabel(measurement.confidence)}</span>
-        )}
-      </div>
+        <div className="shrink-0 text-sm font-semibold text-[#2f3530]">
+          {measurement.value.toLocaleString("de-DE", { maximumFractionDigits: 3 })} {measurement.unit}
+        </div>
+      </button>
 
-      <div className="mt-3 flex items-center gap-2">
-        <input
-          type="number"
-          step="any"
-          value={measurement.value}
-          onChange={(event) =>
-            onChange({
-              value: event.target.value === "" ? 0 : Number(event.target.value),
-              source: "customer",
-              status: "confirmed",
-              confidence: null,
-            })
-          }
-          className="h-9 min-w-0 flex-1 rounded-lg border border-[#d5ddd6] px-2.5 text-sm font-bold outline-none focus:border-[#75a383]"
-        />
-        <select
-          value={measurement.unit}
-          onChange={(event) => onChange({ unit: event.target.value as Measurement["unit"], source: "customer", status: "confirmed", confidence: null })}
-          className="h-9 rounded-lg border border-[#d5ddd6] bg-white px-2 text-xs font-bold outline-none focus:border-[#75a383]"
-        >
-          <option value="m">m</option>
-          <option value="cm">cm</option>
-          <option value="mm">mm</option>
-        </select>
-        <Button
-          variant={measurement.status === "confirmed" ? "primary" : "secondary"}
-          className="h-9 px-2.5"
-          onClick={() => onChange({ status: measurement.status === "confirmed" ? "unconfirmed" : "confirmed" })}
-        >
-          <Check size={14} />
-        </Button>
-      </div>
-      {measurement.evidence && <div className="mt-2 line-clamp-2 text-[10px] leading-4 text-[#8a948d]">{measurement.evidence}</div>}
+      {selected && (
+        <div className="mt-3 flex gap-2 border-t border-[#e7e9e7] pt-3">
+          <input
+            type="number"
+            step="any"
+            value={measurement.value}
+            onChange={(event) =>
+              onChange({
+                value: event.target.value === "" ? 0 : Number(event.target.value),
+                source: "customer",
+                status: "confirmed",
+                confidence: null,
+              })
+            }
+            className="h-8 min-w-0 flex-1 rounded-md border border-[#dcdedb] px-2 text-sm outline-none focus:border-[#8db299]"
+          />
+          <select
+            value={measurement.unit}
+            onChange={(event) =>
+              onChange({
+                unit: event.target.value as Measurement["unit"],
+                source: "customer",
+                status: "confirmed",
+                confidence: null,
+              })
+            }
+            className="h-8 rounded-md border border-[#dcdedb] bg-white px-2 text-xs outline-none focus:border-[#8db299]"
+          >
+            <option value="m">m</option>
+            <option value="cm">cm</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SummaryCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-[#e3e5e2] bg-[#fafbfa] p-3">
+      <div className="text-[10px] uppercase tracking-[0.08em] text-[#8c928d]">{label}</div>
+      <div className="mt-1 text-lg font-semibold tracking-[-0.03em]">{value}</div>
     </div>
   );
 }

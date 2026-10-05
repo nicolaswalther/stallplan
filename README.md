@@ -1,85 +1,74 @@
 # PATURA Stallplan Assistant
 
-MVP für die strukturierte Vorarbeit bei Stallplanungen:
+MVP für die automatisierte Vorarbeit bei Stallplanungen:
 
-**PDF hochladen → deterministisch auslesen → KI-Bereichsvorschläge → Nutzer bestätigt/korrigiert → PATURA-Fachfragen → strukturierte Planungsanfrage**
+**PDF hochladen → automatisch analysieren → Bereiche kurz prüfen → fachliche Angaben ergänzen → Planungsdatensatz übergeben**
 
-Die Anwendung trennt bewusst drei Ebenen:
+## Architektur
 
-1. **Deterministische Analyse** – PDF-Rendering, Text und eindeutig geschriebene Maße werden im Browser mit PDF.js extrahiert.
-2. **Visuelle / semantische Analyse** – OpenAI Vision analysiert gerenderte Seitenbilder zusammen mit dem bereits extrahierten Text und liefert ausschließlich strukturierte Vorschläge.
-3. **PATURA-Fachlogik** – Produkte, benötigte Maße und Rückfragen kommen aus einer expliziten Regelbasis (`lib/rules.ts`), nicht aus dem Modell.
+Die Anwendung trennt weiterhin klar:
+
+1. **Deterministische PDF-Analyse** – PDF.js extrahiert Seiten, Textpositionen und explizite Planmaße.
+2. **Semantische KI-Analyse** – OpenAI Vision erhält das Planbild plus positionsbezogene PDF-Textobjekte und schlägt Bereiche sowie zusätzliche Maße vor.
+3. **PATURA-Fachlogik** – Produkte, relevante Maßtypen und Rückfragen kommen aus `lib/rules.ts`, nicht aus dem Modell.
+
+Die KI erzeugt keine verbindliche Stallplanung.
 
 ## Stack
 
 - Next.js 16 / React / TypeScript
 - Tailwind CSS 4
-- PDF.js (`pdfjs-dist`)
+- PDF.js Legacy Build
 - OpenAI Responses API mit Structured Outputs
-- Zod zur Eingabe- und Antwortvalidierung
-- Keine Datenbank im MVP; Ergebnis wird als nachvollziehbares JSON exportiert
+- Zod
 
 ## Start
 
 ```bash
 npm install
 cp .env.example .env.local
-# OPENAI_API_KEY in .env.local setzen
 npm run dev
 ```
 
-Anschließend `http://localhost:3000` öffnen.
-
-### Umgebungsvariablen
-
 ```env
 OPENAI_API_KEY=...
-OPENAI_MODEL=gpt-5.6
+OPENAI_MODEL=gpt-6.1-sol
 ```
 
-`OPENAI_MODEL` ist optional. Standard ist `gpt-5.6`.
+`OPENAI_MODEL` ist optional. Ohne Angabe wird `gpt-6.1-sol` verwendet.
 
-## Was der MVP kann
+## Aktueller Ablauf
 
-- PDF per Drag & Drop einlesen
-- jede Seite lokal rendern
-- vorhandenen PDF-Text extrahieren
-- eindeutig geschriebene `m`, `cm`, `mm`-Maße deterministisch erfassen
-- Seitenbilder + PDF-Text an die KI-Analyse übergeben
-- strukturierte Bereichsvorschläge mit Confidence, Evidenz, Seite und Bounding Box erhalten
-- Bereiche bestätigen, verwerfen oder fachlich umklassifizieren
-- eigene Bereiche per Maus direkt in den Plan einzeichnen
-- pro bestätigtem Bereich ausschließlich hinterlegte PATURA-Fragen anzeigen
-- Maße mit Quelle und Status getrennt speichern
-- erkannte Werte durch Kundenwerte überschreiben, ohne die Provenienz zu verlieren
-- finale Planungsanfrage als JSON exportieren
+- PDF auswählen
+- PDF wird lokal gerendert
+- Text inklusive Positionen wird extrahiert
+- explizite Maße mit Einheit werden deterministisch erkannt
+- KI-Analyse startet automatisch
+- Vision gleicht Planbild und positionsbezogenen PDF-Text ab
+- Bereichsvorschläge werden geprüft oder gesammelt übernommen
+- individuelle Fragen betreffen nur fachlichen Kontext wie Tierart, Tiergruppe, Tieranzahl und Nutzung
+- Maße werden separat automatisch geführt und können bei Bedarf korrigiert werden
+- strukturierter JSON-Handoff
 
-## Sicherheits- und Qualitätsprinzipien
+## Warum die Maßerkennung jetzt besser ist
 
-- Die KI erzeugt **keine verbindliche Planung**.
-- Die KI trifft **keine Produktauswahl**.
-- Fehlende Angaben dürfen vom Modell nicht erfunden werden.
-- KI-Ergebnisse sind standardmäßig `unconfirmed`.
-- Manuell eingezeichnete Bereiche sind als `manual` gekennzeichnet.
-- PDF-Text-Maße und KI-Maße bleiben nach Quelle unterscheidbar.
-- Kundenseitig geänderte Maße werden als `customer` gespeichert.
-- Die Fachlogik ist versionierbarer TypeScript-Code und damit testbar.
+Die erste Version hat PDF-Text zu einem einzigen String zusammengezogen. Dadurch ging verloren, **wo** ein Maß auf dem Plan steht.
 
-## Aktuelle Einschränkungen
+Jetzt wird jedes Textobjekt mit normalisierten X/Y-Koordinaten gespeichert. Die KI erhält damit z. B. nicht nur `12,50 m`, sondern zusätzlich seine Position auf der Seite und kann den Wert mit dem sichtbaren Maßstrich bzw. Stallbereich abgleichen.
 
-- PDF zuerst; DWG/DXF noch nicht implementiert.
-- Visuelle KI-Analyse ist im MVP auf die ersten vier Planseiten begrenzt. Text wird über weitere Seiten dennoch berücksichtigt.
-- Echte Vektor-Geometrie, Maßkettenbeziehungen, Layer und Maßstabsableitung sind noch nicht implementiert.
-- Daten werden noch nicht serverseitig persistiert.
-- Die aktuelle Fachregelbasis ist ein startfähiges Beispiel und muss mit PATURA-Planern fachlich vervollständigt werden.
+Zusätzlich:
 
-## Nächste sinnvolle Ausbaustufen
+- höher aufgelöstes Seitenrendering
+- Erkennung auch bei getrennten PDF-Textobjekten wie `12,50` + `m`
+- räumliche Deduplizierung
+- PDF-Maße und KI-Maße werden zusammengeführt
+- Kundenkorrekturen bleiben separat nachvollziehbar
 
-1. **Vektorgeometrie aus PDF:** Linien, Polylinien, Maßketten, Textpositionen und Maßstab separat extrahieren.
-2. **Persistenz:** Projekte, Revisionen, Bereichsentscheidungen und Audit Trail in PostgreSQL.
-3. **Historische Planpaare:** Kundenplan + fertiger PATURA-Plan als strukturierte Trainings-/Evaluationsdatensätze aufbereiten.
-4. **DWG/DXF:** serverseitiger Import und Normalisierung in dasselbe interne Planmodell.
-5. **Fachregel-Editor:** Regeln nicht mehr nur im Code, sondern versioniert über ein internes Admin-UI pflegen.
-6. **Evaluation:** Erkennungsquote pro Bereichstyp, Fehlklassifizierungen und Nutzerkorrekturen messen.
+## Grenzen
 
-Weitere Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- DWG/DXF ist noch nicht implementiert.
+- Geometrische Längen werden bewusst **nicht aus Pixeln geschätzt**.
+- Bei Scans ohne Textlayer hängt die Maßerkennung stärker vom Vision-Modell ab.
+- Eine echte CAD-/Vektor-Geometrieanalyse von Maßlinien ist der nächste technische Qualitätssprung.
+
+Weitere Architekturdetails: `docs/ARCHITECTURE.md`.
