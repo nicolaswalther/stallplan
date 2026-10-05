@@ -1,6 +1,6 @@
 # PATURA Stallplan Assistant
 
-PDF hochladen → Maße und Bereiche automatisch vorbereiten → Ausnahmen korrigieren → wenige fachliche Angaben ergänzen → JSON für die Fachplanung exportieren.
+PDF hochladen → Plan prüfen → gemeinsame Wünsche festlegen → Planungsübersicht für die Fachplanung speichern.
 
 ## Start
 
@@ -33,9 +33,15 @@ Die lokale PDF-Analyse funktioniert auch ohne API-Schlüssel. `OPENAI_MODEL` üb
 
 ## Oberfläche und Daten
 
-Der Plan steht neben einer schlanken Kontextspalte. Zoom, Seitenwechsel, manuelle Bereiche und direkte Auswahl bleiben möglich. Ausgewählte Bereiche lassen sich verschieben und über vier Handles skalieren; Originalgeometrie und Korrekturhistorie bleiben erhalten. Sichere Vorschläge werden vorbereitet; unsichere Ergebnisse lassen sich gezielt prüfen. Tierart und Neubau/Bestand werden einmal auf Projektebene abgefragt. Maße sind keine Fachfragen.
+Der Plan steht neben einem Ablauf mit drei Schritten: **Plan prüfen, Wünsche, Übersicht**. Zoom, Seitenwechsel, manuelle Bereiche und direkte Auswahl bleiben möglich. Ausgewählte Bereiche lassen sich verschieben und über vier Handles skalieren; Originalgeometrie und Korrekturhistorie bleiben erhalten. KI-Sicherheit allein bestätigt keine Bereichsgeometrie. Vorschläge können einzeln oder gesammelt übernommen werden.
 
-Der Handoff (`schemaVersion: 1.2`) enthält Textobjekte, Geometrie, Maßprovenienz, Einheitsevidenz, Prüfstatus, Originalwerte und Korrekturhistorie. Ein Export mit offenen Angaben ist ausdrücklich als unvollständig erkennbar. Die Fachplanung bleibt beim Planer.
+Gleiche Bereichstypen teilen eine Vorgabe: beispielsweise alle Liegeboxen zusammen. Zwei bis drei notwendige Entscheidungen pro Gruppe betreffen Nutzung und Wünsche, keine Planmaße. Einzelne Bereiche dürfen davon abweichen; Herkunft und wirksame Antworten bleiben nachvollziehbar. Tierart, Situation und übergreifende Tiergruppe werden projektweit gespeichert. Die Gesamt-Tieranzahl wird nicht auf einzelne Bereiche kopiert.
+
+Tränken, Bürsten und zusätzliche Tore können auch ohne eingezeichnetes Objekt gewünscht werden. Frostschutz fragt nur bei Bedarf nach vorhandener Heiztechnik und einer gewünschten Ergänzung; elektrische Bürsten nach Strom, Außentore nach Windschutz. Weiterer Bedarf kann als Projektwunsch notiert werden. Die Fragen und möglichen Systemfamilien sind anhand offizieller Quellen abgeleitet und benötigen fachliche Freigabe: [PATURA-Recherche](docs/PATURA-RESEARCH.md).
+
+Der primäre Export ist eine eigenständige **druckbare HTML-Planungsübersicht** mit gemeinsamen Vorgaben, individuellen Abweichungen und nummerierten Planvorschauen. Sie lässt sich im Browser als PDF speichern. Es wird keine Anfrage versendet. **Technische Details** enthalten Maße, Quellen und JSON-Export. Technische Maßprüfungen blockieren die Wunschübersicht nicht; im Handoff bleiben sie offen.
+
+Der Handoff (`schemaVersion: 1.3`) enthält Gruppenvorgaben, Bereichsausnahmen, Antwortprovenienz (`project/group/area`), Zusatzwünsche sowie Textobjekte, Geometrie, Maßprovenienz und Korrekturhistorie. Ein Export mit offenen Angaben ist ausdrücklich als Entwurf erkennbar. Die Fachplanung bleibt beim Planer.
 
 ## Qualität prüfen
 

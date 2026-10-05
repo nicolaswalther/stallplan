@@ -47,14 +47,18 @@ Die reine strukturelle CLI-Analyse dauert hier etwa **0,7–0,9 Sekunden** einsc
 
 ## Bereiche: echter API-Lauf
 
-Ein erfolgreicher Browserlauf mit **GPT-6 Luna** lieferte in **19,6 Sekunden** neun Hauptbereiche: fünf Liegeboxenbereiche, zwei Laufgänge, einen Futtergang und einen Abkalbebereich. Alle neun unterstützten Hauptbereiche der Raumreferenz (Räume 7–15) sind richtig klassifiziert. Hilfsräume 1–5 und Melkhalle 6 gehören nicht zu diesem Klassifikationsumfang. Isolation 16 fehlt als eigenständige fachliche Kategorie; Tore sind in dieser Raumreferenz nicht evaluiert.
+Der erste erfolgreiche Browserlauf mit **GPT-6 Luna** lieferte in **19,6 Sekunden** neun Hauptbereiche: fünf Liegeboxenbereiche, zwei Laufgänge, einen Futtergang und einen Abkalbebereich. Alle neun damaligen Kategorien der Raumreferenz (Räume 7–15) waren richtig klassifiziert; Isolation 16 fehlte noch als Kategorie.
+
+Nach Erweiterung um Tierbuchten, Isolation, Tränken und Bürsten findet ein zweiter realer Browserlauf in **25,1 Sekunden** alle **zehn Hauptbereiche 7–16**, einschließlich Isolation. Rohklassifikation: 9/10 korrekt; Raum 12 „korytarz paszowy“ wurde als Laufgang ausgegeben. Die zusätzliche deterministische Interpretation eindeutiger Labels korrigiert diesen Widerspruch im aufgezeichneten echten Ergebnis zu `feeding_area`, ohne eine Box oder einen Wert zu erfinden: **10/10 korrekt nach Normalisierung**. Das ist ein Regressionstest auf diesem Referenzplan, keine allgemeine Erkennungsquote.
+
+Hilfsräume 1–5 und Melkhalle 6 gehören nicht zu diesem Produktumfang. Von allen 16 referenzierten Räumen werden deshalb zehn erfasst. Tore, Tränken und Bürsten sind nicht als Ground Truth annotiert; der aktuelle Modelllauf enthält hierfür keine Vorschläge und behauptet fehlende Ausstattung nicht als erkannt.
 
 Die Geometrie bleibt deutlich schwächer als die Klassifikation:
 
-- Mittlere Bounding-Box-IoU gegen die grobe Raumreferenz: **0,628**; acht von neun ≥ 0,5.
-- Laufgang 9 umfasst nur etwa **27,5 %** des umlaufenden Gangs.
-- Futtergang 12 umfasst etwa **68,4 %**, Abkalbung 15 etwa **58,7 %** der Referenzfläche.
-- Alle neun Modellvorschläge bleiben bei Confidence 0,87–0,92 zur Prüfung; sie werden nicht automatisch bestätigt.
+- Mittlere Bounding-Box-IoU im zweiten Lauf: **0,649**; neun von zehn ≥ 0,5. Footprint-IoU: **0,641**.
+- Laufgang 9 deckt nur etwa **36 %** des umlaufenden Gangs ab; die Rechteckform kann dessen U-Form nicht abbilden.
+- Laufgang 13 reicht in benachbarte Buchten hinein; Abkalbung 15 und Isolation 16 decken nur etwa **61 % / 65 %** ihrer Referenzfläche ab.
+- Das Modell meldet bei diesen Buchten trotzdem 0,97 Confidence. Deshalb bleiben **alle KI-Boxen prüfbare Vorschläge**. Eine Modell-Confidence allein bestätigt keine Geometrie mehr. Nutzer können Vorschläge gesammelt übernehmen oder gezielt korrigieren.
 
 Diese Boxen sind keine verlässlichen finalen Planflächen. Nutzer können sie im Plan verschieben, skalieren, verwerfen oder neu markieren. Präzise Polygonflächen und Aussparungen sind der nächste notwendige Geometrieschritt.
 
@@ -66,9 +70,11 @@ OCR-Zahlen sind empfindlich gegenüber Auflösung und Vorverarbeitung: Je nach V
 
 ## Prüfung und verbleibende Grenzen
 
-Die 46 automatisierten Regressionstests prüfen unter anderem Einheitenkonflikte, unbekannte Einheiten, gedrehte Texte, CropBox, Superskripte, getrennte Einheiten, Ketten, Höhenrollen, Teilergebnisse, Modellfallback, Review und historische Annotationen. TypeScript, ESLint und Produktionsbuild wurden geprüft.
+Automatisierte Regressionstests prüfen unter anderem Einheitenkonflikte, unbekannte Einheiten, gedrehte Texte, CropBox, Superskripte, getrennte Einheiten, Ketten, Höhenrollen, Teilergebnisse, Modellfallback, Review und historische Annotationen. Hinzu kommen Gruppenvorgaben, Bereichsausnahmen, bedingte Fragezweige, ehrliche Ungewissheit, Kopfzahlen mit korrektem Umfang, Antwortprovenienz, Geräte-False-Positives und sichere druckbare Exporte. TypeScript, ESLint und Produktionsbuild werden gemeinsam geprüft.
 
 Playwright prüft Upload, Loading, Rendering, Zoom/Fit, Maßtext/-linie, Bereichsauswahl, Übernehmen/Verwerfen, Verschieben/Skalieren mit Audit und Escape, manuelle Markierung, Fragen, Korrekturaudit, Review, Export und Neustart. Weitere Durchläufe prüfen verspätete Ergebnisse, Reset während Parsing, beschädigte PDFs, mehrseitige Pläne und mobile Darstellung. Ein echter API-Lauf prüft den Upload bis zu den Luna-Bereichen; kontrollierte API-Antworten dienen den reproduzierbaren Randfalltests.
+
+Die neue Wunschstrecke wird zusätzlich gegen aufgezeichnete erfolgreiche Luna-Ergebnisse geprüft: fünf Liegeboxenbereiche mit vier gemeinsamen Latexwünschen und einer Wasserbett-Ausnahme, gemeinsame Projekt-Tiergruppe, Zusatzwünsche für Tränken/Bürsten/Tore ohne Planposition, Heiztechnik- und Stromzweige, lesbare HTML-Übersicht, JSON 1.3, sekundäre Maßkorrektur und 390-Pixel-Ansicht. Die 36 technischen Maßausnahmen blockieren keine vollständig erfassten Wünsche; sie bleiben im Datensatz offen. Ein Nutzerbericht ist keine fertige Stallplanung und verschickt noch keine Anfrage.
 
 Verbleibend:
 
