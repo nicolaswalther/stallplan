@@ -9,6 +9,6 @@ const pdfjsRoot = dirname(require.resolve("pdfjs-dist/package.json"));
 
 mkdirSync(join(root, "public"), { recursive: true });
 copyFileSync(
-  join(pdfjsRoot, "build", "pdf.worker.min.mjs"),
+  join(pdfjsRoot, "legacy", "build", "pdf.worker.min.mjs"),
   join(root, "public", "pdf.worker.min.mjs"),
 );
