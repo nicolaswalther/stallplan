@@ -63,6 +63,7 @@ export interface Measurement {
   pageNumber: number | null;
   bbox: NormalizedBox | null;
   evidence: string;
+  originalEvidence?: string;
   sources?: string[];
   textObjectId?: string;
   kind?: "plan-length" | "opening-width" | "opening-height";
@@ -92,6 +93,17 @@ export interface DetectedArea {
   bbox: NormalizedBox;
   hasBbox: boolean;
   evidence: string[];
+  originalLabel?: string;
+  originalEvidence?: string[];
+  removedAt?: string;
+  removalPreviousStatus?: ReviewStatus;
+  boundaryRefinement?: {
+    method: "vector-rails";
+    originalBbox: NormalizedBox;
+    snappedSides: Array<"left" | "top" | "right" | "bottom">;
+    sourceLineIds: string[];
+    confidence: number;
+  };
   originalBbox?: NormalizedBox;
   originalSource?: AreaSource;
   originalConfidence?: number | null;
@@ -101,21 +113,35 @@ export interface DetectedArea {
 export type QuestionType = "text" | "number" | "select" | "boolean";
 export type AnswerValue = string | number | boolean;
 export type AnswerMap = Record<string, AnswerValue>;
+export interface ProjectFact {
+  value: AnswerValue;
+  confidence: number;
+  evidence: string[];
+  source: "pdf-text" | "ai";
+  pageNumber?: number;
+  scope: "project" | "group";
+  groupKind?: AreaType;
+}
+export type ProjectFacts = Record<string, ProjectFact>;
 export const EQUIPMENT_TYPES = ["drinker", "brush", "gate"] as const;
 export type EquipmentType = (typeof EQUIPMENT_TYPES)[number];
 
 /** Shared wishes never create a detected object or imply an equipment location. */
 export interface PlanningPreferences {
   groupAnswers: Partial<Record<AreaType, AnswerMap>>;
+  groupAnswerProvenance?: Partial<Record<AreaType, Record<string, AnswerProvenance>>>;
   areaOverrides: Record<string, AnswerMap>;
   additionalEquipment: Partial<Record<EquipmentType, boolean>>;
 }
 
 export interface AnswerProvenance {
-  source: "customer";
+  source: "customer" | "pdf-text" | "ai";
   scope: "project" | "group" | "area";
   groupKind?: AreaType;
   areaId?: string;
+  confidence?: number;
+  evidence?: string[];
+  pageNumber?: number;
 }
 
 export interface PlanningGroup {
@@ -150,19 +176,24 @@ export interface AiAnalysisResult {
   warnings: string[];
   areas: DetectedArea[];
   measurements: Measurement[];
+  projectFacts?: ProjectFacts;
+  originalAnalysis?: { documentSummary: string; warnings: string[] };
 }
 
 export interface PlanningHandoff {
-  schemaVersion: "1.2" | "1.3";
+  schemaVersion: "1.2" | "1.3" | "1.4";
   createdAt: string;
   project: {
     fileName: string;
     pageCount: number;
     answers?: AnswerMap;
+    answerProvenance?: Record<string, AnswerProvenance>;
+    detectedFacts?: ProjectFacts;
   };
   analysis: {
     summary: string;
     warnings: string[];
+    originalAnalysis?: { documentSummary: string; warnings: string[] };
   };
   areas: Array<{
     id: string;
@@ -173,6 +204,9 @@ export interface PlanningHandoff {
     source: AreaSource;
     confidence?: number | null;
     evidence: string[];
+    originalLabel?: string;
+    originalEvidence?: string[];
+    boundaryRefinement?: DetectedArea["boundaryRefinement"];
     relevantProducts: string[];
     requiredMeasurements: string[];
     answers: AnswerMap;

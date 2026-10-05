@@ -22,9 +22,12 @@ test("historical data rejects unknown areas and invalid document references", ()
   assert.throws(() => buildHistoricalSample(handoff, { ...review, annotations: [{ ...review.annotations[0], areaId: "missing" }] }), /Unknown/);
   assert.throws(() => buildHistoricalSample(handoff, { ...review, finalDocumentHash: "missing" }), /SHA-256/);
 });
-test("group-aware historical samples retain project totals separately from effective area answers", () => {
-  const current: PlanningHandoff = { ...handoff, schemaVersion: "1.3",
-    project: { ...handoff.project, answers: { animalSpecies: "Rind", animalCount: 200 } },
+for (const schemaVersion of ["1.3", "1.4"] as const) test(`${schemaVersion} historical samples retain project totals separately from effective area answers`, () => {
+  const current: PlanningHandoff = { ...handoff, schemaVersion,
+    project: { ...handoff.project, answers: { animalSpecies: "Rind", animalCount: 200 },
+      answerProvenance: { animalSpecies: { source: "pdf-text", scope: "project", confidence: 0.97, evidence: ["200 Rinder insgesamt"], pageNumber: 1 } },
+      detectedFacts: { animalSpecies: { value: "Rind", source: "pdf-text", scope: "project", confidence: 0.97, evidence: ["200 Rinder insgesamt"], pageNumber: 1 } },
+    },
     areas: [{ ...handoff.areas[0], answers: { animalSpecies: "Rind", feedingRestraint: "Ja" },
       answerProvenance: { feedingRestraint: { source: "customer", scope: "group", groupKind: "feeding_area" } } }],
     preferences: { groupAnswers: { feeding_area: { feedingRestraint: "Ja" } }, areaOverrides: {}, additionalEquipment: {} },
@@ -34,4 +37,13 @@ test("group-aware historical samples retain project totals separately from effec
   assert.equal(sample.planningContext.projectAnswers.animalCount, 200);
   assert.equal(sample.areas[0].customerAnswerProvenance?.feedingRestraint.scope, "group");
   assert.deepEqual(sample.planningContext.preferences, current.preferences);
+  assert.deepEqual(sample.planningContext.projectAnswerProvenance, current.project.answerProvenance);
+  assert.deepEqual(sample.planningContext.detectedFacts, current.project.detectedFacts);
+});
+
+test("legacy historical samples keep inheritance and tolerate absent provenance/facts", () => {
+  const sample = buildHistoricalSample(handoff, review);
+  assert.equal(sample.areas[0].customerAnswers.animalSpecies, "Rind");
+  assert.deepEqual(sample.planningContext.projectAnswerProvenance, {});
+  assert.deepEqual(sample.planningContext.detectedFacts, {});
 });

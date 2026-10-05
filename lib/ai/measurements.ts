@@ -41,17 +41,19 @@ export function validateRasterMeasurements(input: unknown, pages: PdfPageData[])
       const smallerArea = Math.min(item.bbox.width * item.bbox.height, measurement.bbox.width * measurement.bbox.height);
       return smallerArea > 0 && intersection / smallerArea >= 0.5;
     }));
-  const warnings = [...payload.warnings];
+  const warnings = payload.warnings.length ? ["Einzelne Rastermaße sind unsicher. Die Fachplanung prüft diese Werte."] : [];
   if (valid.length < payload.measurements.length) warnings.push("Nichtlineare oder nicht lokalisierbare Maßvorschläge wurden verworfen.");
   return {
     warnings,
     measurements: valid.map((measurement) => {
       const unit = payload.unitBasis.unit === "unknown" || payload.unitBasis.confidence < 0.8 ? "unknown" : measurement.unit;
       return {
-        id: crypto.randomUUID(), key: measurement.key, label: measurement.label, value: measurement.value, unit,
+        id: crypto.randomUUID(), key: measurement.key, label: "Planmaß", value: measurement.value, unit,
         source: "ai", sources: ["vision"], status: "unconfirmed", confidence: Math.min(measurement.confidence, unit === "unknown" ? 0.69 : payload.unitBasis.confidence),
-        pageNumber: measurement.pageNumber, bbox: measurement.bbox, evidence: measurement.evidence,
-        unitInference: payload.unitBasis,
+        pageNumber: measurement.pageNumber, bbox: measurement.bbox, evidence: "Schriftlicher Maßwert aus dem Scan; Position und Einheit bitte prüfen.", originalEvidence: measurement.evidence,
+        originalUnitInference: payload.unitBasis,
+        unitInference: { ...payload.unitBasis, evidence: payload.unitBasis.unit === "unknown" || payload.unitBasis.confidence < 0.8
+          ? "Einheit im Scan nicht ausreichend belegt." : "Einheit anhand der Zeichnungsangaben im Scan erkannt." },
       };
     }),
   };
@@ -60,6 +62,7 @@ export function validateRasterMeasurements(input: unknown, pages: PdfPageData[])
 export async function analyzeRasterMeasurements(client: OpenAI, model: string, fileName: string, pages: PdfPageData[]) {
   const selectedPages = selectRasterMeasurementPages(pages);
   const prompt = `Extrahiere aus den Rasterseiten des technischen Plans ${JSON.stringify(fileName)} ausschließlich schriftliche lineare Maßwerte.
+Die gesamte Ausgabe ist immer Deutsch, auch bei fremdsprachigen Plänen. Originaltext ausschließlich als deutlich gekennzeichnetes Dokumentzitat in evidence.
 Dies ist nur die Ersatzanalyse für Seiten ohne nutzbare PDF-Textobjekte; keine Vektorseiten untersuchen.
 Zahlen mit vorhandenen PDF-Textkoordinaten niemals aus dem Bild neu lesen. Diese werden separat direkt aus dem PDF übernommen. Nur zusätzliche Rastermaßtexte ohne entsprechendes PDF-Textobjekt extrahieren.
 Lies Maßtexte mit ihren Positionen. Niemals Längen aus Pixelabständen schätzen. Unklare Ziffern weglassen.

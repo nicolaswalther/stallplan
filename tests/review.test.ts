@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { applyAreaGeometryCorrection, applyMeasurementCorrection, mergeAreas, mergeMeasurements, needsMeasurementReview, prepareArea, transformAreaBox } from "../lib/plan/review";
+import { applyAreaGeometryCorrection, applyMeasurementCorrection, mergeAreas, mergeMeasurements, needsMeasurementReview, prepareArea, transformAreaBox, removeArea, restoreArea } from "../lib/plan/review";
 import type { DetectedArea, Measurement } from "../lib/types";
 
 function dimension(patch: Partial<Measurement> = {}): Measurement {
@@ -11,6 +11,22 @@ function area(patch: Partial<DetectedArea> = {}): DetectedArea {
   return { id: "a-1", kind: "feeding_area", label: "Fressbereich", source: "geometry", status: "unconfirmed", confidence: 0.96,
     pageNumber: 1, bbox: { x: 0.2, y: 0.3, width: 0.3, height: 0.1 }, hasBbox: true, evidence: ["Beschriftung und Umriss"], ...patch };
 }
+
+test("deleted manual areas disappear from active reviews, cannot revive late and restore their exact status", () => {
+  const original = area({ source: "manual", status: "confirmed" });
+  const removed = removeArea(original, "2026-10-05T12:00:00Z");
+  assert.equal(removed.status, "rejected");
+  assert.equal(removed.removedAt, "2026-10-05T12:00:00Z");
+  const late = mergeAreas([removed], [area({ id: "late-ai", source: "ai" })]);
+  assert.equal(late.length, 1);
+  assert.equal(late.filter((item) => item.status !== "rejected").length, 0);
+  assert.deepEqual(restoreArea(late[0]), original);
+  assert.equal(removeArea(removed), removed);
+  assert.equal(mergeAreas([original], [area({ id: "changed-type", kind: "pens", source: "ai" })]).length, 1);
+  assert.equal(mergeAreas([removed], [area({ id: "changed-type", kind: "pens", source: "ai" })]).length, 1);
+  const tinyDevice = area({ id: "tiny-drinker", kind: "drinker", source: "ai", bbox: { x: 0.3, y: 0.32, width: 0.01, height: 0.02 } });
+  assert.equal(mergeAreas([removed], [tinyDevice]).length, 2);
+});
 
 test("measurement corrections retain original value/unit and a chronological audit", () => {
   const originalInference = { unit: "cm" as const, confidence: 0.96, evidence: "Gedruckter Maßstab passt zur Vektorstrecke." };

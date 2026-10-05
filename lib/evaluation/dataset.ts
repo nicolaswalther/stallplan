@@ -47,9 +47,9 @@ export function buildHistoricalSample(
       prediction: { type: area.kind, geometry: area.bbox, labels: area.evidence, source: area.source,
         confidence: area.confidence ?? null, review: source.areaReviews?.find((item) => item.id === area.id) ?? null },
       measurements: source.measurements.filter((item) => relatedIds.has(item.id)),
-      // 1.3 already resolves area answers with scope-aware inheritance. A project
+      // From 1.3 onward area answers have scope-aware inheritance. A project
       // total must not be introduced as an individual area's animal count.
-      customerAnswers: source.schemaVersion === "1.3" ? { ...area.answers } : { ...source.project.answers, ...area.answers },
+      customerAnswers: source.schemaVersion !== "1.2" ? { ...area.answers } : { ...source.project.answers, ...area.answers },
       customerAnswerProvenance: area.answerProvenance ?? null,
       planner: { ...annotation },
     };
@@ -64,6 +64,8 @@ export function buildHistoricalSample(
     audit: source.audit,
     planningContext: {
       projectAnswers: source.project.answers ?? {},
+      projectAnswerProvenance: source.project.answerProvenance ?? {},
+      detectedFacts: source.project.detectedFacts ?? {},
       preferences: source.preferences ?? null,
       groups: source.planningGroups ?? [],
     },

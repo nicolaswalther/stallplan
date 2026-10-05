@@ -27,12 +27,15 @@ export function getPlanningGroups(areas: DetectedArea[], preferences: PlanningPr
   });
 }
 
-function mergeAnswers(target: ResolvedAnswers, incoming: AnswerMap, provenance: AnswerProvenance) {
+function mergeAnswers(target: ResolvedAnswers, incoming: AnswerMap, provenance: AnswerProvenance, savedProvenance: Record<string, AnswerProvenance> = {}) {
   for (const [id, value] of Object.entries(incoming)) {
     // Blank controls restore inheritance rather than storing an empty override.
     if (typeof value === "string" && !value.trim()) continue;
     target.answers[id] = value;
-    target.provenance[id] = provenance;
+    const saved = savedProvenance[id];
+    // Inheritance changes the target area, not the origin of the answer.
+    target.provenance[id] = saved && saved.scope === provenance.scope && saved.groupKind === provenance.groupKind
+      ? saved : provenance;
   }
 }
 
@@ -42,29 +45,33 @@ function applicableAnswers(kind: AreaType, result: ResolvedAnswers): ResolvedAns
     ...HERD_OVERRIDE_QUESTIONS.map((question) => question.id),
     ...getGroupQuestions(kind, result.answers).map((question) => question.id),
   ]);
+  // Current herd-group choices describe cattle. Keep raw wishes for a later
+  // species change, but do not export hidden cattle defaults for another species.
+  const species = result.answers.animalSpecies;
+  if (typeof species === "string" && species.trim() && species !== "Rind") allowed.delete("animalGroup");
   return {
     answers: Object.fromEntries(Object.entries(result.answers).filter(([id]) => allowed.has(id))),
     provenance: Object.fromEntries(Object.entries(result.provenance).filter(([id]) => allowed.has(id))),
   };
 }
 
-export function resolveGroupAnswers(kind: AreaType, projectAnswers: AnswerMap, preferences: PlanningPreferences = EMPTY_PLANNING_PREFERENCES): ResolvedAnswers {
+export function resolveGroupAnswers(kind: AreaType, projectAnswers: AnswerMap, preferences: PlanningPreferences = EMPTY_PLANNING_PREFERENCES, projectAnswerProvenance: Record<string, AnswerProvenance> = {}): ResolvedAnswers {
   const result: ResolvedAnswers = { answers: {}, provenance: {} };
-  mergeAnswers(result, Object.fromEntries(Object.entries(projectAnswers).filter(([id]) => !["animalCount", "planningNotes"].includes(id))), { source: "customer", scope: "project" });
-  mergeAnswers(result, preferences.groupAnswers[kind] ?? {}, { source: "customer", scope: "group", groupKind: kind });
+  mergeAnswers(result, Object.fromEntries(Object.entries(projectAnswers).filter(([id]) => !["animalCount", "planningNotes"].includes(id))), { source: "customer", scope: "project" }, projectAnswerProvenance);
+  mergeAnswers(result, preferences.groupAnswers[kind] ?? {}, { source: "customer", scope: "group", groupKind: kind }, preferences.groupAnswerProvenance?.[kind]);
   return applicableAnswers(kind, result);
 }
 
-export function getGroupAnswers(kind: AreaType, projectAnswers: AnswerMap, preferences: PlanningPreferences = EMPTY_PLANNING_PREFERENCES): AnswerMap {
-  return resolveGroupAnswers(kind, projectAnswers, preferences).answers;
+export function getGroupAnswers(kind: AreaType, projectAnswers: AnswerMap, preferences: PlanningPreferences = EMPTY_PLANNING_PREFERENCES, projectAnswerProvenance: Record<string, AnswerProvenance> = {}): AnswerMap {
+  return resolveGroupAnswers(kind, projectAnswers, preferences, projectAnswerProvenance).answers;
 }
 
-export function resolveAreaAnswers(area: Pick<DetectedArea, "id" | "kind">, projectAnswers: AnswerMap, preferences: PlanningPreferences = EMPTY_PLANNING_PREFERENCES): ResolvedAnswers {
+export function resolveAreaAnswers(area: Pick<DetectedArea, "id" | "kind">, projectAnswers: AnswerMap, preferences: PlanningPreferences = EMPTY_PLANNING_PREFERENCES, projectAnswerProvenance: Record<string, AnswerProvenance> = {}): ResolvedAnswers {
   // Resolve the branch after overrides, so an area may activate a question hidden
   // for its group. Raw group wishes must remain available during that resolution.
   const result: ResolvedAnswers = { answers: {}, provenance: {} };
-  mergeAnswers(result, Object.fromEntries(Object.entries(projectAnswers).filter(([id]) => !["animalCount", "planningNotes"].includes(id))), { source: "customer", scope: "project" });
-  mergeAnswers(result, preferences.groupAnswers[area.kind] ?? {}, { source: "customer", scope: "group", groupKind: area.kind });
+  mergeAnswers(result, Object.fromEntries(Object.entries(projectAnswers).filter(([id]) => !["animalCount", "planningNotes"].includes(id))), { source: "customer", scope: "project" }, projectAnswerProvenance);
+  mergeAnswers(result, preferences.groupAnswers[area.kind] ?? {}, { source: "customer", scope: "group", groupKind: area.kind }, preferences.groupAnswerProvenance?.[area.kind]);
   mergeAnswers(result, preferences.areaOverrides[area.id] ?? {}, { source: "customer", scope: "area", groupKind: area.kind, areaId: area.id });
   return applicableAnswers(area.kind, result);
 }

@@ -32,6 +32,18 @@ export function applyAreaGeometryCorrection(area: DetectedArea, bbox: Normalized
     geometryCorrections: [...(area.geometryCorrections ?? []), { at: new Date().toISOString(), bbox, source: "customer" }] };
 }
 
+/** Removed objects remain as tombstones so late analysis cannot recreate them. */
+export function removeArea(area: DetectedArea, at = new Date().toISOString()): DetectedArea {
+  return area.removedAt ? area : { ...area, status: "rejected", removedAt: at, removalPreviousStatus: area.status };
+}
+
+export function restoreArea(area: DetectedArea): DetectedArea {
+  if (!area.removedAt) return area;
+  const { removedAt: _at, removalPreviousStatus, ...rest } = area;
+  void _at;
+  return { ...rest, status: removalPreviousStatus ?? "unconfirmed" };
+}
+
 function center(box: NormalizedBox) {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 }
@@ -112,6 +124,16 @@ export function mergeAreas(base: DetectedArea[], incoming: DetectedArea[]) {
   const merged = [...base];
   for (const proposal of incoming) {
     const candidate = prepareArea(proposal);
+    // Deleted or manually corrected rooms keep the user's decision even when
+    // a later model classifies the same footprint differently.
+    // Symmetric IoU protects small real objects located inside a removed room.
+    if (merged.some((current) => {
+      if ((!current.removedAt && current.source !== "manual") || current.pageNumber !== candidate.pageNumber || !current.hasBbox || !candidate.hasBbox) return false;
+      const intersection = Math.max(0, Math.min(current.bbox.x + current.bbox.width, candidate.bbox.x + candidate.bbox.width) - Math.max(current.bbox.x, candidate.bbox.x))
+        * Math.max(0, Math.min(current.bbox.y + current.bbox.height, candidate.bbox.y + candidate.bbox.height) - Math.max(current.bbox.y, candidate.bbox.y));
+      const union = current.bbox.width * current.bbox.height + candidate.bbox.width * candidate.bbox.height - intersection;
+      return current.id === candidate.id || union > 0 && intersection / union >= 0.65;
+    })) continue;
     const index = merged.findIndex((current) => current.id === candidate.id
       || (current.pageNumber === candidate.pageNumber && current.kind === candidate.kind
         && current.hasBbox && candidate.hasBbox && overlap(current.bbox, candidate.bbox) >= 0.65));

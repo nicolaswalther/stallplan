@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { validateSemanticAreas } from "../lib/ai/areas";
+import { germanAreaLabel, validateSemanticAreas } from "../lib/ai/areas";
 import { classifyAreaLabel, classifyUnambiguousAreaLabel, detectStructuralAreas } from "../lib/analysis/areas";
 import type { AreaType, PdfPageData } from "../lib/types";
 
@@ -103,10 +103,28 @@ test("explicit feeding labels reconcile a mistaken alley type with traceable pro
   assert.equal(area.kind, "feeding_area");
   assert.equal(area.source, "ai");
   assert.equal(area.confidence, 0.9);
+  assert.equal(area.label, "Fressbereiche · 12");
+  assert.equal(area.originalLabel, label);
   assert.deepEqual(area.bbox, original.bbox);
-  assert.equal(area.evidence[0], original.evidence[0]);
-  assert.ok(area.evidence[1].includes("Beschriftungsklassifikation") && area.evidence[1].includes("KI-Typ: alley"));
+  assert.equal(area.originalEvidence?.[0], original.evidence[0]);
+  assert.ok(area.originalEvidence?.[1].includes("Beschriftungsklassifikation") && area.originalEvidence?.[1].includes("KI-Typ: alley"));
+  assert.ok(area.evidence.includes("Eindeutige Planbeschriftung bestätigt die Bereichsart."));
   assert.equal(classifyUnambiguousAreaLabel("Futtertisch / Fressbereich"), "feeding_area");
+});
+
+test("visible area labels are always canonical German while source labels remain in the audit", () => {
+  for (const [kind, label, expected] of [
+    ["cubicles", "8 – legowiska", "Liegeboxen · 8"],
+    ["calving", "15. porodówka", "Abkalbebuchten · 15"],
+    ["isolation", "Room 16: hospital pen", "Kranken- / Separationsbuchten · 16"],
+    ["pens", "calf pen", "Tierbuchten"],
+    ["cubicles", "2-reihige Liegeboxen", "Liegeboxen"],
+  ] as const) {
+    assert.equal(germanAreaLabel(kind, label), expected);
+    const result = validateSemanticAreas({ documentSummary: "Stall", warnings: [], areas: [{ ...candidate(kind, ["Beschriftung im Plan"]), label }] }, [enclosurePage("Stall")]);
+    assert.equal(result.areas[0].label, expected);
+    assert.equal(result.areas[0].originalLabel, label);
+  }
 });
 
 test("compound labels and adjacent-room evidence retain the original semantic decision", () => {
@@ -115,9 +133,27 @@ test("compound labels and adjacent-room evidence retain the original semantic de
   const unlabeled = { ...candidate("alley", ["Der Laufgang grenzt an den Futtertisch und die Liegeboxen."], 0.82), label: "Bereich 9" };
   const result = validateSemanticAreas({ documentSummary: "Stall", warnings: [], areas: [original, unlabeled] }, [enclosurePage("Stall")]);
   assert.deepEqual(result.areas.map((area) => area.kind), ["cubicles", "alley"]);
-  assert.deepEqual(result.areas[0].evidence, original.evidence);
-  assert.deepEqual(result.areas[1].evidence, unlabeled.evidence);
+  assert.deepEqual(result.areas[0].originalEvidence, original.evidence);
+  assert.deepEqual(result.areas[1].originalEvidence, unlabeled.evidence);
   assert.deepEqual(detectStructuralAreas([enclosurePage("Liegeboxen + Laufgang")]), []);
+});
+
+test("foreign model descriptions remain in the audit and public summaries and warnings stay German", () => {
+  const result = validateSemanticAreas({ documentSummary: "The barn contains cubicles.", warnings: ["The room boundary is uncertain."], areas: [{ ...candidate("cubicles", ["A row of cubicles is visible."]), label: "8 – legowiska" }] }, [enclosurePage("Stall")]);
+  assert.equal(result.documentSummary, "1 Stallbereich erkannt.");
+  assert.deepEqual(result.warnings, ["Bei einzelnen Bereichen ist die Erkennung unsicher. Bitte Markierungen prüfen."]);
+  assert.equal(result.originalAnalysis?.documentSummary, "The barn contains cubicles.");
+  assert.deepEqual(result.areas[0].originalEvidence, ["A row of cubicles is visible."]);
+  assert.ok(result.areas[0].evidence.every((item) => !item.includes("cubicles")));
+});
+
+test("repeated unlabeled cubicle rows have distinct application names without inventing PDF room numbers", () => {
+  const result = validateSemanticAreas({ documentSummary: "Stall", warnings: [], areas: [
+    { ...candidate("cubicles", ["Liegeboxenreihe sichtbar"]), label: "Liegeboxen", originalLabel: "legowiska 18 DJP" },
+    { ...candidate("cubicles", ["Liegeboxenreihe sichtbar"]), label: "Liegeboxen", originalLabel: "legowiska 18 DJP" },
+  ] }, [enclosurePage("Stall")]);
+  assert.deepEqual(result.areas.map((area) => area.label), ["Liegeboxen · Bereich 1", "Liegeboxen · Bereich 2"]);
+  assert.equal(result.areas[0].originalLabel, "legowiska 18 DJP");
 });
 
 test("equipment label reconciliation cannot manufacture its own document evidence", () => {
