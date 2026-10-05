@@ -78,6 +78,10 @@ button {
 .plan-viewport { flex: 0 0 auto; height: 54dvh; min-height: 320px; }
 .workbench-context { min-height: 360px; }
 
+@media (max-width: 1023px) {
+  .workbench-wishes .plan-viewport { height: 26dvh; min-height: 180px; }
+}
+
 @media (min-width: 1024px) {
   .workbench-layout { height: calc(100dvh - 60px); }
   .plan-viewport { flex: 1 1 0%; height: auto; min-height: 0; }

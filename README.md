@@ -28,20 +28,23 @@ Die lokale PDF-Analyse funktioniert auch ohne API-Schlüssel. `OPENAI_MODEL` üb
 - Einheit nur mit belegter Zeichnungsangabe oder mehreren konsistenten Text-/Vektorlängen. Sonst `unknown`, ohne Umrechnung.
 - Öffnungsbreiten und Öffnungshöhen bleiben unterschiedliche Maßtypen. Höhen besitzen keine erfundene Grundriss-Maßlinie.
 - Zahlen aus Maßstäben, Höhenkoten, DJP, Flächen, Volumen und Titelblock sind keine gewöhnlichen Längenmaße.
+- Automatische Bereichsrechtecke werden lokal an belegte PDF-Vektorgrenzen angepasst; Originalbox und Linienquellen bleiben erhalten. Keine zusätzliche KI-Anfrage.
 - Semantische Bereichserkennung als separater Vision-Schritt. Vorhandene Vektor-PDF-Zahlen werden nicht erneut per Vision gelesen. Rastermaße haben einen eigenen optionalen Analyseschritt.
 - PATURA-Systemmöglichkeiten und Fragen kommen aus versionierbaren Regeln, nicht aus Modell-Produktempfehlungen.
 
 ## Oberfläche und Daten
 
-Der Plan steht neben einem Ablauf mit drei Schritten: **Plan prüfen, Wünsche, Übersicht**. Zoom, Seitenwechsel, manuelle Bereiche und direkte Auswahl bleiben möglich. Ausgewählte Bereiche lassen sich verschieben und über vier Handles skalieren; Originalgeometrie und Korrekturhistorie bleiben erhalten. KI-Sicherheit allein bestätigt keine Bereichsgeometrie. Vorschläge können einzeln oder gesammelt übernommen werden.
+Der Plan steht neben einem Ablauf mit drei Schritten: **Plan prüfen, Wünsche, Übersicht**. Mausrad-Zoom funktioniert auch über markierten Bereichen; Umschalt + Mausrad verschiebt die Ansicht. Seitenwechsel steht oben, doppelte Fußleiste und permanenter Fertig-Status entfallen. Entfernte Bereiche verschwinden aus Plan und Liste und lassen sich direkt rückgängig machen; im technischen Audit bleiben sie nachvollziehbar. Ausgewählte Bereiche lassen sich verschieben und über vier Handles skalieren; Originalgeometrie und Korrekturhistorie bleiben erhalten. KI-Sicherheit allein bestätigt keine Bereichsgeometrie. Vorschläge können einzeln oder gesammelt übernommen werden.
 
-Gleiche Bereichstypen teilen eine Vorgabe: beispielsweise alle Liegeboxen zusammen. Zwei bis drei notwendige Entscheidungen pro Gruppe betreffen Nutzung und Wünsche, keine Planmaße. Einzelne Bereiche dürfen davon abweichen; Herkunft und wirksame Antworten bleiben nachvollziehbar. Tierart, Situation und übergreifende Tiergruppe werden projektweit gespeichert. Die Gesamt-Tieranzahl wird nicht auf einzelne Bereiche kopiert.
+Die Wünsche-Ansicht gibt dem Fragebogen mehr Bildschirmfläche und führt mit Weiter/Zurück durch einen Abschnitt nach dem anderen. Gleiche Bereichstypen teilen eine Vorgabe: beispielsweise alle Liegeboxen zusammen. Zwei bis drei notwendige Entscheidungen pro Gruppe betreffen Nutzung und Wünsche, keine Planmaße. Einzelne Bereiche dürfen davon abweichen; Herkunft und wirksame Antworten bleiben nachvollziehbar. Tierart, Situation und übergreifende Tiergruppe werden projektweit gespeichert. Die Gesamt-Tieranzahl wird nicht auf einzelne Bereiche kopiert.
 
 Tränken, Bürsten und zusätzliche Tore können auch ohne eingezeichnetes Objekt gewünscht werden. Frostschutz fragt nur bei Bedarf nach vorhandener Heiztechnik und einer gewünschten Ergänzung; elektrische Bürsten nach Strom, Außentore nach Windschutz. Weiterer Bedarf kann als Projektwunsch notiert werden. Die Fragen und möglichen Systemfamilien sind anhand offizieller Quellen abgeleitet und benötigen fachliche Freigabe: [PATURA-Recherche](docs/PATURA-RESEARCH.md).
 
 Der primäre Export ist eine eigenständige **druckbare HTML-Planungsübersicht** mit gemeinsamen Vorgaben, individuellen Abweichungen und nummerierten Planvorschauen. Sie lässt sich im Browser als PDF speichern. Es wird keine Anfrage versendet. **Technische Details** enthalten Maße, Quellen und JSON-Export. Technische Maßprüfungen blockieren die Wunschübersicht nicht; im Handoff bleiben sie offen.
 
-Der Handoff (`schemaVersion: 1.3`) enthält Gruppenvorgaben, Bereichsausnahmen, Antwortprovenienz (`project/group/area`), Zusatzwünsche sowie Textobjekte, Geometrie, Maßprovenienz und Korrekturhistorie. Ein Export mit offenen Angaben ist ausdrücklich als Entwurf erkennbar. Die Fachplanung bleibt beim Planer.
+Erkannte Tierart, Tiergruppe und ausdrücklich bezeichnete Gesamt-Tieranzahl können mit Quellenhinweis vorbefüllt werden. DJP, Plätze und lokale Bestände werden nicht als Gesamtkopfzahl übernommen. Widersprüche bleiben offen, Nutzereingaben haben Vorrang. Die Anwendungsausgabe ist Deutsch; Originalbeschriftungen bleiben separat im Audit erhalten.
+
+Der Handoff (`schemaVersion: 1.4`) enthält Gruppenvorgaben, Bereichsausnahmen, Antwortprovenienz (`project/group/area`), Zusatzwünsche sowie Textobjekte, Geometrie, Maßprovenienz und Korrekturhistorie. Ein Export mit offenen Angaben ist ausdrücklich als Entwurf erkennbar. Die Fachplanung bleibt beim Planer.
 
 ## Qualität prüfen
 
@@ -55,4 +58,4 @@ npm run evaluate -- /pfad/zum/beispielplan.pdf tests/fixtures/obora-reference.js
 
 Die Evaluation prüft den SHA-256 des Dokuments und vergleicht jedes Maßvorkommen einzeln nach Wert und Position. Der Kundenplan selbst wird nicht im Repository gespeichert. Die Referenz umfasst 194 visuell geprüfte Maßangaben, 26 Maßketten und 44 ausgeschlossene Nichtmaßangaben.
 
-Details: [Architektur](docs/ARCHITECTURE.md), [Evaluation und bekannte Grenzen](docs/EVALUATION.md). Der vorbereitete historische Dataset Builder liegt in `lib/evaluation/dataset.ts`; finale Systeme benötigen explizite Planerannotationen. Es findet kein Modelltraining statt.
+Details: [Architektur](docs/ARCHITECTURE.md), [Evaluation und bekannte Grenzen](docs/EVALUATION.md), [Vektorgrenzen-Vergleich](docs/BOUNDARY-QUALITY.md). Der vorbereitete historische Dataset Builder liegt in `lib/evaluation/dataset.ts`; finale Systeme benötigen explizite Planerannotationen. Es findet kein Modelltraining statt.

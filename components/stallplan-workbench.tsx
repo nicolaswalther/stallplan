@@ -2,36 +2,37 @@
 
 import {
   AlertCircle, ArrowRight, Check, ChevronLeft, ChevronRight, Clipboard, Download, Settings2,
-  FileUp, Loader2, Maximize2, Minus, MousePointer2, Plus, Ruler, X,
+  FileUp, Loader2, Maximize2, Minus, MousePointer2, Plus, Ruler, Trash2, X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent, ReactNode } from "react";
 
 import { detectStructuralAreas } from "@/lib/analysis/areas";
 import { extractDeterministicMeasurements } from "@/lib/deterministic";
 import { parsePdf } from "@/lib/pdf-client";
 import {
-  applyAreaGeometryCorrection, applyMeasurementCorrection, mergeAreas, mergeMeasurements, needsMeasurementReview, prepareArea, transformAreaBox,
+  applyAreaGeometryCorrection, applyMeasurementCorrection, mergeAreas, mergeMeasurements, needsMeasurementReview, prepareArea, transformAreaBox, removeArea, restoreArea,
 } from "@/lib/plan/review";
 import type { AreaGeometryGesture } from "@/lib/plan/review";
-import { AREA_RULES, DOMAIN_RULES_VERSION, PROJECT_QUESTIONS, PROJECT_CONTEXT_QUESTIONS, HERD_OVERRIDE_QUESTIONS, areaTypeOptions, getGroupQuestions } from "@/lib/rules";
+import { AREA_RULES, DOMAIN_RULES_VERSION, PROJECT_QUESTIONS, HERD_OVERRIDE_QUESTIONS, areaTypeOptions, getGroupQuestions } from "@/lib/rules";
 import { EMPTY_PLANNING_PREFERENCES, countMissingPlanningAnswers, getPlanningGroups, getGroupAnswers, getPlanningProducts, isAnswerMissing, resolveAreaAnswers, resolveGroupAnswers } from "@/lib/domain/planning-preferences";
 import { buildPlanningSummaryHtml } from "@/lib/plan/summary";
+import { anchoredScroll, wheelZoom } from "@/lib/plan/viewport";
+import { detectProjectFacts } from "@/lib/analysis/project-facts";
+import { applyDetectedFacts } from "@/lib/domain/inferred-preferences";
+import { PlanningWishes } from "./planning-wishes";
 import type {
-  AreaType, DetectedArea, DomainQuestion, Measurement, NormalizedBox, PdfPageData, PlanningHandoff, PlanningPreferences,
+  AreaType, AnswerProvenance, DetectedArea, DomainQuestion, Measurement, NormalizedBox, PdfPageData, PlanningHandoff, PlanningPreferences, ProjectFacts,
 } from "@/lib/types";
 
 type Panel = "areas" | "details" | "measurements" | "handoff";
 type AnswerValue = string | number | boolean;
-type AnalysisMeta = { model: string; actualModels?: { areas?: string; measurements?: string }; documentSummary: string; warnings: string[] };
-type ApiResponse = AnalysisMeta & { areas: DetectedArea[]; measurements: Measurement[]; error?: string };
+type AnalysisMeta = { model: string; actualModels?: { areas?: string; measurements?: string }; documentSummary: string; warnings: string[]; originalAnalysis?: { documentSummary: string; warnings: string[] } };
+type ApiResponse = AnalysisMeta & { areas: DetectedArea[]; measurements: Measurement[]; projectFacts?: ProjectFacts; error?: string };
 
 const PRIMARY_STEPS: Array<{ panel: Panel; label: string }> = [
   { panel: "areas", label: "Plan prüfen" }, { panel: "details", label: "Wünsche" }, { panel: "handoff", label: "Übersicht" },
 ];
-const EQUIPMENT_OPTIONS = [
-  { kind: "drinker", label: "Tränken" }, { kind: "brush", label: "Kuhbürsten" }, { kind: "gate", label: "Tore / Durchgänge" },
-] as const;
 const KIND_LABELS = { vector: "Vektor-PDF", raster: "Scan", mixed: "Gemischte PDF" };
 
 function cn(...classes: Array<string | false | null | undefined>) { return classes.filter(Boolean).join(" "); }
@@ -94,8 +95,12 @@ export function StallplanWorkbench() {
   const [areas, setAreas] = useState<DetectedArea[]>([]);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [projectAnswers, setProjectAnswers] = useState<Record<string, AnswerValue>>({});
+  const [projectFacts, setProjectFacts] = useState<ProjectFacts>({});
+  const [projectAnswerProvenance, setProjectAnswerProvenance] = useState<Record<string, AnswerProvenance>>({});
   const [preferences, setPreferences] = useState<PlanningPreferences>(EMPTY_PLANNING_PREFERENCES);
   const [selectedGroupId, setSelectedGroupId] = useState<AreaType | null>(null);
+  const [initialWishGroup, setInitialWishGroup] = useState<AreaType | null>(null);
+  const [lastRemovedId, setLastRemovedId] = useState<string | null>(null);
   const [technicalOpen, setTechnicalOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>("areas");
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
@@ -113,6 +118,7 @@ export function StallplanWorkbench() {
   const [viewportSize, setViewportSize] = useState({ width: 1000, height: 700 });
   const [copied, setCopied] = useState(false);
   const runRef = useRef(0);
+  const selectionTouchedRef = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const areaGestureRef = useRef<{ areaId: string; pageNumber: number; original: NormalizedBox; gesture: AreaGeometryGesture;
@@ -123,18 +129,25 @@ export function StallplanWorkbench() {
   const navigationRef = useRef<HTMLElement>(null);
   const selectedHighlightRef = useRef<HTMLDivElement>(null);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const zoomRef = useRef(zoom);
+  const zoomAnchorRef = useRef<{ x: number; y: number; cursorX: number; cursorY: number } | null>(null);
+  const touchedFactsRef = useRef(new Set<string>());
+  const answersRef = useRef(projectAnswers);
+  const preferencesRef = useRef(preferences);
+  const answerProvenanceRef = useRef(projectAnswerProvenance);
+  const visibleProjectFacts = Object.fromEntries(Object.entries(projectFacts).filter(([id]) =>
+    projectAnswerProvenance[id]?.source === "pdf-text" || projectAnswerProvenance[id]?.source === "ai"));
 
   const currentPage = pages.find((page) => page.pageNumber === activePage) ?? pages[0];
   const confirmedAreas = useMemo(() => areas.filter((area) => area.status === "confirmed"), [areas]);
   const openAreas = areas.filter((area) => area.status === "unconfirmed");
   const selectedMeasurement = measurements.find((measurement) => measurement.id === selectedMeasurementId) ?? null;
   const planningGroups = useMemo(() => getPlanningGroups(confirmedAreas, preferences), [confirmedAreas, preferences]);
-  const selectedGroup = planningGroups.find((group) => group.id === selectedGroupId) ?? planningGroups[0];
-  const questionArea = selectedGroup ? confirmedAreas.find((area) => selectedGroup.areaIds.includes(area.id) && area.id === selectedAreaId)
-    ?? confirmedAreas.find((area) => selectedGroup.areaIds.includes(area.id)) : undefined;
+  const selectedGroup = planningGroups.find((group) => group.id === selectedGroupId);
   const reviewMeasurements = measurements.filter(needsMeasurementReview);
   const usableMeasurements = measurements.filter((item) => item.status !== "rejected");
-  const visibleAreas = areaFilter === "review" ? openAreas : areas;
+  const activeAreas = areas.filter((area) => area.status !== "rejected");
+  const visibleAreas = areaFilter === "review" ? openAreas : activeAreas;
   const visibleMeasurements = measurements.filter((item) => (measurementFilter !== "review" || needsMeasurementReview(item))
     && (!measurementSearch || `${item.value} ${item.unit} ${item.label}`.toLowerCase().includes(measurementSearch.toLowerCase().replace(",", "."))));
   const missingRequired = countMissingPlanningAnswers(confirmedAreas, projectAnswers, preferences);
@@ -142,6 +155,10 @@ export function StallplanWorkbench() {
   const wishesReady = !busy && planningGroups.length > 0 && !missingRequired;
   const bulkAreas = openAreas.filter((area) => area.kind !== "unknown" && area.hasBbox && (area.confidence ?? 0) >= 0.8);
   const planWidth = currentPage ? Math.max(180, Math.min(viewportSize.width - 40, (viewportSize.height - 40) * currentPage.width / currentPage.height)) * zoom : 0;
+
+  useLayoutEffect(() => {
+    answersRef.current = projectAnswers; preferencesRef.current = preferences; answerProvenanceRef.current = projectAnswerProvenance;
+  }, [projectAnswers, preferences, projectAnswerProvenance]);
 
   useEffect(() => {
     return () => { runRef.current += 1; abortRef.current?.abort(); if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current); };
@@ -171,6 +188,38 @@ export function StallplanWorkbench() {
     return () => observer.disconnect();
   }, [pages.length]);
   useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    function onWheel(event: WheelEvent) {
+      // Shift-wheel retains native horizontal/vertical panning.
+      if (event.shiftKey) return;
+      const canvas = planCanvasRef.current;
+      if (!canvas || !viewport || !event.deltaY) return;
+      event.preventDefault();
+      const next = wheelZoom(zoomRef.current, event.deltaY, event.deltaMode, viewport.clientHeight);
+      if (next === zoomRef.current) return;
+      const plan = canvas.getBoundingClientRect(), bounds = viewport.getBoundingClientRect();
+      zoomAnchorRef.current = { x: (event.clientX - plan.left) / plan.width, y: (event.clientY - plan.top) / plan.height,
+        cursorX: event.clientX - bounds.left, cursorY: event.clientY - bounds.top };
+      // Changing scale during a gesture cancels its preview, never saves a jump.
+      const gesture = areaGestureRef.current;
+      areaGestureRef.current = null; setAreaDraft(null); dragStartRef.current = null; setDraftBox(null);
+      if (gesture?.target.hasPointerCapture(gesture.pointerId)) gesture.target.releasePointerCapture(gesture.pointerId);
+      zoomRef.current = next; setZoom(next);
+    }
+    viewport.addEventListener("wheel", onWheel, { passive: false });
+    return () => viewport.removeEventListener("wheel", onWheel);
+  }, [pages.length]);
+  useLayoutEffect(() => {
+    zoomRef.current = zoom;
+    const viewport = viewportRef.current, canvas = planCanvasRef.current, anchor = zoomAnchorRef.current;
+    if (!viewport || !canvas || !anchor) return;
+    const plan = canvas.getBoundingClientRect(), bounds = viewport.getBoundingClientRect();
+    viewport.scrollLeft = anchoredScroll(anchor.x, plan.width, plan.left - bounds.left + viewport.scrollLeft, anchor.cursorX);
+    viewport.scrollTop = anchoredScroll(anchor.y, plan.height, plan.top - bounds.top + viewport.scrollTop, anchor.cursorY);
+    zoomAnchorRef.current = null;
+  }, [zoom]);
+  useEffect(() => {
     contextRef.current?.scrollTo({ top: 0 });
     if (window.matchMedia("(max-width: 1023px)").matches) navigationRef.current?.scrollIntoView({ block: "start" });
   }, [panel]);
@@ -184,41 +233,44 @@ export function StallplanWorkbench() {
         top: viewport.scrollTop + target.y + target.height / 2 - bounds.y - bounds.height / 2, behavior: "smooth" });
     });
     return () => cancelAnimationFrame(frame);
-  }, [activePage, selectedMeasurementId, panel, zoom]);
+  }, [activePage, selectedMeasurementId, panel]);
 
   const handoff = useMemo<PlanningHandoff | null>(() => {
     if (!file || !pages.length || !analysis) return null;
     return {
-      schemaVersion: "1.3", createdAt: new Date().toISOString(),
+      schemaVersion: "1.4", createdAt: new Date().toISOString(),
       preferences,
-      planningGroups: planningGroups.map((group) => ({ ...group, answers: resolveGroupAnswers(group.kind, projectAnswers, preferences).answers,
-        answerProvenance: resolveGroupAnswers(group.kind, projectAnswers, preferences).provenance })),
-      project: { fileName: file.name, pageCount: pages.length, answers: projectAnswers },
-      analysis: { summary: analysis.documentSummary, warnings: analysis.warnings },
+      planningGroups: planningGroups.map((group) => ({ ...group, answers: resolveGroupAnswers(group.kind, projectAnswers, preferences, projectAnswerProvenance).answers,
+        answerProvenance: resolveGroupAnswers(group.kind, projectAnswers, preferences, projectAnswerProvenance).provenance })),
+      project: { fileName: file.name, pageCount: pages.length, answers: projectAnswers, answerProvenance: projectAnswerProvenance, detectedFacts: projectFacts },
+      analysis: { summary: analysis.documentSummary, warnings: analysis.warnings, originalAnalysis: analysis.originalAnalysis },
       documents: [{ fileName: file.name, pages: pages.map((page) => ({ pageNumber: page.pageNumber, width: page.width, height: page.height,
         documentKind: page.documentKind, textObjects: page.textItems, geometryObjects: page.lines ?? [], extractionWarnings: page.extractionWarnings })) }],
       areas: confirmedAreas.map((area) => ({ id: area.id, kind: area.kind, label: area.label, pageNumber: area.pageNumber,
         bbox: area.hasBbox ? area.bbox : null, source: area.source, confidence: area.confidence, evidence: area.evidence,
+        originalLabel: area.originalLabel, originalEvidence: area.originalEvidence, boundaryRefinement: area.boundaryRefinement,
         relevantProducts: getPlanningProducts(area.kind, resolveAreaAnswers(area, projectAnswers, preferences).answers), requiredMeasurements: AREA_RULES[area.kind].measurements,
         answers: resolveAreaAnswers(area, projectAnswers, preferences).answers,
-        answerProvenance: resolveAreaAnswers(area, projectAnswers, preferences).provenance })),
+        answerProvenance: resolveAreaAnswers(area, projectAnswers, preferences, projectAnswerProvenance).provenance })),
       measurements,
       areaReviews: areas,
       review: { openAreaCount: openAreas.length, unresolvedMeasurementCount: reviewMeasurements.length, missingAnswerCount: missingRequired, pendingAnalysis: Boolean(busy), ready },
       audit: { aiModel: analysis.model, actualModels: analysis.actualModels, rulesVersion: DOMAIN_RULES_VERSION, confirmedAreaCount: confirmedAreas.length, detectedMeasurementCount: measurements.length,
         customerCorrectedMeasurementCount: measurements.filter((measurement) => measurement.source === "customer").length },
     };
-  }, [file, pages, analysis, projectAnswers, confirmedAreas, preferences, planningGroups, measurements, areas, openAreas.length, reviewMeasurements.length, missingRequired, ready, busy]);
+  }, [file, pages, analysis, projectAnswers, projectAnswerProvenance, projectFacts, confirmedAreas, preferences, planningGroups, measurements, areas, openAreas.length, reviewMeasurements.length, missingRequired, ready, busy]);
 
   function reset() {
     runRef.current += 1;
     abortRef.current?.abort();
     abortRef.current = null;
     if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
-    setFile(null); setPages([]); setAreas([]); setMeasurements([]); setPreferences(EMPTY_PLANNING_PREFERENCES); setSelectedGroupId(null); setTechnicalOpen(false); setProjectAnswers({}); setAnalysis(null);
+    setFile(null); setPages([]); setAreas([]); setMeasurements([]); setPreferences(EMPTY_PLANNING_PREFERENCES); setSelectedGroupId(null); setInitialWishGroup(null); setLastRemovedId(null); setProjectFacts({}); setTechnicalOpen(false); setProjectAnswers({}); setAnalysis(null);
     setActivePage(1); setPanel("areas"); setSelectedAreaId(null); setSelectedMeasurementId(null); setMarkMode(false);
     setDraftBox(null); dragStartRef.current = null; areaGestureRef.current = null; setAreaDraft(null); setError(null); setBusy(null); setCopied(false);
-    setAreaFilter("all"); setMeasurementFilter("all"); setMeasurementSearch(""); setZoom(1);
+    setAreaFilter("all"); setMeasurementFilter("all"); setMeasurementSearch(""); zoomRef.current = 1; zoomAnchorRef.current = null; setZoom(1);
+    selectionTouchedRef.current = false;
+    touchedFactsRef.current.clear(); answersRef.current = {}; preferencesRef.current = EMPTY_PLANNING_PREFERENCES; answerProvenanceRef.current = {}; setProjectAnswerProvenance({});
   }
 
   async function analyzePlan(nextFile: File, parsedPages: PdfPageData[], generation: number) {
@@ -235,11 +287,12 @@ export function StallplanWorkbench() {
       const data = await response.json() as ApiResponse;
       if (runRef.current !== generation) return;
       if (!response.ok) throw new Error(data.error || "Bereichsanalyse nicht verfügbar.");
-      setAnalysis({ model: data.model, actualModels: data.actualModels, documentSummary: data.documentSummary, warnings: data.warnings });
+      setAnalysis({ model: data.model, actualModels: data.actualModels, documentSummary: data.documentSummary, warnings: data.warnings, originalAnalysis: data.originalAnalysis });
       setAreas((current) => mergeAreas(current, data.areas));
       setMeasurements((current) => mergeMeasurements(current, data.measurements));
+      adoptFacts(data.projectFacts ?? detectProjectFacts(parsedPages, data.areas), true);
       // Optional analysis must not take selection away from someone already reviewing the plan.
-      setSelectedAreaId((current) => current ?? data.areas.find((area) => area.status === "unconfirmed")?.id ?? data.areas[0]?.id ?? null);
+      if (!selectionTouchedRef.current) setSelectedAreaId((current) => current ?? data.areas.find((area) => area.status === "unconfirmed")?.id ?? data.areas[0]?.id ?? null);
     } catch (cause) {
       if (runRef.current !== generation || controller.signal.aborted) return;
       setAnalysis((current) => current && { ...current, warnings: [...current.warnings,
@@ -262,36 +315,76 @@ export function StallplanWorkbench() {
       const deterministic = extractDeterministicMeasurements(parsedPages);
       const structural = detectStructuralAreas(parsedPages).map(prepareArea);
       setPages(parsedPages); setActivePage(1); setMeasurements(deterministic); setAreas(structural);
+      adoptFacts(detectProjectFacts(parsedPages, structural));
       setSelectedAreaId(structural.find((area) => area.status === "unconfirmed")?.id ?? structural[0]?.id ?? null);
       setAnalysis({ model: "PDF", documentSummary: "PDF strukturell analysiert.",
         warnings: [...new Set(parsedPages.flatMap((page) => page.extractionWarnings ?? []))] });
       await analyzePlan(nextFile, parsedPages, generation);
-    } catch (cause) {
+    } catch {
       if (runRef.current !== generation) return;
       reset();
-      setError(cause instanceof Error && /invalid pdf|invalidpdf/i.test(cause.message) ? "PDF konnte nicht gelesen werden. Bitte Datei prüfen." : cause instanceof Error ? cause.message : "PDF konnte nicht gelesen werden.");
+      setError("PDF konnte nicht gelesen werden. Bitte Datei prüfen.");
     }
   }
 
   function updateArea(id: string, patch: Partial<DetectedArea>) { setAreas((current) => current.map((area) => area.id === id ? { ...area, ...patch } : area)); }
   function reviewArea(id: string, status: "confirmed" | "rejected") {
-    const next = areas.find((area) => area.id !== id && area.status === "unconfirmed");
-    updateArea(id, { status });
-    if (next) { setSelectedAreaId(next.id); setActivePage(next.pageNumber); }
+    selectionTouchedRef.current = true;
+    const next = areas.find((area) => area.id !== id && area.status === "unconfirmed")
+      ?? areas.find((area) => area.id !== id && area.status === "confirmed");
+    if (status === "rejected") {
+      setAreas((current) => current.map((area) => area.id === id ? removeArea(area) : area));
+      setLastRemovedId(id);
+    } else updateArea(id, { status });
+    setSelectedAreaId(next?.id ?? null);
+    if (next) setActivePage(next.pageNumber);
+  }
+  function undoRemoval() {
+    const removed = areas.find((area) => area.id === lastRemovedId);
+    if (!removed) return;
+    setAreas((current) => current.map((area) => area.id === removed.id ? restoreArea(area) : area));
+    selectArea(removed); setLastRemovedId(null);
   }
   function updateMeasurement(id: string, value: number, unit: Measurement["unit"]) {
     setMeasurements((current) => current.map((measurement) => measurement.id === id ? applyMeasurementCorrection(measurement, value, unit) : measurement));
   }
+  function adoptFacts(facts: ProjectFacts, authoritativeSnapshot = false) {
+    setProjectFacts(facts);
+    const next = applyDetectedFacts(answersRef.current, preferencesRef.current, facts, {
+      projectAnswerProvenance: answerProvenanceRef.current, touchedKeys: touchedFactsRef.current, authoritativeSnapshot,
+    });
+    answersRef.current = next.projectAnswers; preferencesRef.current = next.preferences; answerProvenanceRef.current = next.projectAnswerProvenance;
+    setProjectAnswers(next.projectAnswers); setPreferences(next.preferences); setProjectAnswerProvenance(next.projectAnswerProvenance);
+  }
+  function setProjectAnswer(id: string, value: AnswerValue) {
+    touchedFactsRef.current.add(id);
+    answersRef.current = { ...answersRef.current, [id]: value };
+    answerProvenanceRef.current = { ...answerProvenanceRef.current, [id]: { source: "customer", scope: "project" } };
+    if (id === "animalSpecies" && value !== "Rind") {
+      touchedFactsRef.current.add("animalGroup");
+      answersRef.current = { ...answersRef.current, animalGroup: "" };
+      answerProvenanceRef.current = { ...answerProvenanceRef.current, animalGroup: { source: "customer", scope: "project" } };
+    }
+    setProjectAnswers(answersRef.current); setProjectAnswerProvenance(answerProvenanceRef.current);
+  }
   function setGroupAnswer(kind: AreaType, questionId: string, value: AnswerValue) {
-    setPreferences((current) => ({ ...current, groupAnswers: { ...current.groupAnswers,
-      [kind]: { ...(current.groupAnswers[kind] ?? {}), [questionId]: value } } }));
+    touchedFactsRef.current.add(`${kind}.${questionId}`);
+    const current = preferencesRef.current;
+    preferencesRef.current = { ...current, groupAnswers: { ...current.groupAnswers,
+      [kind]: { ...(current.groupAnswers[kind] ?? {}), [questionId]: value } },
+      groupAnswerProvenance: { ...current.groupAnswerProvenance, [kind]: { ...current.groupAnswerProvenance?.[kind], [questionId]: { source: "customer", scope: "group", groupKind: kind } } } };
+    setPreferences(preferencesRef.current);
   }
   function setAreaAnswer(areaId: string, questionId: string, value: AnswerValue) {
-    setPreferences((current) => ({ ...current, areaOverrides: { ...current.areaOverrides,
+    updatePreferences((current) => ({ ...current, areaOverrides: { ...current.areaOverrides,
       [areaId]: { ...(current.areaOverrides[areaId] ?? {}), [questionId]: value } } }));
   }
+  function updatePreferences(update: (current: PlanningPreferences) => PlanningPreferences) {
+    preferencesRef.current = update(preferencesRef.current);
+    setPreferences(preferencesRef.current);
+  }
   function clearAreaAnswers(areaId: string) {
-    setPreferences((current) => ({ ...current, areaOverrides: Object.fromEntries(Object.entries(current.areaOverrides).filter(([id]) => id !== areaId)) }));
+    updatePreferences((current) => ({ ...current, areaOverrides: Object.fromEntries(Object.entries(current.areaOverrides).filter(([id]) => id !== areaId)) }));
   }
   function groupUsesIndividualAnswers(kind: AreaType, areaIds: string[], additional: boolean) {
     const shared = getGroupAnswers(kind, projectAnswers, preferences);
@@ -301,10 +394,15 @@ export function StallplanWorkbench() {
       return getGroupQuestions(kind, effective).every((question) => !question.required || !emptyAnswer(question, effective[question.id]));
     });
   }
-  function selectGroup(kind: AreaType) {
+  function selectGroup(kind: AreaType | null) {
+    selectionTouchedRef.current = true;
     setSelectedGroupId(kind);
     const first = confirmedAreas.find((area) => area.kind === kind);
     if (first) selectArea(first);
+    else setSelectedAreaId(null);
+  }
+  function enterWishes(kind: AreaType | null = null) {
+    setInitialWishGroup(kind); selectGroup(kind); setPanel("details"); setTechnicalOpen(false);
   }
   function confirmSuggestions() {
     const ids = new Set(bulkAreas.map((area) => area.id));
@@ -318,10 +416,11 @@ export function StallplanWorkbench() {
     anchor.download = (file?.name ?? "stallplan").replace(/\.pdf$/i, "") + "-planungsübersicht.html";
     document.body.append(anchor); anchor.click(); anchor.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-  function selectArea(area: DetectedArea) { setSelectedAreaId(area.id); setActivePage(area.pageNumber); }
+  function selectArea(area: DetectedArea) { selectionTouchedRef.current = true; setSelectedAreaId(area.id); setActivePage(area.pageNumber); }
   function startAreaGesture(event: PointerEvent<HTMLButtonElement>, area: DetectedArea, gesture: AreaGeometryGesture) {
     if (markMode || panel !== "areas" || selectedAreaId !== area.id || event.button !== 0 || !planCanvasRef.current) return;
     event.preventDefault(); event.stopPropagation();
+    selectionTouchedRef.current = true;
     event.currentTarget.setPointerCapture(event.pointerId);
     areaGestureRef.current = { areaId: area.id, pageNumber: area.pageNumber, original: area.bbox, gesture, start: { x: event.clientX, y: event.clientY },
       rect: planCanvasRef.current.getBoundingClientRect(), target: event.currentTarget, pointerId: event.pointerId };
@@ -362,8 +461,9 @@ export function StallplanWorkbench() {
   }
   function finishMark(cancel = false) {
     if (!cancel && markMode && draftBox && currentPage && draftBox.width >= 0.01 && draftBox.height >= 0.01) {
-      const area: DetectedArea = { id: crypto.randomUUID(), kind: manualKind, label: AREA_RULES[manualKind].title, confidence: null,
+      const area: DetectedArea = { id: crypto.randomUUID(), kind: manualKind, label: `${AREA_RULES[manualKind].title} · Bereich ${areas.length + 1}`, confidence: null,
         source: "manual", status: "confirmed", pageNumber: currentPage.pageNumber, bbox: draftBox, hasBbox: true, evidence: ["Manuell markiert"] };
+      selectionTouchedRef.current = true;
       setAreas((current) => [...current, area]); setSelectedAreaId(area.id); setAreaFilter("all"); setPanel("areas"); setMarkMode(false);
     }
     dragStartRef.current = null; setDraftBox(null);
@@ -385,7 +485,7 @@ export function StallplanWorkbench() {
     } catch { setError("Kopieren nicht möglich. Bitte JSON herunterladen."); }
   }
 
-  const statusText = busy === "reading" ? "PDF wird gelesen" : busy === "analyzing" ? "Bereiche werden erkannt" : "Analyse fertig";
+  const statusText = busy === "reading" ? "PDF wird gelesen" : "Bereiche werden erkannt";
   const warnings = analysis?.warnings ?? [];
 
   return <main className="min-h-dvh bg-[#f7f8f6] text-[#242724]">
@@ -395,9 +495,9 @@ export function StallplanWorkbench() {
         {file && <span className="hidden truncate border-l border-[#e3e6e2] pl-4 text-xs text-[#777e78] md:block" title={file.name}>{file.name}</span>}
       </div>
       {file && <div className="flex shrink-0 items-center gap-3">
-        <div role="status" aria-live="polite" className="hidden items-center gap-1.5 text-[11px] text-[#737b75] sm:flex">
-          {busy ? <Loader2 size={12} className="animate-spin" /> : <Check size={13} className="text-[#17633a]" />}{statusText}
-        </div>
+        {busy && <div role="status" aria-live="polite" className="hidden items-center gap-1.5 text-[11px] text-[#737b75] sm:flex">
+          <Loader2 size={12} className="animate-spin" />{statusText}
+        </div>}
         <Button variant="ghost" onClick={reset}>Neuer Plan</Button>
       </div>}
     </header>
@@ -406,12 +506,12 @@ export function StallplanWorkbench() {
       <Loader2 size={24} strokeWidth={1.5} className="animate-spin text-[#17633a]" /><p role="status" className="text-sm text-[#687069]">PDF wird gelesen</p>
       <p className="max-w-[70vw] truncate text-xs text-[#919792]">{file.name}</p>
     </div>}
-    {file && currentPage && <div className="workbench-layout grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px]">
+    {file && currentPage && <div className={cn("workbench-layout grid grid-cols-1", panel === "details" ? "workbench-wishes lg:grid-cols-[minmax(300px,0.38fr)_minmax(500px,0.62fr)]" : "lg:grid-cols-[minmax(0,1fr)_380px]")}>
       <section className="flex min-h-0 min-w-0 flex-col bg-[#eef0ed] lg:border-r lg:border-[#dfe3dc]" aria-label="Planansicht">
         <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 border-b border-[#dfe3dc] bg-[#fafbf9] px-3 py-2">
           <div className="flex items-center gap-1">
             <Button variant="ghost" className="h-7 w-7 px-0" label="Vorherige Seite" disabled={activePage <= 1} onClick={() => setActivePage((page) => Math.max(1, page - 1))}><ChevronLeft size={15} /></Button>
-            <span className="min-w-16 text-center text-[11px] text-[#69726b]">{activePage} / {pages.length}</span>
+            <span className="min-w-20 text-center text-[11px] text-[#69726b]">Seite {activePage} / {pages.length}</span>
             <Button variant="ghost" className="h-7 w-7 px-0" label="Nächste Seite" disabled={activePage >= pages.length} onClick={() => setActivePage((page) => Math.min(pages.length, page + 1))}><ChevronRight size={15} /></Button>
             <span className="mx-1.5 hidden h-4 w-px bg-[#dfe3dc] sm:block" />
             <Button variant="ghost" className="h-7 w-7 px-0" label="Verkleinern" disabled={zoom <= 0.5} onClick={() => setZoom((value) => Math.max(0.5, value - 0.5))}><Minus size={14} /></Button>
@@ -426,7 +526,7 @@ export function StallplanWorkbench() {
             {areaTypeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select><span className="text-[#828a84]">Rechteck im Plan aufziehen</span>
         </div>}
-        <div ref={viewportRef} className="plan-viewport scrollbar-thin relative min-h-0 flex-1 overflow-auto">
+        <div ref={viewportRef} data-testid="plan-viewport" title="Mausrad: zoomen · Umschalt + Mausrad: verschieben" className="plan-viewport scrollbar-thin relative min-h-0 flex-1 overflow-auto overscroll-contain">
           <div className="flex min-h-full min-w-full items-center justify-center p-5" style={{ width: Math.max(viewportSize.width, planWidth + 40), height: Math.max(viewportSize.height, planWidth * currentPage.height / currentPage.width + 40) }}>
             <div ref={planCanvasRef} data-testid="plan-canvas" className={cn("relative shrink-0 bg-white shadow-[0_3px_18px_rgba(25,34,27,0.12)]", markMode && "cursor-crosshair touch-none select-none")}
               style={{ width: planWidth, aspectRatio: `${currentPage.width} / ${currentPage.height}` }}
@@ -439,7 +539,7 @@ export function StallplanWorkbench() {
                 const editable = selected && panel === "areas" && !markMode;
                 const bbox = areaDraft?.id === area.id ? areaDraft.bbox : area.bbox;
                 return <div key={area.id} className={cn("absolute", selected && "z-10", markMode && "pointer-events-none")} style={boxStyle(bbox)}>
-                  <button type="button" disabled={markMode} onClick={(event) => { event.stopPropagation(); selectArea(area); setPanel("areas"); }}
+                  <button type="button" disabled={markMode} onClick={(event) => { event.stopPropagation(); selectArea(area); if (panel !== "details") setPanel("areas"); }}
                     onPointerDown={(event) => startAreaGesture(event, area, "move")} onPointerMove={moveAreaGesture}
                     onPointerUp={(event) => finishAreaGesture(event)} onPointerCancel={(event) => finishAreaGesture(event, true)}
                     onLostPointerCapture={() => finishAreaGesture(undefined, true)}
@@ -474,16 +574,15 @@ export function StallplanWorkbench() {
             </div>
           </div>
         </div>
-        <div className="flex h-7 shrink-0 items-center justify-between border-t border-[#dfe3dc] bg-[#fafbf9] px-4 text-[10px] text-[#889088]">
-          <span className="min-w-0 truncate">Seite {activePage} · {file.name}</span>
-          <span className="hidden sm:block">{markMode ? "Rechteck aufziehen" : "Auswahl im Plan oder in der Liste"}</span>
-        </div>
       </section>
       <aside className="workbench-context flex min-h-0 flex-col bg-white" aria-label="Planungskontext">
         <nav ref={navigationRef} aria-label="Planungsschritte" className="grid h-[60px] shrink-0 grid-cols-3 border-b border-[#e4e7e2] px-3">
           {PRIMARY_STEPS.map((step, index) => {
             const complete = step.panel === "areas" ? confirmedAreas.length > 0 && !openAreas.length && !busy : step.panel === "details" ? wishesReady : false;
-            return <button key={step.panel} type="button" onClick={() => { setPanel(step.panel); setTechnicalOpen(false); }} aria-current={panel === step.panel ? "step" : undefined}
+            return <button key={step.panel} type="button" onClick={() => {
+              if (step.panel === "details" && panel !== "details") enterWishes();
+              else { setPanel(step.panel); setTechnicalOpen(false); }
+            }} aria-current={panel === step.panel ? "step" : undefined}
               className={cn("relative flex items-center justify-center gap-1.5 text-[11px] font-medium transition", panel === step.panel ? "text-[#17633a] after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-[#17633a]" : "text-[#858c85] hover:text-[#343d35]")}>
               <span className={cn("flex h-4 w-4 items-center justify-center rounded-full text-[9px]", panel === step.panel || complete ? "bg-[#edf5ef] text-[#17633a]" : "bg-[#f0f2ef] text-[#858c85]")}>{complete ? <Check size={10} /> : index + 1}</span>{step.label}
             </button>;
@@ -497,76 +596,30 @@ export function StallplanWorkbench() {
             <PanelHeading title="Stimmt der Plan?" subtitle={openAreas.length ? `${openAreas.length} Vorschläge · ${confirmedAreas.length} übernommen` : `${confirmedAreas.length} Bereiche übernommen`} />
             {bulkAreas.length > 0 && !busy && <Button variant="secondary" className="mt-4 w-full" onClick={confirmSuggestions}><Check size={13} />{bulkAreas.length} {bulkAreas.length === 1 ? "Vorschlag" : "Vorschläge"} übernehmen</Button>}
             {busy && <div role="status" className="mt-4 flex items-center gap-2 text-xs text-[#818982]"><Loader2 size={13} className="animate-spin" />Bereiche werden ergänzt</div>}
-            {areas.length > 0 && <><FilterToggle value={areaFilter} onChange={setAreaFilter} count={openAreas.length} />
+            {lastRemovedId && <div role="status" className="mt-4 flex items-center justify-between gap-2 text-[11px] text-[#818982]">
+              <span>Bereich entfernt</span><button type="button" onClick={undoRemoval} className="font-medium text-[#17633a]">Rückgängig</button>
+            </div>}
+            {activeAreas.length > 0 && <><FilterToggle value={areaFilter} onChange={setAreaFilter} count={openAreas.length} />
               <div className="mt-3 -mx-4 border-t border-[#eff1ed]">{visibleAreas.map((area) => <AreaRow key={area.id} area={area} selected={selectedAreaId === area.id}
                 onSelect={() => selectArea(area)} onKind={(kind) => {
                   if (kind === area.kind) return;
-                  updateArea(area.id, { kind, label: AREA_RULES[kind].title, source: "manual", confidence: null, status: "confirmed",
+                  updateArea(area.id, { kind, label: AREA_RULES[kind].title + (area.label.match(/ · (?:Bereich )?\d+$/)?.[0] ?? ` · Bereich ${areas.indexOf(area) + 1}`), source: "manual", confidence: null, status: "confirmed",
                     evidence: [...area.evidence, `Typ korrigiert: ${AREA_RULES[area.kind].title} → ${AREA_RULES[kind].title} (ursprünglich ${sourceLabel(area.source)}${area.confidence !== null ? `, ${Math.round(area.confidence * 100)}%` : ""}).`] });
                 }}
-                onConfirm={() => reviewArea(area.id, "confirmed")} onReject={() => reviewArea(area.id, "rejected")}
-                onRestore={() => updateArea(area.id, { status: "unconfirmed" })} />)}</div>
+                onConfirm={() => reviewArea(area.id, "confirmed")} onReject={() => reviewArea(area.id, "rejected")} />)}</div>
               {!visibleAreas.length && <EmptyState>Alle Bereiche sind übernommen.</EmptyState>}
             </>}
-            {!busy && !areas.length && <EmptyState>Keine sicheren Bereiche erkannt.<br /><button type="button" onClick={() => setMarkMode(true)} className="mt-3 font-medium text-[#17633a]">Bereich im Plan markieren <ArrowRight size={12} className="inline" /></button></EmptyState>}
+            {!busy && !activeAreas.length && <EmptyState>{areas.length ? "Keine Bereiche ausgewählt." : "Keine sicheren Bereiche erkannt."}<br /><button type="button" onClick={() => setMarkMode(true)} className="mt-3 font-medium text-[#17633a]">Bereich im Plan markieren <ArrowRight size={12} className="inline" /></button></EmptyState>}
           </div>}
-          {panel === "details" && <div className="px-4 py-5">
-            <PanelHeading title="Was wünschen Sie?" subtitle="Einmal je Gruppe. Gilt für alle zugehörigen Bereiche." />
-            <section className="mt-5"><h3 className="mb-3 text-[11px] font-medium text-[#8b928b]">Ihr Stall</h3>
-              <QuestionFields questions={[...PROJECT_QUESTIONS, ...PROJECT_CONTEXT_QUESTIONS.filter((question) => question.id === "animalGroup")]} answers={projectAnswers} onAnswer={(id, value) => setProjectAnswers((current) => ({ ...current, [id]: value }))} showOptional />
-              <details className="mt-4 text-xs"><summary className="cursor-pointer text-[#8a918b]">Weitere Angaben</summary>
-                <div className="mt-4"><QuestionFields questions={PROJECT_CONTEXT_QUESTIONS.filter((question) => question.id !== "animalGroup")} answers={projectAnswers} onAnswer={(id, value) => setProjectAnswers((current) => ({ ...current, [id]: value }))} showOptional /></div>
-              </details>
-            </section>
-            <section className="mt-6 border-t border-[#edf0ea] pt-5" aria-label="Gemeinsame Vorgaben">
-              <h3 className="mb-3 text-[11px] font-medium text-[#8b928b]">Bereichsgruppen</h3>
-              {planningGroups.map((group) => {
-                const groupAnswers = getGroupAnswers(group.kind, projectAnswers, preferences);
-                const questions = getGroupQuestions(group.kind, groupAnswers);
-                const missing = questions.filter((question) => question.required && emptyAnswer(question, groupAnswers[question.id])).length;
-                const selected = selectedGroup?.id === group.id;
-                const individual = groupUsesIndividualAnswers(group.kind, group.areaIds, group.additional);
-                return <section key={group.id} data-planning-group={group.kind} className="border-b border-[#edf0ea] py-3" aria-label={`Vorgaben ${group.title}`}>
-                  <button type="button" className="flex w-full items-center justify-between gap-2 text-left" onClick={() => selectGroup(group.kind)} aria-expanded={selected} aria-label={`${group.title}, ${group.areaIds.length ? `${group.areaIds.length} ${group.areaIds.length === 1 ? "Bereich" : "Bereiche"}` : "zusätzlich"}`}>
-                    <div><span className="text-[13px] font-medium">{group.title}</span><span className="ml-2 text-[10px] text-[#8a918b]">{group.areaIds.length ? `${group.areaIds.length} ${group.areaIds.length === 1 ? "Bereich" : "Bereiche"}` : "Zusätzlich"}</span>
-                      {(individual || groupAnswers.animalGroup) && <span className="mt-1 block text-[10px] text-[#8a918b]">{individual ? "Individuelle Vorgaben" : String(groupAnswers.animalGroup)}</span>}
-                    </div>
-                    {!missing || individual ? <Check size={13} className="text-[#3c8755]" /> : <span className="text-[10px] text-[#8a918b]">{missing} offen</span>}
-                  </button>
-                  {selected && <div className="pb-2 pt-4">
-                    <QuestionFields questions={questions} answers={groupAnswers} onAnswer={(id, value) => setGroupAnswer(group.kind, id, value)} />
-                    <details className="mt-4 text-xs"><summary className="cursor-pointer text-[#8a918b]">Andere Tiergruppe für diese Gruppe</summary>
-                      <div className="mt-4"><QuestionFields questions={HERD_OVERRIDE_QUESTIONS} answers={preferences.groupAnswers[group.kind] ?? {}} onAnswer={(id, value) => setGroupAnswer(group.kind, id, value)} showOptional /></div>
-                    </details>
-                    {group.areaIds.length > 0 && questionArea && <details className="mt-4 text-xs"><summary className="cursor-pointer text-[#8a918b]">Einzelnen Bereich anders einstellen</summary>
-                      <div className="mt-4 rounded-md bg-[#f7f8f5] p-3">
-                        <select aria-label="Bereich mit abweichenden Wünschen" className="field mb-4" value={questionArea.id} onChange={(event) => { const area = confirmedAreas.find((area) => area.id === event.target.value); if (area) selectArea(area); }}>
-                          {confirmedAreas.filter((area) => group.areaIds.includes(area.id)).map((area) => <option key={area.id} value={area.id}>{area.label} · Seite {area.pageNumber}</option>)}
-                        </select>
-                        <p className="mb-3 text-[11px] leading-5 text-[#8a918b]">Vorgaben der Gruppe gelten, bis Sie hier etwas ändern.</p>
-                        <QuestionFields questions={getGroupQuestions(group.kind, resolveAreaAnswers(questionArea, projectAnswers, preferences).answers)} answers={resolveAreaAnswers(questionArea, projectAnswers, preferences).answers} onAnswer={(id, value) => setAreaAnswer(questionArea.id, id, value)} />
-                        <details className="mt-4"><summary className="cursor-pointer text-[#8a918b]">Tiergruppe dieses Bereichs</summary><div className="mt-4"><QuestionFields questions={HERD_OVERRIDE_QUESTIONS.map((question) => question.id === "animalCount" ? { ...question, label: "Tieranzahl dieses Bereichs" } : question)} answers={preferences.areaOverrides[questionArea.id] ?? {}} onAnswer={(id, value) => setAreaAnswer(questionArea.id, id, value)} showOptional /></div></details>
-                        {Object.keys(preferences.areaOverrides[questionArea.id] ?? {}).length > 0 && <button type="button" className="mt-4 text-[11px] font-medium text-[#17633a]" onClick={() => clearAreaAnswers(questionArea.id)}>Gruppenvorgaben wiederherstellen</button>}
-                      </div>
-                    </details>}
-                  </div>}
-                </section>;
-              })}
-              {!planningGroups.length && <EmptyState>Bereiche im Plan übernehmen oder markieren.</EmptyState>}
-            </section>
-            <section className="mt-5" aria-label="Zusätzliche Ausstattung">
-              <h3 className="text-[11px] font-medium text-[#8b928b]">Zusätzlich planen</h3>
-              <p className="mt-1 text-[11px] text-[#9aa099]">Auch wenn es im Plan fehlt.</p>
-              <div className="mt-3 flex flex-wrap gap-2">{EQUIPMENT_OPTIONS.filter((option) => !confirmedAreas.some((area) => area.kind === option.kind)).map((option) => {
-                const selected = preferences.additionalEquipment[option.kind] === true;
-                return <button key={option.kind} type="button" aria-label={`${option.label} zusätzlich planen`} aria-pressed={selected}
-                  onClick={() => { setPreferences((current) => ({ ...current, additionalEquipment: { ...current.additionalEquipment, [option.kind]: !selected } })); if (!selected) { setSelectedGroupId(option.kind); requestAnimationFrame(() => document.querySelector(`[data-planning-group="${option.kind}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" })); } }}
-                  className={cn("flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[11px]", selected ? "border-[#9eb9a5] bg-[#f3f8f2] text-[#17633a]" : "border-[#e1e5dd] text-[#737b73]")}>
-                  {selected ? <Check size={11} /> : <Plus size={11} />}{option.label}
-                </button>;
-              })}</div>
-            </section>
-          </div>}
+          {panel === "details" && <PlanningWishes
+            confirmedAreas={confirmedAreas} projectAnswers={projectAnswers} preferences={preferences}
+            inferredProjectFacts={visibleProjectFacts} initialGroupKind={initialWishGroup}
+            onProjectAnswer={setProjectAnswer} onGroupAnswer={setGroupAnswer} onAreaAnswer={setAreaAnswer}
+            onClearAreaAnswers={clearAreaAnswers} onToggleEquipment={(kind, enabled) => updatePreferences((current) => ({
+              ...current, additionalEquipment: { ...current.additionalEquipment, [kind]: enabled },
+            }))}
+            onSelectGroup={selectGroup} onSelectArea={(id) => { const area = confirmedAreas.find((area) => area.id === id); if (area) selectArea(area); }}
+            onComplete={() => { setPanel("handoff"); setTechnicalOpen(false); }} />}
           {panel === "measurements" && <div className="px-4 py-5">
             <PanelHeading title="Maße" subtitle={`${usableMeasurements.length} erkannt${reviewMeasurements.length ? ` · ${reviewMeasurements.length} prüfen` : " · keine Prüfung nötig"}`} />
             <div className="relative mt-4"><Ruler size={13} className="pointer-events-none absolute top-3 left-2.5 text-[#9ca29c]" /><input aria-label="Maße suchen" className="field h-9 pl-8 text-xs" placeholder="Wert oder Bezeichnung suchen" value={measurementSearch} onChange={(event) => setMeasurementSearch(event.target.value)} /></div>
@@ -588,7 +641,7 @@ export function StallplanWorkbench() {
               const overrides = confirmedAreas.filter((area) => group.areaIds.includes(area.id)).map((area) => ({ area, resolved: resolveAreaAnswers(area, projectAnswers, preferences) }))
                 .filter(({ resolved }) => Object.values(resolved.provenance).some((provenance) => provenance.scope === "area"));
               return <section key={group.id} className="py-4">
-                <button type="button" className="flex w-full items-center justify-between text-left" onClick={() => { selectGroup(group.kind); setPanel("details"); }}>
+                <button type="button" className="flex w-full items-center justify-between text-left" onClick={() => enterWishes(group.kind)}>
                   <h3 className="text-[13px] font-medium">{group.title}<span className="ml-2 text-[10px] font-normal text-[#8a918b]">{group.areaIds.length ? `${group.areaIds.length} ${group.areaIds.length === 1 ? "Bereich" : "Bereiche"}` : "Zusätzlich"}</span></h3><span className="text-[11px] text-[#17633a]">Ändern</span>
                 </button>
                 {groupAnswers.animalGroup && !individual && <p className="mt-2 text-[10px] text-[#8a918b]">{String(groupAnswers.animalGroup)}</p>}
@@ -608,15 +661,14 @@ export function StallplanWorkbench() {
             {!planningGroups.length && <EmptyState>Noch keine Bereiche oder Ausstattung ausgewählt.</EmptyState>}
             {(openAreas.length > 0 || missingRequired > 0 || busy) && <div className="mt-3 border-t border-[#edf0ea] pt-4 text-[11px] leading-5 text-[#8a918b]">
               {openAreas.length > 0 && <button type="button" onClick={() => setPanel("areas")} className="block text-[#a17c35]">{openAreas.length} Bereiche noch offen</button>}
-              {missingRequired > 0 && <button type="button" onClick={() => setPanel("details")} className="block text-[#a17c35]">{missingRequired} Wünsche noch offen</button>}
+              {missingRequired > 0 && <button type="button" onClick={() => enterWishes()} className="block text-[#a17c35]">{missingRequired} Wünsche noch offen</button>}
               <p className="mt-1">Die Übersicht kann bereits als Entwurf gespeichert werden.</p>
             </div>}
             <p className="mt-4 text-[11px] leading-5 text-[#929891]">Die Fachplanung prüft Maße und wählt passende Systeme. Es wird noch keine Anfrage versendet.</p>
           </div>}
         </div>
         <div className="shrink-0 border-t border-[#e4e7e2] px-4 py-3">
-          {panel === "areas" && <Button className="w-full" disabled={!confirmedAreas.length && !planningGroups.length} onClick={() => { setPanel("details"); setTechnicalOpen(false); }}>Weiter zu Wünschen <ArrowRight size={13} /></Button>}
-          {panel === "details" && <Button className="w-full" onClick={() => { setPanel("handoff"); setTechnicalOpen(false); }}>Übersicht ansehen <ArrowRight size={13} /></Button>}
+          {panel === "areas" && <Button className="w-full" disabled={!confirmedAreas.length && !planningGroups.length} onClick={() => enterWishes()}>Weiter zu Wünschen <ArrowRight size={13} /></Button>}
           {panel === "handoff" && <Button className="w-full" disabled={!handoff} onClick={downloadOverview}><Download size={14} />Planungsübersicht herunterladen</Button>}
           {panel === "measurements" && <Button variant="secondary" className="w-full" onClick={() => { setPanel("handoff"); setTechnicalOpen(false); }}>Zurück zur Übersicht</Button>}
           <button type="button" aria-expanded={technicalOpen} onClick={() => setTechnicalOpen((current) => !current)} className="mt-3 flex w-full items-center justify-center gap-1.5 py-1 text-[10px] text-[#929991]"><Settings2 size={11} />Technische Details</button>
@@ -647,9 +699,9 @@ function FilterToggle({ value, onChange, count }: { value: "all" | "review"; onC
     <button type="button" onClick={() => onChange("review")} aria-pressed={value === "review"} className={cn("py-1 font-medium", value === "review" ? "text-[#17633a]" : "text-[#929991]")}>Nur prüfen <span className="ml-1 tabular-nums">{count}</span></button>
   </div>;
 }
-function AreaRow({ area, selected, onSelect, onKind, onConfirm, onReject, onRestore }: {
+function AreaRow({ area, selected, onSelect, onKind, onConfirm, onReject }: {
   area: DetectedArea; selected: boolean; onSelect: () => void; onKind: (kind: AreaType) => void;
-  onConfirm: () => void; onReject: () => void; onRestore: () => void;
+  onConfirm: () => void; onReject: () => void;
 }) {
   return <div className={cn("border-b border-[#edf0ea] px-4 py-3", selected && "bg-[#f7faf6]", area.status === "rejected" && "opacity-50")}>
     <button type="button" onClick={onSelect} className="flex w-full items-start justify-between gap-3 text-left">
@@ -657,33 +709,16 @@ function AreaRow({ area, selected, onSelect, onKind, onConfirm, onReject, onRest
       {area.status === "confirmed" ? <Check size={14} className="mt-0.5 shrink-0 text-[#3c8755]" /> : <span className={cn("mt-1 text-[10px]", area.status === "rejected" ? "text-[#939a93]" : "text-[#a17c35]")}>{area.status === "rejected" ? "Ausgeschlossen" : "Prüfen"}</span>}
     </button>
     {selected && <div className="mt-3">
-      {area.status === "rejected" ? <button type="button" onClick={onRestore} className="text-xs font-medium text-[#17633a]">Wiederherstellen</button> : <>
+      <>
         <select aria-label="Bereichstyp" className="field h-8 text-xs" value={area.kind} onChange={(event) => onKind(event.target.value as AreaType)}>{areaTypeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         {area.evidence.length > 0 && <details className="mt-2 text-[11px] leading-5 text-[#8a918b]"><summary className="cursor-pointer">Quelle anzeigen</summary><p className="mt-1">{sourceLabel(area.source)}{area.confidence !== null && ` · ${Math.round(area.confidence * 100)}%`} · {area.evidence.join(" · ")}</p></details>}
         <div className="mt-3 flex items-center justify-between gap-2">
           {area.status === "unconfirmed" && <Button className="h-8 flex-1" onClick={onConfirm}><Check size={13} />Übernehmen</Button>}
-          <Button variant="ghost" className="h-8" onClick={onReject}>{area.status === "unconfirmed" ? "Verwerfen" : "Ausschließen"}</Button>
+          <Button variant="ghost" className="h-8" onClick={onReject}><Trash2 size={12} />{area.status === "unconfirmed" ? "Verwerfen" : "Löschen"}</Button>
         </div>
-      </>}
+      </>
     </div>}
   </div>;
-}
-function QuestionFields({ questions, answers, onAnswer, showOptional = false }: { questions: DomainQuestion[]; answers: Record<string, AnswerValue>; onAnswer: (id: string, value: AnswerValue) => void; showOptional?: boolean }) {
-  const required = questions.filter((question) => showOptional || question.required), optional = questions.filter((question) => !showOptional && !question.required);
-  return <div className="space-y-4">{required.map((question) => <QuestionField key={question.id} question={question} value={answers[question.id]} onAnswer={onAnswer} />)}
-    {optional.length > 0 && <details className="text-xs"><summary className="cursor-pointer text-[#8a918b]">Weitere Angaben</summary><div className="mt-4 space-y-4">{optional.map((question) => <QuestionField key={question.id} question={question} value={answers[question.id]} onAnswer={onAnswer} />)}</div></details>}
-  </div>;
-}
-function QuestionField({ question, value, onAnswer }: { question: DomainQuestion; value?: AnswerValue; onAnswer: (id: string, value: AnswerValue) => void }) {
-  const invalidNumber = question.type === "number" && value !== undefined && value !== "" && emptyAnswer(question, value);
-  return <label className="block"><span className="text-xs font-medium text-[#566057]">{question.label}</span>
-    {question.type === "select" && <select aria-label={question.label} className="field mt-1.5" value={String(value ?? "")} onChange={(event) => onAnswer(question.id, event.target.value)}><option value="">Auswählen</option>{question.options?.map((option) => <option key={option} value={option}>{option}</option>)}</select>}
-    {question.type === "boolean" && <div className="mt-1.5 flex gap-2">{[true, false].map((answer) => <button key={String(answer)} type="button" aria-label={`${question.label}: ${answer ? "Ja" : "Nein"}`} aria-pressed={value === answer} onClick={() => onAnswer(question.id, answer)}
-      className={cn("h-9 flex-1 rounded-md border text-xs", value === answer ? "border-[#7dad8d] bg-[#f1f7f1] text-[#17633a]" : "border-[#dfe4db] text-[#788077]")}>{answer ? "Ja" : "Nein"}</button>)}</div>}
-    {question.id === "planningNotes" && <textarea aria-label={question.label} value={String(value ?? "")} rows={2} className="field mt-1.5 h-auto min-h-20 resize-y py-2 leading-5" placeholder="Was soll das Planungsteam noch berücksichtigen?" onChange={(event) => onAnswer(question.id, event.target.value)} />}
-    {question.id !== "planningNotes" && (question.type === "text" || question.type === "number") && <input aria-label={question.label} aria-invalid={invalidNumber || undefined} type={question.type} min={question.type === "number" ? 1 : undefined} step={question.type === "number" ? 1 : undefined} value={String(value ?? "")} className="field mt-1.5" onChange={(event) => onAnswer(question.id, question.type === "number" && event.target.value !== "" ? Number(event.target.value) : event.target.value)} />}
-    {invalidNumber && <span className="mt-1 block text-[11px] text-[#a33c3c]">Ganze Zahl größer als 0 eingeben.</span>}
-  </label>;
 }
 function MeasurementRow({ measurement, selected, onSelect, onChange, onAccept, onExclude }: { measurement: Measurement; selected: boolean; onSelect: () => void; onChange: (value: number, unit: Measurement["unit"]) => void; onAccept: () => void; onExclude: () => void }) {
   const [editing, setEditing] = useState(false);

@@ -17,7 +17,7 @@ PDF.js Legacy
                      │
                  PATURA-Regeln
                      │
-                Handoff 1.3 + lesbare Planungsübersicht
+                Handoff 1.4 + lesbare Planungsübersicht
 ```
 
 `lib/types.ts` ist unabhängig von React, PDF.js und OpenAI. Seiten speichern Textobjekte und normierte Geometrie; Maße referenzieren Originaltext, Maßlinie, Bezugspunkte, Kette, Einheitsevidenz und Signalwerte. Öffnungshöhen sind ein eigener Typ. Ein Teilmaß kann ein geometrisch und rechnerisch belegtes Gesamtmaß referenzieren.
@@ -33,6 +33,11 @@ PDF.js Legacy
 | `lib/analysis/measurements.ts` | Maßkandidaten, Ketten, Öffnungspaare, Konfidenz |
 | `lib/analysis/unit-detection.ts` | Maßstab, eindeutige Einheitenbelege, `unknown` |
 | `lib/analysis/areas.ts` | Beschriftung plus reale vierseitige Vektoreinschließung |
+| `lib/geometry/area-boundaries.ts` | Lokale Vektorgrenzen und vollständig belegte Rechteckschließung |
+| `lib/analysis/project-facts.ts` | Explizite mehrsprachige Tierangaben, Umfang, Widerspruchsprüfung |
+| `lib/domain/inferred-preferences.ts` | Automatische Vorbelegung, Herkunft, Schutz bewusster Eingaben |
+| `lib/plan/viewport.ts` | Begrenzter Mausrad-Zoom und Cursoranker |
+| `components/planning-wishes.tsx` | Fokussierter Fragebogen je Projekt/Bereichsgruppe |
 | `lib/analysis/pipeline.ts` | Unabhängige Analysezweige, Teilergebnisse |
 | `lib/ai/*` | Spezialisierte Bereiche / Rastermaße, Modelle, Kontext |
 | `lib/plan/request.ts` | Validierung der normalisierten Eingangsdaten |
@@ -54,7 +59,7 @@ Die Bereichsanalyse liest Nutzungsbeschriftungen und Einrichtungsmuster. Auf Vek
 
 Beschriftungsbasierte lokale Bereiche benötigen echte umschließende Kanten. Ein Wort oder ein Eintrag in der Raumtabelle wird nicht zu einer erfundenen Bereichsbox. Tore, Tränken und Bürsten verwenden nicht den umschließenden Raum als Objektposition. Kleine Geräte benötigen konkreten Beschriftungs-/Legenden- oder Symbolgeometriebeleg; Farbe allein reicht nicht. Die Belege bleiben Modellbeobachtungen und benötigen Prüfung.
 
-Eindeutige Bereichslabels korrigieren widersprüchliche Modellkategorien deterministisch; der ursprüngliche Modelltyp bleibt in der Evidenz. Geometrien werden dabei nicht verbessert oder neu erfunden. Unregelmäßige Flächen lassen sich mit einer rechteckigen Box nur eingeschränkt beschreiben. KI-Konfidenz allein führt deshalb nicht mehr zur automatischen Übernahme einer Bereichsbox.
+Eindeutige Bereichslabels korrigieren widersprüchliche Modellkategorien deterministisch; der ursprüngliche Modelltyp bleibt in der Evidenz. Die reine Labelkorrektur ändert keine Geometrie. Ein unabhängiger lokaler Vektorschritt kann Rechteckseiten an kontinuierliche PDF-Linien anpassen. Schraffuren und kurze Trenner zählen nicht als Grenze; Überhänge benötigen vier bestätigte Seiten. Originalbox, betroffene Seiten und Linienquellen bleiben erhalten. Dieser Schritt erhöht weder semantische Confidence noch Reviewstatus. Unregelmäßige Flächen lassen sich mit einer rechteckigen Box nur eingeschränkt beschreiben. KI-Konfidenz allein führt deshalb nicht mehr zur automatischen Übernahme einer Bereichsbox.
 
 ## Fachlogik und historischer Datensatz
 
@@ -62,14 +67,22 @@ Projektfragen werden einmal gespeichert. `PlanningPreferences` trennt gemeinsame
 
 Antwortauflösung: Projekt → Bereichsgruppe → explizite Bereichsausnahme. `animalCount` auf Projektebene ist eine Gesamtsumme und wird nicht vererbt. Gruppenbestände bleiben durch Provenienz als Gruppensumme gekennzeichnet; sie dürfen nicht je Bereich aufsummiert werden. Globale Freitextwünsche bleiben ebenfalls auf Projektebene. Inaktive Fragezweige werden aus wirksamen Antworten entfernt, während Rohvorgaben zur Nachvollziehbarkeit erhalten bleiben. Leere Ausnahmen stellen Vererbung wieder her.
 
-Notwendige Angaben werden je gemeinsamem Wunsch einmal gezählt, bei abweichenden Fragezweigen gezielt je Bereich. Bewusste Antworten wie „Noch offen“ oder „Planungsteam entscheidet“ übertragen eine Entscheidung an die Fachplanung; vollständige Wunschangaben bedeuten keine abgeschlossene technische Planung. `review.ready` bleibt die strengere technische Prüfung einschließlich Maßausnahmen. Die Oberfläche führt den Nutzer über drei Schritte; technische Details sind sekundär.
+Notwendige Angaben werden je gemeinsamem Wunsch einmal gezählt, bei abweichenden Fragezweigen gezielt je Bereich. Bewusste Antworten wie „Noch offen“ oder „Planungsteam entscheidet“ übertragen eine Entscheidung an die Fachplanung; vollständige Wunschangaben bedeuten keine abgeschlossene technische Planung. `review.ready` bleibt die strengere technische Prüfung einschließlich Maßausnahmen. Die Oberfläche führt den Nutzer über drei Hauptschritte; Wünsche zeigen jeweils einen Abschnitt auf einer breiteren Fläche; technische Details sind sekundär.
 
 `DOMAIN_RULES_VERSION` versioniert Fachregeln und Quellen. `getPlanningProducts` grenzt veröffentlichte Systemfamilien deterministisch nach Wünschen ein, wählt keine Artikel und bemisst keine Elektro-/Wasserinstallation. Die Fragen sind abgeleitete Vorarbeit, keine vom PATURA-Fachteam freigegebene Bedarfsbemessung.
 
-`buildHistoricalSample` verknüpft ursprünglichen Handoff und finale Planerannotationen über Dokumenthashes. Vorhersagen und finale Systeme bleiben getrennt. Erfasst werden Geometrie, Belege, Fragen, fehlende Information, Entscheidungen und Maßkorrekturen. Gruppen-/Projektkontext und Antwortprovenienz bleiben erhalten; Projekt-Tieranzahlen werden im Schema 1.3 nicht als Bereichsbestand gelernt. Eine Modellvorhersage wird nicht automatisch zu Ground Truth.
+`buildHistoricalSample` verknüpft ursprünglichen Handoff und finale Planerannotationen über Dokumenthashes. Vorhersagen und finale Systeme bleiben getrennt. Erfasst werden Geometrie, Belege, Fragen, fehlende Information, Entscheidungen und Maßkorrekturen. Gruppen-/Projektkontext und Antwortprovenienz bleiben erhalten; Projekt-Tieranzahlen werden ab Schema 1.3 nicht als Bereichsbestand gelernt. Eine Modellvorhersage wird nicht automatisch zu Ground Truth.
 
 ## Andere Entscheidungsmodelle
 
 Stand 05.10.2026: Die [OpenAI Decisions API](https://openai.com/index/devday-2026-recap/) ist als begrenzte Vorschau angekündigt und beantwortet vorgegebene endliche Entscheidungen aus Text/Bild-Kontext. Eine öffentlich nutzbare Integration über den installierten SDK-Endpunkt liegt hier nicht vor. [Jev von TypeSafe](https://docs.typesafe.ai/models) nimmt derzeit ausschließlich Text an. Es ist daher kein direkter Ersatz für die visuelle Bereichsgeometrie. Es wird keine nicht verfügbare API simuliert und kein unbelegter Geschwindigkeitsgewinn behauptet.
 
 Die getrennten Analysefunktionen erlauben später einen Vergleich: gleiche dokumentierte Regionskandidaten, Labels und mögliche Klassifikationen; Messung von Richtigkeit, False Positives, Latenz und Kosten. Vor einer Umstellung steht dieser Benchmark, nicht der Modellname.
+
+## Sprache, Tierangaben und Eingriffe
+
+Benutzertexte werden mit deutschen Vorlagen normalisiert, einschließlich Bereichsnamen, Zusammenfassung, Warnungen und Evidenz. Fremdsprachige Originalnamen/-beobachtungen bleiben in `originalLabel`, `originalEvidence` und `originalAnalysis`. Wiederholte Namen ohne echte Raumnummer erhalten eine ausdrücklich als „Bereich“ bezeichnete Anwendungsnummer.
+
+Tierangaben kommen bevorzugt aus nahen nativen Textobjekten. Der bestehende Bereichsrequest kann explizite Bildbeschriftungen als getrennte Kandidaten lesen, ohne zweite Vision-Anfrage. Tierart/-gruppe müssen wörtlich belegt sein; eine Kopfzahl benötigt eine ausdrücklich bezeichnete Gesamtsumme. DJP, Kapazität und Raumbestände werden nicht umgedeutet. Kombinierte Quellen werden erneut auf Widersprüche geprüft. Vorbefüllung setzt mindestens 0,9 technischen Score und einen Beleg voraus; Herkunft bleibt bei Vererbung erhalten. Eine abgeschlossene Analyse zieht nicht mehr belegte automatische Vorgaben zurück. Bewusste Eingaben und geleerte Felder werden dabei nicht überschrieben.
+
+Gelöschte Bereiche verlassen die aktive Ansicht und Wunschgruppen. Ein Tombstone mit Zeitstempel verhindert ein Wiederauftauchen derselben Fläche durch verspätete Ergebnisse; andere kleine Geräte innerhalb dieser Fläche bleiben unabhängige Objekte. Die Rückgängig-Aktion stellt den vorherigen Reviewstatus wieder her.

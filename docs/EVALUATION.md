@@ -43,7 +43,7 @@ Korrekt erkannt werden unter anderem **14 × 600 cm**, Gesamtmaße **4224 / 4212
 
 Die Produktion baut 27 zusammenhängende Ketten und 49 rechnerisch/geometrisch geprüfte Teilmaß→Gesamtmaß-Beziehungen auf. 158 geometrisch belegte Planmaße werden vorbereitet; 36 schwächer belegte Öffnungsangaben bleiben zur Ausnahmeprüfung. Ein hoher Einzelplan-Recall ist kein Anlass, schwächere Evidenz als sicher auszugeben.
 
-Die reine strukturelle CLI-Analyse dauert hier etwa **0,7–0,9 Sekunden** einschließlich PDF-Extraktion, ohne Rendering und ohne API-Kosten.
+Die reine strukturelle CLI-Analyse dauert hier etwa **0,7–1,1 Sekunden** einschließlich PDF-Extraktion, ohne Rendering und ohne API-Kosten.
 
 ## Bereiche: echter API-Lauf
 
@@ -62,6 +62,25 @@ Die Geometrie bleibt deutlich schwächer als die Klassifikation:
 
 Diese Boxen sind keine verlässlichen finalen Planflächen. Nutzer können sie im Plan verschieben, skalieren, verwerfen oder neu markieren. Präzise Polygonflächen und Aussparungen sind der nächste notwendige Geometrieschritt.
 
+## Aktuelle Vektorgrenzen und Bedienung
+
+Der dritte echte Upload mit GPT-6 Luna dauert **25,5 Sekunden** einschließlich Browser-PDF-Verarbeitung und findet erneut zehn Hauptbereiche. Die Maßerkennung bleibt vollständig deterministisch: **194/194**, keine fehlenden Werte, falschen Einheiten oder False Positives im Referenzumfang. TypeScript, ESLint, Tests und Produktionsbuild werden geprüft.
+
+Identische aufgezeichnete Modellboxen werden vor/nach lokaler Vektornachbearbeitung verglichen:
+
+| Durchlauf | Vorher Flächen-IoU | Nachher Flächen-IoU | Lokalisiert ≥ 0,5 |
+|---|---:|---:|---:|
+| Zweiter realer Lauf, Replay | 0,6410 | 0,8606 | 9 → 9 von 10 |
+| Dritter realer Lauf, neue Modellboxen | 0,6221 | 0,8551 | 7 → 9 von 10 |
+
+Die neue Zuordnung nutzt einmalig Bereichsart und ursprüngliche Position, da das Modell keine eindeutigen Raumnummern geliefert hat; dieselben Paare gelten nach der Korrektur. Es sind grobe manuell geprüfte Raumflächen, keine pixelgenaue Segmentierung. Der zweite Benchmark verwendet beobachtete Raumnummern. Ergebnisse der beiden Läufe sind getrennt und keine allgemeine Erkennungsquote.
+
+Laufgang13 endet jetzt vor Abkalbung/Isolation; die Buchten reichen bis zur belegten unteren Wand. Eine begrenzte, seitenverhältnisabhängige Suche behebt zusätzlich die abgeschnittene Außenwand einer schmalen Bucht. **U-Laufgang9 bleibt unvollständig**: nur etwa 31% Flächenabdeckung, Flächen-IoU 0,3043 im neuen Lauf. Vektorbelege für einzelne Seiten bestätigen keine vollständige Raumkontur. Die lokale Nachbearbeitung benötigt etwa 10–25ms und keinen zusätzlichen Modellrequest. Methodendetails: [Vektorgrenzen](BOUNDARY-QUALITY.md).
+
+Benutzertexte sind unabhängig von der Plansprache Deutsch; Originaltexte werden separat auditiert. Explizite mehrsprachige Tierangaben können vorbelegt werden. Im echten Beispiel bleiben diese Felder leer: weder eine eindeutige Tierartbeschriftung noch eine ausdrücklich bezeichnete Kopfzahl ist ausreichend belegt. **94 DJP wird nicht zu 94 Tieren.** Vorbefüllungs- und Korrekturabläufe werden zusätzlich mit eindeutig als synthetisch gekennzeichneten Fakten geprüft.
+
+Browserregressionen prüfen Mausrad-Zoom über ausgewählten Bereichen, Cursoranker, Abbruch eines laufenden Zeichengestus beim Zoomen, Verschieben/Skalieren, Entfernen ohne ausgeschlossene Listenreste, Rückgängig, breite Wünsche je Gruppe, gemeinsame Vorgaben und einzelne Ausnahmen, tierartspezifische Sichtbarkeit, Zusatzwünsche, bedingte Heizungsfragen, HTML/JSON-Export, Seitenwechsel und Neustart sowie 390px-Ansichten. Gesunde Durchläufe haben keine Console-/Runtimefehler; simulierte Netzfehler bleiben gesondert erkennbar.
+
 ## OCR-Experiment
 
 Die Raumtabelle besteht aus gezeichneten Buchstabenpfaden: **0/16 Raumlabels** sind als PDF-Text vorhanden. Ein gezielt gerenderter 3×-Ausschnitt mit Tesseract (Englisch, PSM6) liest **15/16 Labels exakt**, alle 16 semantisch verständlich. Die native OCR dauert etwa 0,3–0,6 Sekunden.
@@ -74,7 +93,7 @@ Automatisierte Regressionstests prüfen unter anderem Einheitenkonflikte, unbeka
 
 Playwright prüft Upload, Loading, Rendering, Zoom/Fit, Maßtext/-linie, Bereichsauswahl, Übernehmen/Verwerfen, Verschieben/Skalieren mit Audit und Escape, manuelle Markierung, Fragen, Korrekturaudit, Review, Export und Neustart. Weitere Durchläufe prüfen verspätete Ergebnisse, Reset während Parsing, beschädigte PDFs, mehrseitige Pläne und mobile Darstellung. Ein echter API-Lauf prüft den Upload bis zu den Luna-Bereichen; kontrollierte API-Antworten dienen den reproduzierbaren Randfalltests.
 
-Die neue Wunschstrecke wird zusätzlich gegen aufgezeichnete erfolgreiche Luna-Ergebnisse geprüft: fünf Liegeboxenbereiche mit vier gemeinsamen Latexwünschen und einer Wasserbett-Ausnahme, gemeinsame Projekt-Tiergruppe, Zusatzwünsche für Tränken/Bürsten/Tore ohne Planposition, Heiztechnik- und Stromzweige, lesbare HTML-Übersicht, JSON 1.3, sekundäre Maßkorrektur und 390-Pixel-Ansicht. Die 36 technischen Maßausnahmen blockieren keine vollständig erfassten Wünsche; sie bleiben im Datensatz offen. Ein Nutzerbericht ist keine fertige Stallplanung und verschickt noch keine Anfrage.
+Die neue Wunschstrecke wird zusätzlich gegen aufgezeichnete erfolgreiche Luna-Ergebnisse geprüft: fünf Liegeboxenbereiche mit vier gemeinsamen Latexwünschen und einer Wasserbett-Ausnahme, gemeinsame Projekt-Tiergruppe, Zusatzwünsche für Tränken/Bürsten/Tore ohne Planposition, Heiztechnik- und Stromzweige, lesbare HTML-Übersicht, JSON 1.4, sekundäre Maßkorrektur und 390-Pixel-Ansicht. Die 36 technischen Maßausnahmen blockieren keine vollständig erfassten Wünsche; sie bleiben im Datensatz offen. Ein Nutzerbericht ist keine fertige Stallplanung und verschickt noch keine Anfrage.
 
 Verbleibend:
 
