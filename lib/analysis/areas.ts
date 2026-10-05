@@ -5,17 +5,27 @@ const LABELS: Array<{ kind: AreaType; pattern: RegExp }> = [
   { kind: "feeding_area", pattern: /\b(futtertisch|fressbereich|fressachse|futtergang|korytarz paszowy|stol paszowy)\b/ },
   { kind: "cubicles", pattern: /\b(liegebox(?:en)?|liegeboxenreihe|legowiska)\b/ },
   { kind: "alley", pattern: /\b(laufgang|treibgang|komunikacja|korytarz spacerowy)\b/ },
-  { kind: "calving", pattern: /\b(abkalbe(?:bereich|bucht)?|porodowka)\b/ },
-  { kind: "gate", pattern: /\b(stalltor|tierdurchgang|maschinendurchfahrt|personendurchgang|brama)\b/ },
+  { kind: "calving", pattern: /\b(abkalbe(?:bereich|bucht|buchten|box|boxen)?|porodowka|calving pen)\b/ },
+  { kind: "isolation", pattern: /\b(kranken(?:bucht|buchten|box|boxen|bereich)|separations(?:bucht|bereich)|isolation(?:sbereich|sbucht)?|izolatka|isolatka|izolacja|kwarantanna|hospital pen|sick pen)\b/ },
+  { kind: "pens", pattern: /\b(rinder(?:bucht|buchten|box|boxen)|jungvieh(?:bucht|buchten|box|boxen|bereich|stall)|kalber(?:bucht|buchten|box|boxen|bereich|stall)|tier(?:bucht|buchten)|gruppen(?:bucht|buchten)|mast(?:bucht|buchten)|jalownik|cieletnik|cattle pen|youngstock pen|calf pen)\b/ },
+  { kind: "gate", pattern: /\b(stalltor|toranlage|tierdurchgang|maschinendurchfahrt|personendurchgang|brama|furtka)\b/ },
+  { kind: "drinker", pattern: /\b(tranke(?:n|becken|trog)?|poidlo|poidla|poidelko|drinker|waterer|drinking trough)\b/ },
+  { kind: "brush", pattern: /\b(kuhburste|viehburste|scheuerburste|burste|szczotka|szczotki|cow brush|cattle brush)\b/ },
 ];
 
 function normalizedLabel(text: string) {
   return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l");
 }
 
-export function classifyAreaLabel(text: string): AreaType | null {
+/** A compound label can mention adjacent functions; never choose the first match. */
+export function classifyUnambiguousAreaLabel(text: string): AreaType | null {
   const normalized = normalizedLabel(text);
-  return LABELS.find((entry) => entry.pattern.test(normalized))?.kind ?? null;
+  const kinds = new Set(LABELS.filter((entry) => entry.pattern.test(normalized)).map((entry) => entry.kind));
+  return kinds.size === 1 ? [...kinds][0] : null;
+}
+
+export function classifyAreaLabel(text: string): AreaType | null {
+  return classifyUnambiguousAreaLabel(text);
 }
 
 interface Edge { axis: number; from: number; to: number }
@@ -77,7 +87,12 @@ function enclosingBox(page: PdfPageData, label: PdfTextItem, otherLabels: PdfTex
 export function detectStructuralAreas(pages: PdfPageData[]): DetectedArea[] {
   const result: DetectedArea[] = [];
   for (const page of pages) {
-    const labels = page.textItems.filter((item) => classifyAreaLabel(item.text) !== null);
+    // Small equipment and door openings need their own symbol/opening geometry.
+    // A room enclosure around their labels would invent a device-sized location.
+    const labels = page.textItems.filter((item) => {
+      const kind = classifyAreaLabel(item.text);
+      return kind !== null && kind !== "drinker" && kind !== "brush" && kind !== "gate";
+    });
     for (const item of labels) {
       const kind = classifyAreaLabel(item.text)!;
       const bbox = enclosingBox(page, item, labels);

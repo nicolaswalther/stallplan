@@ -100,7 +100,10 @@ function overlap(a: NormalizedBox, b: NormalizedBox) {
 }
 
 export function prepareArea(area: DetectedArea): DetectedArea {
-  return area.status === "unconfirmed" && area.kind !== "unknown" && area.hasBbox && (area.confidence ?? 0) >= 0.93
+  // A vision model's classification certainty is not evidence that its box
+  // follows the room boundary. Keep AI geometry reviewable until independent
+  // geometry validation exists, even when the model reports 0.97 confidence.
+  return area.status === "unconfirmed" && area.source !== "ai" && area.kind !== "unknown" && area.hasBbox && (area.confidence ?? 0) >= 0.93
     ? { ...area, status: "confirmed" } : area;
 }
 

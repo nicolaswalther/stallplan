@@ -3,7 +3,11 @@ export const AREA_TYPES = [
   "cubicles",
   "alley",
   "calving",
+  "pens",
+  "isolation",
   "gate",
+  "drinker",
+  "brush",
   "unknown",
 ] as const;
 
@@ -95,6 +99,32 @@ export interface DetectedArea {
 }
 
 export type QuestionType = "text" | "number" | "select" | "boolean";
+export type AnswerValue = string | number | boolean;
+export type AnswerMap = Record<string, AnswerValue>;
+export const EQUIPMENT_TYPES = ["drinker", "brush", "gate"] as const;
+export type EquipmentType = (typeof EQUIPMENT_TYPES)[number];
+
+/** Shared wishes never create a detected object or imply an equipment location. */
+export interface PlanningPreferences {
+  groupAnswers: Partial<Record<AreaType, AnswerMap>>;
+  areaOverrides: Record<string, AnswerMap>;
+  additionalEquipment: Partial<Record<EquipmentType, boolean>>;
+}
+
+export interface AnswerProvenance {
+  source: "customer";
+  scope: "project" | "group" | "area";
+  groupKind?: AreaType;
+  areaId?: string;
+}
+
+export interface PlanningGroup {
+  id: AreaType;
+  kind: AreaType;
+  title: string;
+  areaIds: string[];
+  additional: boolean;
+}
 
 export interface DomainQuestion {
   id: string;
@@ -102,6 +132,8 @@ export interface DomainQuestion {
   type: QuestionType;
   options?: string[];
   required: boolean;
+  /** Hidden branches must not become unanswered requirements. */
+  when?: { questionId: string; values: AnswerValue[]; and?: Array<{ questionId: string; values: AnswerValue[] }> };
 }
 
 export interface AreaRule {
@@ -110,6 +142,7 @@ export interface AreaRule {
   products: string[];
   measurements: string[];
   questions: DomainQuestion[];
+  sources?: Array<{ label: string; url: string }>;
 }
 
 export interface AiAnalysisResult {
@@ -120,12 +153,12 @@ export interface AiAnalysisResult {
 }
 
 export interface PlanningHandoff {
-  schemaVersion: "1.2";
+  schemaVersion: "1.2" | "1.3";
   createdAt: string;
   project: {
     fileName: string;
     pageCount: number;
-    answers?: Record<string, string | number | boolean>;
+    answers?: AnswerMap;
   };
   analysis: {
     summary: string;
@@ -142,9 +175,12 @@ export interface PlanningHandoff {
     evidence: string[];
     relevantProducts: string[];
     requiredMeasurements: string[];
-    answers: Record<string, string | number | boolean>;
+    answers: AnswerMap;
+    answerProvenance?: Record<string, AnswerProvenance>;
   }>;
   measurements: Measurement[];
+  preferences?: PlanningPreferences;
+  planningGroups?: Array<PlanningGroup & { answers: AnswerMap; answerProvenance: Record<string, AnswerProvenance> }>;
   documents?: Array<{ fileName: string; pages: Array<{
     pageNumber: number; width: number; height: number; documentKind?: DocumentKind;
     textObjects: PdfTextItem[]; geometryObjects: PdfLine[]; extractionWarnings?: string[];

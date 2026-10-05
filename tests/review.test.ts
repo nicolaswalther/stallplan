@@ -57,6 +57,7 @@ test("automatic area acceptance requires high confidence, a kind, and geometry",
   assert.equal(prepareArea(area({ confidence: 0.92 })).status, "unconfirmed");
   assert.equal(prepareArea(area({ hasBbox: false })).status, "unconfirmed");
   assert.equal(prepareArea(area({ kind: "unknown" })).status, "unconfirmed");
+  assert.equal(prepareArea(area({ source: "ai", confidence: 0.99 })).status, "unconfirmed");
 });
 
 test("late semantic suggestions preserve manual and rejected area reviews", () => {

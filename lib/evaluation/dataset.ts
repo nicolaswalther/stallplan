@@ -47,7 +47,10 @@ export function buildHistoricalSample(
       prediction: { type: area.kind, geometry: area.bbox, labels: area.evidence, source: area.source,
         confidence: area.confidence ?? null, review: source.areaReviews?.find((item) => item.id === area.id) ?? null },
       measurements: source.measurements.filter((item) => relatedIds.has(item.id)),
-      customerAnswers: { ...source.project.answers, ...area.answers },
+      // 1.3 already resolves area answers with scope-aware inheritance. A project
+      // total must not be introduced as an individual area's animal count.
+      customerAnswers: source.schemaVersion === "1.3" ? { ...area.answers } : { ...source.project.answers, ...area.answers },
+      customerAnswerProvenance: area.answerProvenance ?? null,
       planner: { ...annotation },
     };
   });
@@ -59,6 +62,11 @@ export function buildHistoricalSample(
     review: { by: review.reviewedBy, at: review.reviewedAt, preparationMinutes: review.preparationMinutes ?? null },
     analysis: source.analysis,
     audit: source.audit,
+    planningContext: {
+      projectAnswers: source.project.answers ?? {},
+      preferences: source.preferences ?? null,
+      groups: source.planningGroups ?? [],
+    },
     areas,
     unassignedMeasurements: source.measurements.filter((item) => !source.relationships?.some((relation) => relation.measurementId === item.id)),
   };

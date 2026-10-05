@@ -22,3 +22,16 @@ test("historical data rejects unknown areas and invalid document references", ()
   assert.throws(() => buildHistoricalSample(handoff, { ...review, annotations: [{ ...review.annotations[0], areaId: "missing" }] }), /Unknown/);
   assert.throws(() => buildHistoricalSample(handoff, { ...review, finalDocumentHash: "missing" }), /SHA-256/);
 });
+test("group-aware historical samples retain project totals separately from effective area answers", () => {
+  const current: PlanningHandoff = { ...handoff, schemaVersion: "1.3",
+    project: { ...handoff.project, answers: { animalSpecies: "Rind", animalCount: 200 } },
+    areas: [{ ...handoff.areas[0], answers: { animalSpecies: "Rind", feedingRestraint: "Ja" },
+      answerProvenance: { feedingRestraint: { source: "customer", scope: "group", groupKind: "feeding_area" } } }],
+    preferences: { groupAnswers: { feeding_area: { feedingRestraint: "Ja" } }, areaOverrides: {}, additionalEquipment: {} },
+  };
+  const sample = buildHistoricalSample(current, review);
+  assert.equal(sample.areas[0].customerAnswers.animalCount, undefined);
+  assert.equal(sample.planningContext.projectAnswers.animalCount, 200);
+  assert.equal(sample.areas[0].customerAnswerProvenance?.feedingRestraint.scope, "group");
+  assert.deepEqual(sample.planningContext.preferences, current.preferences);
+});
