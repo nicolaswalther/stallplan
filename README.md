@@ -29,6 +29,8 @@ Die lokale PDF-Analyse funktioniert auch ohne API-Schlüssel. `OPENAI_MODEL` üb
 - Öffnungsbreiten und Öffnungshöhen bleiben unterschiedliche Maßtypen. Höhen besitzen keine erfundene Grundriss-Maßlinie.
 - Zahlen aus Maßstäben, Höhenkoten, DJP, Flächen, Volumen und Titelblock sind keine gewöhnlichen Längenmaße.
 - Automatische Bereichsrechtecke werden lokal an belegte PDF-Vektorgrenzen angepasst; Originalbox und Linienquellen bleiben erhalten. Keine zusätzliche KI-Anfrage.
+- Raumkennzeichen werden direkt aus PDF-Texten gelesen. Als Vektorpfade gezeichnete Beschriftungstabellen erhalten automatisch einen scharfen PDF-Ausschnitt für die semantische Analyse.
+- Geschlossene, eindeutig nummerierte Vektorflächen erzeugen echte Polygone mit Aussparungen. Modellboxen bleiben im Audit; widersprüchliche Positionen sind gezielte Prüffälle.
 - Semantische Bereichserkennung als separater Vision-Schritt. Vorhandene Vektor-PDF-Zahlen werden nicht erneut per Vision gelesen. Rastermaße haben einen eigenen optionalen Analyseschritt.
 - PATURA-Systemmöglichkeiten und Fragen kommen aus versionierbaren Regeln, nicht aus Modell-Produktempfehlungen.
 
@@ -61,3 +63,5 @@ npm run evaluate -- /pfad/zum/beispielplan.pdf tests/fixtures/obora-reference.js
 Die Evaluation prüft den SHA-256 des Dokuments und vergleicht jedes Maßvorkommen einzeln nach Wert und Position. Der Kundenplan selbst wird nicht im Repository gespeichert. Die Referenz umfasst 194 visuell geprüfte Maßangaben, 26 Maßketten und 44 ausgeschlossene Nichtmaßangaben.
 
 Details: [Architektur](docs/ARCHITECTURE.md), [Evaluation und bekannte Grenzen](docs/EVALUATION.md), [Vektorgrenzen-Vergleich](docs/BOUNDARY-QUALITY.md). Der vorbereitete historische Dataset Builder liegt in `lib/evaluation/dataset.ts`; finale Systeme benötigen explizite Planerannotationen. Es findet kein Modelltraining statt.
+
+Für wiederholte Bereichstests: [A/B-Ergebnisse und Referenz](docs/AREA-AB-EVALUATION.md), [tatsächliche Modellkosten](docs/MODEL-COSTS.md), [Qualitätsarbeit mit 100 Plänen](docs/DATASET-QUALITY-WORKFLOW.md). Der [Umsetzungsauftrag für die Unternehmenspipeline](docs/COMPANY-IMPLEMENTATION-PROMPT.md) beschreibt den aktuellen Stand und die erforderlichen Abnahmetests. Tokenverbrauch und geschätzte Standard-API-Kosten jedes erfolgreichen Analyseschritts stehen im technischen Audit; unbekannte Tarife werden nicht erfunden.

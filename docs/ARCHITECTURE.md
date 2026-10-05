@@ -34,12 +34,17 @@ PDF.js Legacy
 | `lib/analysis/unit-detection.ts` | Maßstab, eindeutige Einheitenbelege, `unknown` |
 | `lib/analysis/areas.ts` | Beschriftung plus reale vierseitige Vektoreinschließung |
 | `lib/geometry/area-boundaries.ts` | Lokale Vektorgrenzen und vollständig belegte Rechteckschließung |
+| `lib/geometry/semantic-regions.ts` | Eindeutige native Raumkennzeichen und automatisch lokalisierte Vektorschrift-Ausschnitte |
+| `lib/geometry/room-contours.ts` | Geschlossene Vektorflächen, Aussparungen, Verweigerung bei mehreren Raumkennzeichen |
+| `lib/analysis/area-geometry.ts` | Belegte Zuordnung einer wörtlichen Raumbezeichnung zur nativen Kontur |
+| `components/area-outline.tsx` | Editierbare Polygon-Markierungen, Klicks durch Aussparungen, Tastaturbedienung |
 | `lib/analysis/project-facts.ts` | Explizite mehrsprachige Tierangaben, Umfang, Widerspruchsprüfung |
 | `lib/domain/inferred-preferences.ts` | Automatische Vorbelegung, Herkunft, Schutz bewusster Eingaben |
 | `lib/plan/viewport.ts` | Begrenzter Mausrad-Zoom und Cursoranker |
 | `components/planning-wishes.tsx` | Fokussierter Fragebogen je Projekt/Bereichsgruppe |
 | `lib/analysis/pipeline.ts` | Unabhängige Analysezweige, Teilergebnisse |
 | `lib/ai/*` | Spezialisierte Bereiche / Rastermaße, Modelle, Kontext |
+| `lib/ai/usage.ts` | Tatsächliche Tokens und versionierte, tarifabhängige Kostenschätzung |
 | `lib/plan/request.ts` | Validierung der normalisierten Eingangsdaten |
 | `lib/plan/review.ts` | Positionsbezogene Fusion, Schutz der Kundenkorrekturen, Prüfung |
 | `lib/rules.ts` | PATURA-Systemmöglichkeiten, Projekt- und Bereichsfragen |
@@ -56,6 +61,14 @@ Die Confidence dokumentiert technische Signale; sie ist noch keine über viele D
 ## Semantik und Fehlergrenzen
 
 Die Bereichsanalyse liest Nutzungsbeschriftungen und Einrichtungsmuster. Auf Vektor-PDFs ergänzt sie keine bereits vorhandenen Maßzahlen. Vision-Maße werden nur für textarme Raster-/Mischseiten angefragt, jeweils mit eigener Validierung. Ein API- oder Modellfehler lässt die deterministischen Maße bestehen. Tatsächlich verwendete Modelle werden protokolliert.
+
+Die Semantik erhält native Raumkennzeichen mit exakten Koordinaten und höchstens vier echte, hochauflösende PDF-Ausschnitte aus automatisch gefundenen Vektorschriftregionen. Es wird kein Ground-Truth-Text eingespeist und kein OCR-Zahlenwert als Maß übernommen. Eine wörtliche, eindeutig klassifizierbare nummerierte Raumbezeichnung kann mit einem nativen Kennzeichen und einer eindeutig geschlossenen Fläche verbunden werden. Ein Kennzeichen allein legt keine Nutzung fest.
+
+Native Konturen speichern Außenringe, Löcher und Linienquellen. Mehrere Kennzeichen in derselben Fläche, offene Komponenten und geometrische Grenzverletzungen verhindern die Übernahme. Liegt der native Raumanker außerhalb der Modellbox, ist zusätzlich ein realer Beschriftungsausschnitt und semantische Confidence mindestens 0,9 nötig. Dieser Konflikt bleibt explizit prüfpflichtig; Originalbox und Confidence bleiben erhalten. Damit kann die reale Raumkontur eine falsche Bildbox korrigieren, ohne die widersprüchliche Zuordnung automatisch zu bestätigen.
+
+Die Polygonform bleibt in Darstellung, Klickfläche, Verschieben/Skalieren, Handoff und druckbarer Vorschau erhalten. Aussparungen lassen darunterliegende Bereiche auswählbar. Kundeneingriffe behalten die ursprüngliche Kontur und lösen ihre aktuelle automatische Geometriebestätigung ab. Fehlt eine eindeutige Kontur, bleibt die lokale Rechteck-Nachbearbeitung als begrenzter Fallback bestehen.
+
+Die Modell-Confidence ist keine kalibrierte Wahrscheinlichkeit. Ein vorhandener Beschriftungsausschnitt beweist insbesondere nicht selbst, dass eine bestimmte Nummer/Nutzung darin korrekt gelesen wurde. Die Korrektur widersprüchlicher Boxen bleibt deshalb eine semantische Zuordnung mit expliziter Prüfung; zusätzliche Dokumente und separat annotierte Labels müssen ihre Zuverlässigkeit belegen.
 
 Beschriftungsbasierte lokale Bereiche benötigen echte umschließende Kanten. Ein Wort oder ein Eintrag in der Raumtabelle wird nicht zu einer erfundenen Bereichsbox. Tore, Tränken und Bürsten verwenden nicht den umschließenden Raum als Objektposition. Kleine Geräte benötigen konkreten Beschriftungs-/Legenden- oder Symbolgeometriebeleg; Farbe allein reicht nicht. Die Belege bleiben Modellbeobachtungen und benötigen Prüfung.
 

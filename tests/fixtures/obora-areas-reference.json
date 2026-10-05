@@ -1,0 +1,353 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "unscoredKinds": ["gate", "drinker", "brush"],
+  "document": {
+    "filename": "obora mariusz-przyziemie(1).pdf",
+    "sha256": "85c80c8338ddd03ce975a9bb52da8c2e9da5f63d8168258ee6543985ee9ff02e",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 1843,
+        "heightPoints": 1191,
+        "rotation": 270,
+        "vectorPaths": 13263,
+        "lineSegments": 17361,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual review of PDF, then exact PDF text geometry attached to reviewed labels. Production detection was not used.",
+    "areaCoverage": "All 16 rooms transcribed from visually reviewed outline-glyph schedule. Room geometry coarse; not an exact segmentation ground truth.",
+    "coordinateConvention": "Normalized viewport coordinates x,y,width,height; page rotation already applied.",
+    "provenance": "Independent visual reference created before repeated-run evaluation; copied without prediction-dependent edits.",
+    "scope": "Principal stall rooms 7–16. Auxiliary/service rooms 1–5 and milking room 6 are explicitly excluded. Their detection is reported separately, not silently penalized as a false positive.",
+    "limitations": [
+      "Coarse room extents, not exact expert-reviewed segmentation.",
+      "Cubicle extents may include adjacent strips, so small localization differences require visual review.",
+      "Room 9 has a nonrectangular footprint and two cubicle holes; a bbox alone cannot represent it accurately.",
+      "Small equipment, gates and drinking systems have no complete reference annotations and are not inferred to be correct from this fixture.",
+      "One document cannot establish general performance; use held-out documents for model and method decisions."
+    ]
+  },
+  "areas": [
+    {
+      "id": "ref-room-7",
+      "roomNumber": 7,
+      "label": "Liegeboxen",
+      "originalLabel": "legowiska",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.597396,
+        "y": 0.365239,
+        "width": 0.180684,
+        "height": 0.060453
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-8",
+      "roomNumber": 8,
+      "label": "Liegeboxen",
+      "originalLabel": "legowiska",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135648,
+        "y": 0.173804,
+        "width": 0.459034,
+        "height": 0.061293
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-9",
+      "roomNumber": 9,
+      "label": "Laufgang",
+      "originalLabel": "komunikacja",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135648,
+        "y": 0.235097,
+        "width": 0.642431,
+        "height": 0.282955
+      },
+      "geometryQuality": "coarse-room-extent",
+      "footprint": {
+        "parts": [
+          {
+            "outer": [
+              {
+                "x": 0.135648,
+                "y": 0.235097
+              },
+              {
+                "x": 0.594683,
+                "y": 0.235097
+              },
+              {
+                "x": 0.594683,
+                "y": 0.361041
+              },
+              {
+                "x": 0.778079,
+                "y": 0.361041
+              },
+              {
+                "x": 0.778079,
+                "y": 0.518052
+              },
+              {
+                "x": 0.135648,
+                "y": 0.518052
+              }
+            ],
+            "holes": [
+              [
+                {
+                  "x": 0.18828,
+                  "y": 0.306465
+                },
+                {
+                  "x": 0.525773,
+                  "y": 0.306465
+                },
+                {
+                  "x": 0.525773,
+                  "y": 0.425693
+                },
+                {
+                  "x": 0.18828,
+                  "y": 0.425693
+                }
+              ],
+              [
+                {
+                  "x": 0.597396,
+                  "y": 0.365239
+                },
+                {
+                  "x": 0.778079,
+                  "y": 0.365239
+                },
+                {
+                  "x": 0.778079,
+                  "y": 0.425693
+                },
+                {
+                  "x": 0.597396,
+                  "y": 0.425693
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ref-room-10",
+      "roomNumber": 10,
+      "label": "Liegeboxen",
+      "originalLabel": "legowiska",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.190993,
+        "y": 0.306465,
+        "width": 0.332067,
+        "height": 0.059614
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-11",
+      "roomNumber": 11,
+      "label": "Liegeboxen",
+      "originalLabel": "legowiska",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.190993,
+        "y": 0.366079,
+        "width": 0.332067,
+        "height": 0.059614
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-12",
+      "roomNumber": 12,
+      "label": "Futtergang",
+      "originalLabel": "korytarz paszowy",
+      "kind": "feeding_area",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135648,
+        "y": 0.52225,
+        "width": 0.642431,
+        "height": 0.115029
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-13",
+      "roomNumber": 13,
+      "label": "Laufgang",
+      "originalLabel": "komunikacja",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135648,
+        "y": 0.640638,
+        "width": 0.459034,
+        "height": 0.083963
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-14",
+      "roomNumber": 14,
+      "label": "Liegeboxen",
+      "originalLabel": "legowiska",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135648,
+        "y": 0.724601,
+        "width": 0.459034,
+        "height": 0.061293
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-15",
+      "roomNumber": 15,
+      "label": "Abkalbebereich",
+      "originalLabel": "porodówka",
+      "kind": "calving",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.597396,
+        "y": 0.640638,
+        "width": 0.089528,
+        "height": 0.145256
+      },
+      "geometryQuality": "coarse-room-extent"
+    },
+    {
+      "id": "ref-room-16",
+      "roomNumber": 16,
+      "label": "Isolation",
+      "originalLabel": "izolatka",
+      "kind": "isolation",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.686923,
+        "y": 0.640638,
+        "width": 0.091156,
+        "height": 0.145256
+      },
+      "geometryQuality": "coarse-room-extent"
+    }
+  ],
+  "excludedAreas": [
+    {
+      "id": "ref-room-1",
+      "roomNumber": 1,
+      "label": "Wirtschaftsraum",
+      "originalLabel": "pom. gospodarcze",
+      "kind": "service",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.686381,
+        "y": 0.102435,
+        "width": 0.090613,
+        "height": 0.104114
+      },
+      "geometryQuality": "coarse-room-extent",
+      "exclusionReason": "Auxiliary service area or milking area outside principal stall-room scope."
+    },
+    {
+      "id": "ref-room-2",
+      "roomNumber": 2,
+      "label": "Wirtschaftsraum",
+      "originalLabel": "pom. gospodarcze",
+      "kind": "service",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.662507,
+        "y": 0.13686,
+        "width": 0.023874,
+        "height": 0.069689
+      },
+      "geometryQuality": "coarse-room-extent",
+      "exclusionReason": "Auxiliary service area or milking area outside principal stall-room scope."
+    },
+    {
+      "id": "ref-room-3",
+      "roomNumber": 3,
+      "label": "WC",
+      "originalLabel": "WC",
+      "kind": "service",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.63809,
+        "y": 0.13686,
+        "width": 0.024417,
+        "height": 0.069689
+      },
+      "geometryQuality": "coarse-room-extent",
+      "exclusionReason": "Auxiliary service area or milking area outside principal stall-room scope."
+    },
+    {
+      "id": "ref-room-4",
+      "roomNumber": 4,
+      "label": "Durchgang",
+      "originalLabel": "komunikacja",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.63809,
+        "y": 0.102435,
+        "width": 0.048291,
+        "height": 0.034425
+      },
+      "geometryQuality": "coarse-room-extent",
+      "exclusionReason": "Auxiliary service area or milking area outside principal stall-room scope."
+    },
+    {
+      "id": "ref-room-5",
+      "roomNumber": 5,
+      "label": "Wirtschaftsraum",
+      "originalLabel": "pom. gospodarcze",
+      "kind": "service",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.597396,
+        "y": 0.102435,
+        "width": 0.040695,
+        "height": 0.104114
+      },
+      "geometryQuality": "coarse-room-extent",
+      "exclusionReason": "Auxiliary service area or milking area outside principal stall-room scope."
+    },
+    {
+      "id": "ref-room-6",
+      "roomNumber": 6,
+      "label": "Melkhalle",
+      "originalLabel": "hala udojowa",
+      "kind": "milking",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.594683,
+        "y": 0.206549,
+        "width": 0.183397,
+        "height": 0.154492
+      },
+      "geometryQuality": "coarse-room-extent",
+      "exclusionReason": "Auxiliary service area or milking area outside principal stall-room scope."
+    }
+  ]
+}

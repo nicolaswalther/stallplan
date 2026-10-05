@@ -13,7 +13,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
-    "evaluate": "tsx scripts/evaluate-plan.ts"
+    "evaluate": "tsx scripts/evaluate-plan.ts",
+    "evaluate:areas": "tsx scripts/evaluate-areas.ts",
+    "benchmark:areas": "tsx scripts/benchmark-areas.ts"
   },
   "dependencies": {
     "lucide-react": "^1.52.0",

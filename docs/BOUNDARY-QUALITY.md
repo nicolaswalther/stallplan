@@ -1,5 +1,7 @@
 # Deterministische Vektorgrenzen: Entwicklungsprüfung
 
+**Historische Rechteck-Iteration.** Die folgenden Messungen dokumentieren den bisherigen Ansatz. Die aktuelle Produktion ergänzt diesen durch native Raumkonturen mit Polygonen und Löchern; der U-Laufgang ist damit vollständig dargestellt. Wiederholte Modelltests, einschließlich einer aufgedeckten und korrigierten Futtergang-Zuordnung, stehen in [AREA-AB-EVALUATION.md](AREA-AB-EVALUATION.md). Alte Hinweise auf fehlende Polygonunterstützung gelten für die hier dokumentierten früheren Versionen.
+
 Quelle: echtes Kunden-PDF `obora mariusz-przyziemie(1).pdf`, SHA256 `85c80c8338ddd03ce975a9bb52da8c2e9da5f63d8168258ee6543985ee9ff02e`. 16.894 direkt aus PDF.js extrahierte Linien. Keine Bildschätzung oder handcodierten Planpositionen im Algorithmus.
 
 Referenz: unabhängig und vorab visuell geprüfte, grobe Raumflächen. Vorher: aufgezeichneter echter Luna-Output, anschließend deterministisch normalisierte Klassifikation des zweiten realen Luna-Laufs. Identische zehn Bereiche vor/nach Nachbearbeitung. Die Referenz bildet Raumumrisse ab, keine pixelgenaue Segmentierung einzelner Liegeboxenteile.
