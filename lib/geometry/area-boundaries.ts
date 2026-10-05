@@ -172,6 +172,29 @@ function validBox(box: NormalizedBox) {
   return Object.values(box).every(Number.isFinite) && box.x >= 0 && box.y >= 0 && box.width > 0 && box.height > 0 && box.x + box.width <= 1 && box.y + box.height <= 1;
 }
 
+/** Evidence for the CURRENT rectangle, independently of semantic confidence.
+ * A supported rectangle is not proof that it covers a whole nonrectangular room.
+ * Recheck all sides after snapping: an earlier match may no longer span the box.
+ */
+export function assessAreaBoundary(area: DetectedArea, pages: PdfPageData[]) {
+  const page = pages.find((candidate) => candidate.pageNumber === area.pageNumber);
+  if (!ROOM_KINDS.has(area.kind) || !area.hasBbox || !validBox(area.bbox) || !page?.lines?.length || page.documentKind === "raster") return undefined;
+  const index = boundaryIndex(page), box = area.bbox;
+  const x = [box.x * page.width, (box.x + box.width) * page.width];
+  const y = [box.y * page.height, (box.y + box.height) * page.height];
+  const matches = [
+    findRail(index.x, "left", x[0], y[0], y[1], 3),
+    findRail(index.x, "right", x[1], y[0], y[1], 3),
+    findRail(index.y, "top", y[0], x[0], x[1], 3),
+    findRail(index.y, "bottom", y[1], x[0], x[1], 3),
+  ].filter((match): match is Match => Boolean(match));
+  return {
+    method: "vector-side-support" as const,
+    supportedSides: matches.map((match) => match.side),
+    sourceLineIds: [...new Set(matches.flatMap((match) => match.rail.ids.slice(0, 32)))],
+  };
+}
+
 /**
  * Refine approximate semantic room boxes using continuous vector boundaries.
  * This is a bounded local correction, not room segmentation: absent support,

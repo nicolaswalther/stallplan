@@ -5,7 +5,7 @@ import { analyzeRasterMeasurements, selectRasterMeasurementPages } from "../ai/m
 import { createAnalysisClient, DEFAULT_MODEL } from "../ai/client";
 import { imagePages } from "../ai/context";
 import { detectProjectFacts, reconcileProjectFacts } from "./project-facts";
-import { refineAreaBoundaries } from "../geometry/area-boundaries";
+import { assessAreaBoundary, refineAreaBoundaries } from "../geometry/area-boundaries";
 import type { AnalysisRequest } from "../plan/request";
 
 interface PipelineOptions { apiKey?: string; model?: string }
@@ -42,7 +42,10 @@ export async function analyzePlan(payload: AnalysisRequest, options: PipelineOpt
     rasterPages.length ? runners.measurements(client, model, payload.fileName, rasterPages) : Promise.resolve(null),
   ]);
   if (areas.status === "fulfilled" && areas.value) {
-    result.areas = mergeDetectedAreas(structuralAreas, areas.value.result.areas.map((area) => refineAreaBoundaries(area, payload.pages)));
+    result.areas = mergeDetectedAreas(structuralAreas, areas.value.result.areas.map((area) => {
+      const refined = refineAreaBoundaries(area, payload.pages);
+      return { ...refined, boundaryAssessment: assessAreaBoundary(refined, payload.pages) };
+    }));
     result.documentSummary = `${payload.pages.length} ${payload.pages.length === 1 ? "Seite" : "Seiten"} · ${result.areas.length} Bereiche · ${result.measurements.length} Maße`;
     result.originalAnalysis = areas.value.result.originalAnalysis;
     result.projectFacts = reconcileProjectFacts(payload.pages, result.areas, areas.value.result.projectFacts ?? {});

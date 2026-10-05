@@ -97,6 +97,11 @@ export interface DetectedArea {
   originalEvidence?: string[];
   removedAt?: string;
   removalPreviousStatus?: ReviewStatus;
+  boundaryAssessment?: {
+    method: "vector-side-support";
+    supportedSides: Array<"left" | "top" | "right" | "bottom">;
+    sourceLineIds: string[];
+  };
   boundaryRefinement?: {
     method: "vector-rails";
     originalBbox: NormalizedBox;
@@ -207,6 +212,7 @@ export interface PlanningHandoff {
     originalLabel?: string;
     originalEvidence?: string[];
     boundaryRefinement?: DetectedArea["boundaryRefinement"];
+    boundaryAssessment?: DetectedArea["boundaryAssessment"];
     relevantProducts: string[];
     requiredMeasurements: string[];
     answers: AnswerMap;

@@ -28,7 +28,7 @@ export function applyAreaGeometryCorrection(area: DetectedArea, bbox: Normalized
     + Math.abs(bbox.width - area.bbox.width) + Math.abs(bbox.height - area.bbox.height) < 1e-6) return area;
   return { ...area, originalBbox: area.originalBbox ?? area.bbox, originalSource: area.originalSource ?? area.source,
     originalConfidence: area.originalConfidence !== undefined ? area.originalConfidence : area.confidence,
-    bbox, hasBbox: true, source: "manual", confidence: null,
+    bbox, hasBbox: true, source: "manual", confidence: null, boundaryAssessment: undefined,
     geometryCorrections: [...(area.geometryCorrections ?? []), { at: new Date().toISOString(), bbox, source: "customer" }] };
 }
 
