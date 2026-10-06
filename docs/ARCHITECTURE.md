@@ -28,11 +28,13 @@ PDF.js Legacy
 |---|---|
 | `lib/pdf-client.ts` | Browserimport, Rendering, Legacy-Lifecycle |
 | `lib/pdf/text-extraction.ts` | Rotation und Transformation der Textboxen |
-| `lib/pdf/vector-extraction.ts` | PDF.js-6-Pfadbuffer, Grafikzustände, Linien, Dokumenttyp |
+| `lib/pdf/vector-extraction.ts` | PDF.js-6-Pfadbuffer, Grafikzustände, Linien, native OCG-Layernamen, Dokumenttyp |
+| `lib/pdf/simplified-view.ts` | Reversible SVG-Präsentation mit gebündelten nativen Linien und benanntem Layerfilter |
+| `components/simplified-plan.tsx` | Nutzungsfarben, Liegeboxenmuster und identischer Koordinatenrahmen für Flächen und Bearbeitung |
 | `lib/geometry/dimension-lines.ts` | Linienindex, Text-/Linienbezug, Maßbegrenzungen |
 | `lib/analysis/measurements.ts` | Maßkandidaten, Ketten, Öffnungspaare, Konfidenz |
 | `lib/analysis/unit-detection.ts` | Maßstab, eindeutige Einheitenbelege, `unknown` |
-| `lib/analysis/areas.ts` | Beschriftung plus reale vierseitige Vektoreinschließung |
+| `lib/analysis/areas.ts` | Beschriftete Vektoreinschließungen sowie geometrisch belegte vollständige Gangbänder |
 | `lib/geometry/area-boundaries.ts` | Lokale Vektorgrenzen und vollständig belegte Rechteckschließung |
 | `lib/geometry/semantic-regions.ts` | Eindeutige native Raumkennzeichen und automatisch lokalisierte Vektorschrift-Ausschnitte |
 | `lib/geometry/room-contours.ts` | Geschlossene Vektorflächen, Aussparungen, Verweigerung bei mehreren Raumkennzeichen |

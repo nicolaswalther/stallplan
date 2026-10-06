@@ -1,0 +1,669 @@
+{
+  "schemaVersion": "gea-svg-iteration/1.0",
+  "date": "2026-10-06",
+  "baselineCommit": "0f8e310",
+  "limitations": [
+    "Independent coarse PARTIAL references; no full-document precision claim.",
+    "SVG presentation does not reconstruct Bezier curves or small raster objects.",
+    "Confidence is rule-based and uncalibrated.",
+    "Native-only corpus counts are not combined semantic detection results."
+  ],
+  "nativeComparison": {
+    "schemaVersion": "native-area-evaluation/1.0",
+    "scope": "Offline deterministic structural areas only; fixed source geometry; no model or browser outputs. IoU >=0.5 plus correct category. Independent coarse reference envelopes remain unchanged.",
+    "baselineCommit": "0f8e310",
+    "documents": [
+      {
+        "id": "latvia",
+        "expectedCount": 6,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 6,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          },
+          {
+            "variant": "after",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 6,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          }
+        ],
+        "documentSha256": "2490ceaa70d15d50b62f67bdd07d82e51d57de6b7b0df3c09ddb49519c91f1df"
+      },
+      {
+        "id": "flexicubicles",
+        "expectedCount": 13,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 13,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          },
+          {
+            "variant": "after",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 13,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          }
+        ],
+        "documentSha256": "d9892cddd138aa762ea72ce4683d7a6b743319e9a3a6abe4cae4fa4acff68894"
+      },
+      {
+        "id": "rzut",
+        "expectedCount": 16,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 16,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          },
+          {
+            "variant": "after",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 16,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          }
+        ],
+        "documentSha256": "4ab624f7c5c35535835b48b0743527fc763ecb286b01af39d2172f0439e63aa0"
+      },
+      {
+        "id": "szekszard-calving",
+        "expectedCount": 12,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 12,
+            "scoredPredictionCount": 12,
+            "detection": {
+              "truePositives": 10,
+              "falsePositives": 2,
+              "falseNegatives": 2,
+              "precision": 0.8333333333333334,
+              "recall": 0.8333333333333334,
+              "f1": 0.8333333333333334
+            },
+            "meanFootprintIoUAllReferences": 0.6130694297893655,
+            "meanFootprintIoUAmongMatches": 0.6130694297893655
+          },
+          {
+            "variant": "after",
+            "predictionCount": 12,
+            "scoredPredictionCount": 12,
+            "detection": {
+              "truePositives": 11,
+              "falsePositives": 1,
+              "falseNegatives": 1,
+              "precision": 0.9166666666666666,
+              "recall": 0.9166666666666666,
+              "f1": 0.9166666666666666
+            },
+            "meanFootprintIoUAllReferences": 0.7938214362290016,
+            "meanFootprintIoUAmongMatches": 0.7938214362290016
+          }
+        ],
+        "documentSha256": "3a33fd5fae38cdd8e8b83e8ec8fe109b0a083c2aa87f4f505e69e14eb55b0c9c"
+      },
+      {
+        "id": "szekszard-production",
+        "expectedCount": 31,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 19,
+            "scoredPredictionCount": 17,
+            "detection": {
+              "truePositives": 10,
+              "falsePositives": 7,
+              "falseNegatives": 21,
+              "precision": 0.5882352941176471,
+              "recall": 0.3225806451612903,
+              "f1": 0.41666666666666663
+            },
+            "meanFootprintIoUAllReferences": 0.35801912743825187,
+            "meanFootprintIoUAmongMatches": 0.7399061967057204
+          },
+          {
+            "variant": "after",
+            "predictionCount": 19,
+            "scoredPredictionCount": 17,
+            "detection": {
+              "truePositives": 10,
+              "falsePositives": 7,
+              "falseNegatives": 21,
+              "precision": 0.5882352941176471,
+              "recall": 0.3225806451612903,
+              "f1": 0.41666666666666663
+            },
+            "meanFootprintIoUAllReferences": 0.3830000702041589,
+            "meanFootprintIoUAmongMatches": 0.7915334784219284
+          }
+        ],
+        "documentSha256": "cacf083c228faa0a33f9a8154a518bc64bfa44d20d97d58a7aedaa7ceba85b2f"
+      },
+      {
+        "id": "kacprzak",
+        "expectedCount": 11,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 11,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          },
+          {
+            "variant": "after",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 11,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          }
+        ],
+        "documentSha256": "997837fe6def20f6c19013a5bb7f939635dac34580aad162c37114c3f1617b69"
+      },
+      {
+        "id": "burdelak",
+        "expectedCount": 14,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 19,
+            "scoredPredictionCount": 19,
+            "detection": {
+              "truePositives": 5,
+              "falsePositives": 14,
+              "falseNegatives": 9,
+              "precision": 0.2631578947368421,
+              "recall": 0.35714285714285715,
+              "f1": 0.30303030303030304
+            },
+            "meanFootprintIoUAllReferences": 0.5199040437605112,
+            "meanFootprintIoUAmongMatches": 0.5598966625113198
+          },
+          {
+            "variant": "after",
+            "predictionCount": 11,
+            "scoredPredictionCount": 11,
+            "detection": {
+              "truePositives": 11,
+              "falsePositives": 0,
+              "falseNegatives": 3,
+              "precision": 1,
+              "recall": 0.7857142857142857,
+              "f1": 0.88
+            },
+            "meanFootprintIoUAllReferences": 0.7579578262515032,
+            "meanFootprintIoUAmongMatches": 0.9646735970473678
+          }
+        ],
+        "documentSha256": "4d8db49a7f32b2a795a227a6828fd4b148fa9ca57ab2ae1efacf8bcd0fb54e47"
+      },
+      {
+        "id": "obora",
+        "expectedCount": 10,
+        "runs": [
+          {
+            "variant": "before",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 10,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          },
+          {
+            "variant": "after",
+            "predictionCount": 0,
+            "scoredPredictionCount": 0,
+            "detection": {
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 10,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "meanFootprintIoUAllReferences": 0,
+            "meanFootprintIoUAmongMatches": null
+          }
+        ],
+        "documentSha256": "85c80c8338ddd03ce975a9bb52da8c2e9da5f63d8168258ee6543985ee9ff02e"
+      }
+    ],
+    "geaLaneMatches": [
+      {
+        "referenceId": "ref-alley-lower",
+        "predictionId": "structure-area-1-text-1-81",
+        "bboxIoU": 0.9527607534671239,
+        "footprintIoU": 0.9527607534671245,
+        "predictedKind": "alley",
+        "expectedKind": "alley",
+        "confidence": 0.89,
+        "truePositive": true
+      },
+      {
+        "referenceId": "ref-alley-middle-lower",
+        "predictionId": "structure-area-1-text-1-136",
+        "bboxIoU": 0.9773479581455852,
+        "footprintIoU": 0.9773479581455843,
+        "predictedKind": "alley",
+        "expectedKind": "alley",
+        "confidence": 0.89,
+        "truePositive": true
+      },
+      {
+        "referenceId": "ref-alley-middle-upper",
+        "predictionId": "structure-area-1-text-1-139",
+        "bboxIoU": 0.9785944158212347,
+        "footprintIoU": 0.9785944158212351,
+        "predictedKind": "alley",
+        "expectedKind": "alley",
+        "confidence": 0.89,
+        "truePositive": true
+      },
+      {
+        "referenceId": "ref-alley-upper",
+        "predictionId": "structure-area-1-text-1-142",
+        "bboxIoU": 0.9814272286463872,
+        "footprintIoU": 0.981427228646387,
+        "predictedKind": "alley",
+        "expectedKind": "alley",
+        "confidence": 0.89,
+        "truePositive": true
+      }
+    ],
+    "remainingGeaNativeMisses": [
+      "ref-calving-upper",
+      "ref-calving-main",
+      "ref-isolation"
+    ],
+    "geaMeanLaneIoU": 0.9725325890200827
+  },
+  "svg": {
+    "ms": 196.46891099999993,
+    "stats": {
+      "nativeLines": 149003,
+      "structuralLines": 37294,
+      "detailLines": 74692,
+      "hiddenHatchingLines": 17061,
+      "hiddenAnnotationLines": 19956,
+      "invalidLines": 0,
+      "renderedSegments": 87995
+    },
+    "paths": 12,
+    "svgBytes": 2491765,
+    "hidden": [
+      {
+        "reason": "named-annotation",
+        "count": 19956
+      },
+      {
+        "reason": "named-hatching",
+        "count": 17061
+      }
+    ]
+  },
+  "liveModelRun": {
+    "documentSha256": "4d8db49a7f32b2a795a227a6828fd4b148fa9ca57ab2ae1efacf8bcd0fb54e47",
+    "actualModels": {
+      "areas": "gpt-6-luna",
+      "measurements": "gpt-6-luna"
+    },
+    "detection": {
+      "truePositives": 12,
+      "falsePositives": 4,
+      "falseNegatives": 2,
+      "precision": 0.75,
+      "recall": 0.8571428571428571,
+      "f1": 0.7999999999999999
+    },
+    "evaluation": {
+      "definition": {
+        "matching": "class-agnostic maximum-weight bbox IoU assignment",
+        "associationIoU": 0.1,
+        "localizationIoU": 0.5,
+        "unscoredKinds": [
+          "gate",
+          "drinker",
+          "brush",
+          "unknown",
+          "pens"
+        ],
+        "geometryScoring": "annotated footprint IoU including polygon holes; missing rooms count as zero in all-reference means"
+      },
+      "expectedCount": 14,
+      "predictionCount": 21,
+      "scoredPredictionCount": 16,
+      "classification": {
+        "truePositives": 13,
+        "falsePositives": 3,
+        "falseNegatives": 1,
+        "precision": 0.8125,
+        "recall": 0.9285714285714286,
+        "f1": 0.8666666666666666,
+        "accuracyAmongSpatialMatches": 1
+      },
+      "detection": {
+        "truePositives": 12,
+        "falsePositives": 4,
+        "falseNegatives": 2,
+        "precision": 0.75,
+        "recall": 0.8571428571428571,
+        "f1": 0.7999999999999999
+      },
+      "localization": {
+        "truePositives": 12,
+        "falsePositives": 4,
+        "falseNegatives": 2,
+        "precision": 0.75,
+        "recall": 0.8571428571428571,
+        "f1": 0.7999999999999999,
+        "meanBboxIoUAmongMatches": 0.9142949554830275,
+        "meanFootprintIoUAmongMatches": 0.9142949554830279,
+        "meanFootprintIoUAllReferences": 0.8489881729485259,
+        "meanReferenceCoverageAllReferences": 0.8630467618562435
+      },
+      "confusionMatrix": {
+        "feeding_area": {
+          "feeding_area": 2
+        },
+        "calving": {
+          "missing": 1,
+          "calving": 1
+        },
+        "isolation": {
+          "isolation": 1
+        },
+        "cubicles": {
+          "cubicles": 5
+        },
+        "alley": {
+          "alley": 4
+        }
+      },
+      "missingSpatialReferences": [
+        "ref-calving-upper"
+      ],
+      "invalidPredictions": [],
+      "duplicates": [],
+      "ignoredPredictions": [
+        {
+          "predictionId": "fb3b4d90-a6aa-4a73-882f-f9ad87818dc5",
+          "referenceId": "exclude-alley-left-upper",
+          "reason": "outside-defined-reference-scope"
+        },
+        {
+          "predictionId": "f1e6223a-fd71-448a-85d9-9a8a39c97b46",
+          "referenceId": "exclude-alley-left-middle",
+          "reason": "outside-defined-reference-scope"
+        },
+        {
+          "predictionId": "611ec16a-6a9b-4537-b0cf-fff9eadd2647",
+          "referenceId": "exclude-alley-left-lower",
+          "reason": "outside-defined-reference-scope"
+        },
+        {
+          "predictionId": "01647ba0-0844-4834-b1a5-08a545caa7d1",
+          "referenceId": "exclude-alley-service-horizontal",
+          "reason": "outside-defined-reference-scope"
+        },
+        {
+          "predictionId": "0d89fa18-259b-4ffd-911d-a40bddbd677d",
+          "reason": "category-without-complete-reference-annotations"
+        }
+      ]
+    },
+    "warnings": [
+      "Bei einzelnen Bereichen ist die Erkennung unsicher. Bitte Markierungen prüfen.",
+      "Tränken oder Bürsten ohne konkreten Planbeleg wurden verworfen.",
+      "Einzelne Bildmaße sind unsicher. Die Fachplanung prüft diese Werte.",
+      "Nichtlineare oder nicht ausreichend lokalisierbare Maßvorschläge wurden verworfen."
+    ]
+  },
+  "browserLiveRun": {
+    "durationSeconds": 38.76,
+    "apiStatus": 200,
+    "mode": "live-api",
+    "areas": 21,
+    "measurements": 2,
+    "checks": [
+      "Real PDF upload, live API 200, four full-width native manure alleys, compact native SVG with legend",
+      "Area selection and wheel zoom in both directions on simplified surface",
+      "Original toggle preserves exact overlay coordinates and selection",
+      "Standalone SVG download is parseable, preserves area geometry, patterns and batched native paths",
+      "Move/resize synchronizes filled SVG geometry with editable overlay",
+      "Discard removes fill and hit target; undo restores both",
+      "Manual marking creates colored area; delete clears it",
+      "JSON retains every native vector and layer provenance after SVG simplification",
+      "Measurement view automatically uses the original drawing",
+      "Wishes and plan work on mobile without horizontal page overflow",
+      "New plan clears prior project and surface"
+    ],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "network": [
+      {
+        "compressedBytes": 2713655,
+        "decodedBytes": 27443474
+      }
+    ]
+  },
+  "productionReplay": {
+    "durationSeconds": 9.91,
+    "apiStatus": 200,
+    "mode": "captured-live-response-replay",
+    "areas": 21,
+    "measurements": 2,
+    "checks": [
+      "Real PDF upload with captured live response deliberately replayed; native SVG and four full-width manure alleys",
+      "Area selection and wheel zoom in both directions on simplified surface",
+      "Original toggle preserves exact overlay coordinates and selection",
+      "Standalone SVG download is parseable, preserves area geometry, patterns and batched native paths",
+      "Move/resize synchronizes filled SVG geometry with editable overlay",
+      "Discard removes fill and hit target; undo restores both",
+      "Manual marking creates colored area; delete clears it",
+      "JSON retains every native vector and layer provenance after SVG simplification",
+      "Measurement view automatically uses the original drawing",
+      "Wishes and plan work on mobile without horizontal page overflow",
+      "New plan clears prior project and surface"
+    ],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "network": [
+      {
+        "compressedBytes": 2713655,
+        "decodedBytes": 27443474
+      }
+    ]
+  },
+  "rendererSmoke": [
+    {
+      "id": "kacprzak",
+      "mode": "Renderer smoke; API response deliberately stubbed; no live API/model evaluation",
+      "simplified": 0,
+      "simplifiedControl": 0,
+      "nativePaths": 0,
+      "originalImg": 1,
+      "alerts": [],
+      "nonWhitePixels": 87038,
+      "mobile": {
+        "innerWidth": 390,
+        "docWidth": 390,
+        "bodyWidth": 390
+      },
+      "mobileOverflow": false,
+      "passed": true,
+      "seconds": 2.8,
+      "request": [
+        {
+          "pages": [
+            {
+              "kind": "raster",
+              "lines": 0,
+              "namedLines": 0,
+              "images": 1
+            }
+          ]
+        }
+      ],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "id": "flexicubicles",
+      "mode": "Renderer smoke; API response deliberately stubbed; no live API/model evaluation",
+      "simplified": 1,
+      "simplifiedControl": 1,
+      "nativePaths": 9,
+      "originalImg": 0,
+      "alerts": [],
+      "nonWhitePixels": 67851,
+      "originalSwitch": true,
+      "mobile": {
+        "innerWidth": 390,
+        "docWidth": 390,
+        "bodyWidth": 390
+      },
+      "mobileOverflow": false,
+      "passed": true,
+      "seconds": 5.55,
+      "request": [
+        {
+          "pages": [
+            {
+              "kind": "vector",
+              "lines": 101184,
+              "namedLines": 0,
+              "images": 0
+            }
+          ]
+        }
+      ],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "id": "szekszard-production",
+      "mode": "Renderer smoke; API response deliberately stubbed; no live API/model evaluation",
+      "simplified": 1,
+      "simplifiedControl": 1,
+      "nativePaths": 4,
+      "originalImg": 0,
+      "alerts": [],
+      "nonWhitePixels": 111601,
+      "originalSwitch": true,
+      "mobile": {
+        "innerWidth": 390,
+        "docWidth": 390,
+        "bodyWidth": 390
+      },
+      "mobileOverflow": false,
+      "passed": true,
+      "seconds": 6.33,
+      "request": [
+        {
+          "pages": [
+            {
+              "kind": "vector",
+              "lines": 32754,
+              "namedLines": 32512,
+              "images": 0
+            }
+          ]
+        }
+      ],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ],
+  "navigationAndHoles": {
+    "mode": "production renderer fixture; API deliberately stubbed; no model evaluation",
+    "checks": [
+      "Native SVG and editable polygon both preserve holes; clicks pass through selected outer area to the inner object",
+      "Two-page document switches vector SVG to raster original and back",
+      "Explicit original-view choice survives page navigation"
+    ],
+    "pageErrors": [],
+    "consoleErrors": []
+  }
+}

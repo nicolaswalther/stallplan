@@ -2,6 +2,8 @@
 
 Geprüft am 6. Oktober 2026 mit `Burdelak_Piotr_k001.pdf`, SHA-256 `4d8db49a7f32b2a795a227a6828fd4b148fa9ca57ab2ae1efacf8bcd0fb54e47`. Das Kundendokument, seine Bilder, API-Rohantworten und Zugangsdaten bleiben außerhalb des Repositorys.
 
+**Aktualisierung:** Die [GEA-/SVG-Arbeitsrunde](GEA-SVG-ITERATION.md) reproduziert die zu kleinen Gangmarkierungen, korrigiert die native Ausgangsmessung auf 5/14 vollständig lokalisierte Hauptflächen und erreicht anschließend 11/14. Die dort getrennt ausgewiesenen neuen Messungen ersetzen die ältere pauschale native Angabe unten. Historische Modell- und OCR-Läufe bleiben als datierte Einzelversuche erhalten.
+
 ## Ursachen
 
 Der Plan ist eine sehr dichte CAD-Mischform: eine Seite mit 2.384 × 1.684 PDF-Punkten, 89 normalisierten Textobjekten und 149.003 extrahierten Linien. Viele Maßziffern sind gezeichnete Pfade und deshalb keine PDF-Textobjekte.
