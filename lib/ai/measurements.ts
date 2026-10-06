@@ -6,6 +6,7 @@ import { positionedTextContext, withPageImages } from "./context";
 import { withModelFallback } from "./client";
 import { recordAnalysisUsage } from "./usage";
 import { extractDeterministicMeasurements } from "../deterministic";
+import { hasLocatedDimensionInk } from "../geometry/text-ink";
 
 const unitSchema = z.enum(["m", "cm", "mm", "unknown"]);
 export const measurementPayloadSchema = z.object({
@@ -18,7 +19,7 @@ export const measurementPayloadSchema = z.object({
   })).max(200),
 });
 
-/** Vector pages never use a vision model to re-read existing numeric geometry/text. */
+/** Only supplement pages whose dimension texts are unavailable as native text. */
 export function selectRasterMeasurementPages(pages: PdfPageData[], structuralMeasurements = extractDeterministicMeasurements(pages)): PdfPageData[] {
   return pages.filter((page) => Boolean(page.imageDataUrl) && (page.documentKind === "raster" || (page.documentKind === "mixed"
     && !structuralMeasurements.some((measurement) => measurement.pageNumber === page.pageNumber && measurement.dimensionLine && measurement.sources?.includes("geometry"))))).slice(0, 4);
@@ -34,6 +35,7 @@ export function validateRasterMeasurements(input: unknown, pages: PdfPageData[])
   const allowedPages = new Set(selectRasterMeasurementPages(pages).map((page) => page.pageNumber));
   const valid = parsedMeasurements.filter((measurement) => allowedPages.has(measurement.pageNumber)
     && measurement.hasBbox && measurement.bbox.width > 0 && measurement.bbox.height > 0 && measurement.evidence.trim().length > 0
+    && hasLocatedDimensionInk(pages.find((page) => page.pageNumber === measurement.pageNumber)!, measurement.bbox)
     && !/(?:\bDJP\b|\bszt\b|\bm(?:[²³]|[23]\b)|\bm\s*\^\s*[23]\b|\b(?:volumen|volume|flache|fläche|tieranzahl|hohenkote|höhenkote|elevation|zeichnung(?:snummer)?|raum(?:nummer)?|achsnummer|datum|date|maßstab|massstab)\b|n\.?\s*p\.?\s*m\.?|m\s*[üu]\.?\s*(?:nn|nhn)\b|1\s*:\s*\d+)/i.test(`${measurement.label} ${measurement.evidence}`)
     && !pages.find((page) => page.pageNumber === measurement.pageNumber)?.textItems.some((item) => {
       if (!/^\d+(?:[.,]\d+)?\s*(?:mm|cm|m)?$/i.test(item.text.trim())) return false;
@@ -43,7 +45,7 @@ export function validateRasterMeasurements(input: unknown, pages: PdfPageData[])
       return smallerArea > 0 && intersection / smallerArea >= 0.5;
     }));
   const warnings = payload.warnings.length ? ["Einzelne Rastermaße sind unsicher. Die Fachplanung prüft diese Werte."] : [];
-  if (valid.length < payload.measurements.length) warnings.push("Nichtlineare oder nicht lokalisierbare Maßvorschläge wurden verworfen.");
+  if (valid.length < payload.measurements.length) warnings.push("Nichtlineare oder nicht ausreichend lokalisierbare Maßvorschläge wurden verworfen.");
   return {
     warnings,
     measurements: valid.map((measurement) => {
@@ -51,10 +53,10 @@ export function validateRasterMeasurements(input: unknown, pages: PdfPageData[])
       return {
         id: crypto.randomUUID(), key: measurement.key, label: "Planmaß", value: measurement.value, unit,
         source: "ai", sources: ["vision"], status: "unconfirmed", confidence: Math.min(measurement.confidence, unit === "unknown" ? 0.69 : payload.unitBasis.confidence),
-        pageNumber: measurement.pageNumber, bbox: measurement.bbox, evidence: "Schriftlicher Maßwert aus dem Scan; Position und Einheit bitte prüfen.", originalEvidence: measurement.evidence,
+        pageNumber: measurement.pageNumber, bbox: measurement.bbox, evidence: "Schriftlicher Maßwert aus dem Planbild; Position und Einheit bitte prüfen.", originalEvidence: measurement.evidence,
         originalUnitInference: payload.unitBasis,
         unitInference: { ...payload.unitBasis, evidence: payload.unitBasis.unit === "unknown" || payload.unitBasis.confidence < 0.8
-          ? "Einheit im Scan nicht ausreichend belegt." : "Einheit anhand der Zeichnungsangaben im Scan erkannt." },
+          ? "Einheit im Plan nicht ausreichend belegt." : "Einheit anhand der Zeichnungsangaben im Plan erkannt." },
       };
     }),
   };
@@ -62,12 +64,12 @@ export function validateRasterMeasurements(input: unknown, pages: PdfPageData[])
 
 export async function analyzeRasterMeasurements(client: OpenAI, model: string, fileName: string, pages: PdfPageData[]) {
   const selectedPages = selectRasterMeasurementPages(pages);
-  const prompt = `Extrahiere aus den Rasterseiten des technischen Plans ${JSON.stringify(fileName)} ausschließlich schriftliche lineare Maßwerte.
+  const prompt = `Extrahiere aus den ausgewählten Planbildern des technischen Plans ${JSON.stringify(fileName)} ausschließlich schriftliche lineare Maßwerte.
 Die gesamte Ausgabe ist immer Deutsch, auch bei fremdsprachigen Plänen. Originaltext ausschließlich als deutlich gekennzeichnetes Dokumentzitat in evidence.
-Dies ist nur die Ersatzanalyse für Seiten ohne nutzbare PDF-Textobjekte; keine Vektorseiten untersuchen.
+Dies ist die Ersatzanalyse für Scans oder Mischseiten, deren Maßziffern als Vektorpfade statt als PDF-Text vorliegen. Vorhandene Zahlen und Koordinaten aus PDF-Text niemals ersetzen.
 Zahlen mit vorhandenen PDF-Textkoordinaten niemals aus dem Bild neu lesen. Diese werden separat direkt aus dem PDF übernommen. Nur zusätzliche Rastermaßtexte ohne entsprechendes PDF-Textobjekt extrahieren.
 Lies Maßtexte mit ihren Positionen. Niemals Längen aus Pixelabständen schätzen. Unklare Ziffern weglassen.
-Prüfe Einheiten separat. Teilmaß+Gesamtmaß belegen eine Kette, aber allein keine Einheit. Nur Titelblock/eindeutige Einheit/maßstäblich konsistente Evidenz kann eine Einheit begründen.
+Prüfe Einheiten separat. Teilmaß+Gesamtmaß belegen eine Kette, aber allein keine Einheit. Nur Titelblock/eindeutige Einheit/maßstäblich konsistente Evidenz kann eine Einheit begründen. Wenn der Titelblock mehrere mögliche Einheiten nennt (z. B. Meter ODER Zentimeter), ist dies keine eindeutige globale Einheit: unitBasis=unknown.
 Wenn die Einheit nicht sicher ist: unknown, Zahl unverändert. Keine Umrechnung oder blindes Raten.
 Keine Tierzahlen (DJP), Raum-/Positions-/Achsnummern, Datumswerte, Zeichnungsnummern, Höhenkoten, Flächen oder Volumen. 1:100 ist Maßstab, kein Maß. 0,00=136,6m n.p.m. ist Höhe, keine Länge.
 Bounding-Box markiert ausschließlich den Maßtext (0..1, Ursprung links oben). Nur sichtbare Werte mit konkreter Evidenz ausgeben; label=Planmaß, wenn die Bauteilzuordnung unklar ist.

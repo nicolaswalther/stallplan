@@ -49,7 +49,10 @@ export function withPageImages(prompt: string, pages: PdfPageData[]): InputPart[
 
 /** Detail images are semantic evidence only; measurements keep their own input. */
 export function withAreaImages(prompt: string, pages: PdfPageData[]): InputPart[] {
-  const content = withPageImages(prompt, pages);
+  const content = withPageImages(prompt, pages.map((page) => ({ ...page, imageDataUrl: page.semanticAreaImage?.imageDataUrl ?? page.imageDataUrl })));
+  for (const page of imagePages(pages)) if (page.semanticAreaImage) {
+    content.push({ type: "input_text", text: `Seite ${page.pageNumber}: Nur ausdrücklich benannte Schraffurlayer wurden im Bereichsbild ausgeblendet. Wände, Einrichtungen, Maßlinien und native Textkoordinaten bleiben erhalten. Dieses vereinfachte Bild dient der Bereichsklassifikation; fehlende Bodenschraffuren belegen keinen Bodenbelag.` });
+  }
   let details = 0;
   for (const page of imagePages(pages)) for (const crop of (page.semanticDetails ?? []).slice(0, 2)) {
     if (details++ >= 4) break;

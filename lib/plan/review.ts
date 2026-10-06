@@ -31,6 +31,8 @@ export function applyAreaGeometryCorrection(area: DetectedArea, bbox: Normalized
   return { ...area, originalBbox: area.originalBbox ?? area.bbox, originalSource: area.originalSource ?? area.source,
     originalFootprint: area.originalFootprint ?? area.footprint,
     originalContourProvenance: area.originalContourProvenance ?? area.contourProvenance,
+    originalPatternProvenance: area.originalPatternProvenance ?? area.patternProvenance,
+    patternProvenance: undefined,
     footprint, contourProvenance: undefined,
     originalConfidence: area.originalConfidence !== undefined ? area.originalConfidence : area.confidence,
     bbox, hasBbox: true, source: "manual", confidence: null, boundaryAssessment: undefined,
@@ -145,8 +147,13 @@ export function mergeAreas(base: DetectedArea[], incoming: DetectedArea[]) {
     if (index === -1) merged.push(candidate);
     else {
       const current = merged[index];
-      if (current.source === "manual" || current.status !== "unconfirmed") continue;
-      merged[index] = { ...current, evidence: [...new Set([...current.evidence, ...candidate.evidence])] };
+      if (current.source === "manual" || current.geometryCorrections?.length || current.status !== "unconfirmed") continue;
+      // The server retains a native area's ID when independent text evidence
+      // associates it with a more complete semantic boundary. Apply that fused
+      // geometry; otherwise the initial fallback would remain stuck on screen.
+      const associatedNative = current.source === "geometry" && candidate.source === "ai"
+        && current.id === candidate.id && current.kind === candidate.kind && current.pageNumber === candidate.pageNumber;
+      merged[index] = { ...(associatedNative ? candidate : current), evidence: [...new Set([...current.evidence, ...candidate.evidence])] };
     }
   }
   return merged;

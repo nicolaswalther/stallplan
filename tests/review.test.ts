@@ -85,6 +85,21 @@ test("late semantic suggestions preserve manual and rejected area reviews", () =
   assert.equal(fused[1].status, "rejected");
 });
 
+test("server-associated complete boundary replaces an unreviewed native fragment without undoing customer decisions", () => {
+  const native = area({ id: "structure-area-1-label", confidence: .82, bbox: { x: .3, y: .3, width: .04, height: .05 } });
+  const fused = area({ id: native.id, source: "ai", confidence: .82, bbox: { x: .2, y: .25, width: .2, height: .1 }, evidence: ["PDF-Beschriftung bestätigt vollständigen Bereich"] });
+  const result = mergeAreas([native], [fused]);
+  assert.equal(result.length, 1);
+  assert.deepEqual(result[0].bbox, fused.bbox);
+  assert.equal(result[0].source, "ai");
+  assert.equal(result[0].status, "unconfirmed");
+  assert.equal(result[0].evidence.length, 2);
+  for (const protectedArea of [{ ...native, status: "confirmed" as const }, removeArea(native), { ...native, source: "manual" as const }]) {
+    assert.deepEqual(mergeAreas([protectedArea], [fused])[0], protectedArea);
+  }
+  assert.deepEqual(mergeAreas([native], [{ ...fused, id: "unassociated-ai" }])[0].bbox, native.bbox);
+});
+
 test("moving an area clamps against the page without shrinking it", () => {
   const box = { x: 0.2, y: 0.3, width: 0.4, height: 0.2 };
   assert.deepEqual(transformAreaBox(box, "move", -0.5, 1), { x: 0, y: 0.8, width: 0.4, height: 0.2 });
@@ -120,4 +135,13 @@ test("geometry corrections preserve model origin and one audit entry per committ
   assert.equal(second.geometryCorrections?.[0].source, "customer");
   assert.equal(applyAreaGeometryCorrection(second, second.bbox), second);
   assert.equal(applyAreaGeometryCorrection(second, { x: -0.1, y: 0.2, width: 0.4, height: 0.3 }), second);
+});
+
+test("moving a vector-pattern area preserves its original proof without claiming it supports the corrected position", () => {
+  const patternProvenance = { method: "repeated-cubicle-geometry" as const, rasterImageIndices: [0, 1, 2, 3], sourceLineIds: ["left", "right", "divider"], dividerCount: 16, spacingPoints: 30 };
+  const original = area({ kind: "cubicles", patternProvenance });
+  const corrected = applyAreaGeometryCorrection(original, { ...original.bbox, y: .4 });
+  assert.equal(corrected.patternProvenance, undefined);
+  assert.deepEqual(corrected.originalPatternProvenance, patternProvenance);
+  assert.deepEqual(corrected.originalBbox, original.bbox);
 });

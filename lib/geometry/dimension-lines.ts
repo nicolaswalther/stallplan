@@ -18,19 +18,32 @@ export function indexAxisLines(page: PdfPageData): AxisLine[] {
   return result;
 }
 
-/** A tick/arrow or crossing extension at each endpoint is independent evidence. */
+/** A crossing tick/extension or paired arrowhead is dimension evidence.
+ * A wall/cubicle corner merely meeting the rail does not establish a measure.
+ */
 export function endpointSupport(line: AxisLine, page: PdfPageData): number {
   const supported = [line.from, line.to].map((coordinate) => {
     const p = line.axis === "horizontal" ? { x: coordinate, y: line.cross } : { x: line.cross, y: coordinate };
-    return (page.lines ?? []).some((other) => {
-      if (other.id === line.source.id) return false;
+    const arrowSides: Array<{ parallel: number; cross: number }> = [];
+    for (const other of page.lines ?? []) {
+      if (other.id === line.source.id) continue;
       const s = pagePoint(other.start, page), e = pagePoint(other.end, page), dx = e.x - s.x, dy = e.y - s.y;
       const length = Math.hypot(dx, dy);
-      if (length < 1 || length > 90) return false;
-      if (line.axis === "horizontal" ? Math.abs(dy) < 1 : Math.abs(dx) < 1) return false;
+      if (length < 1 || length > 90) continue;
+      if (line.axis === "horizontal" ? Math.abs(dy) < 1 : Math.abs(dx) < 1) continue;
       const t = Math.max(0, Math.min(1, ((p.x - s.x) * dx + (p.y - s.y) * dy) / (length * length)));
-      return Math.hypot(p.x - (s.x + t * dx), p.y - (s.y + t * dy)) < 1.35;
-    });
+      if (Math.hypot(p.x - (s.x + t * dx), p.y - (s.y + t * dy)) >= 1.35) continue;
+      if (t * length >= .5 && (1 - t) * length >= .5) return true;
+      const startDistance = Math.hypot(p.x - s.x, p.y - s.y), endDistance = Math.hypot(p.x - e.x, p.y - e.y);
+      if (Math.min(startDistance, endDistance) >= 1.35) continue;
+      const far = startDistance < endDistance ? e : s;
+      const parallel = line.axis === "horizontal" ? far.x - p.x : far.y - p.y;
+      const cross = line.axis === "horizontal" ? far.y - p.y : far.x - p.x;
+      if (Math.abs(parallel) < 1 || Math.abs(cross) < .5 || Math.abs(cross / parallel) < .15 || Math.abs(cross / parallel) > 2) continue;
+      if (arrowSides.some((side) => side.parallel * parallel > 0 && side.cross * cross < 0)) return true;
+      arrowSides.push({ parallel, cross });
+    }
+    return false;
   });
   return Number(supported[0]) + Number(supported[1]);
 }

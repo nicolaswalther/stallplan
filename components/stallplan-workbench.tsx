@@ -10,6 +10,7 @@ import type { PointerEvent, ReactNode } from "react";
 import { detectStructuralAreas } from "@/lib/analysis/areas";
 import { extractDeterministicMeasurements } from "@/lib/deterministic";
 import { parsePdf } from "@/lib/pdf-client";
+import { AnalysisBodyError, encodeAnalysisBody } from "@/lib/plan/transport";
 import {
   applyAreaGeometryCorrection, applyMeasurementCorrection, mergeAreas, mergeMeasurements, needsMeasurementReview, prepareArea, transformAreaBox, removeArea, restoreArea,
 } from "@/lib/plan/review";
@@ -254,10 +255,14 @@ export function StallplanWorkbench() {
       project: { fileName: file.name, pageCount: pages.length, answers: projectAnswers, answerProvenance: projectAnswerProvenance, detectedFacts: projectFacts },
       analysis: { summary: analysis.documentSummary, warnings: analysis.warnings, originalAnalysis: analysis.originalAnalysis },
       documents: [{ fileName: file.name, pages: pages.map((page) => ({ pageNumber: page.pageNumber, width: page.width, height: page.height,
-        documentKind: page.documentKind, textObjects: page.textItems, geometryObjects: page.lines ?? [], extractionWarnings: page.extractionWarnings })) }],
+        documentKind: page.documentKind, textObjects: page.textItems, geometryObjects: page.lines ?? [], extractionWarnings: page.extractionWarnings,
+        rasterImages: page.rasterImages, rasterGeometryComplete: page.rasterGeometryComplete,
+        curveInkBounds: page.curveInkBounds, vectorInkComplete: page.vectorInkComplete,
+        semanticAreaView: page.semanticAreaImage ? { hiddenLayers: page.semanticAreaImage.hiddenLayers } : undefined })) }],
       areas: confirmedAreas.map((area) => ({ id: area.id, kind: area.kind, label: area.label, pageNumber: area.pageNumber,
         bbox: area.hasBbox ? area.bbox : null, source: area.source, confidence: area.confidence, evidence: area.evidence,
         originalLabel: area.originalLabel, originalEvidence: area.originalEvidence, boundaryRefinement: area.boundaryRefinement, boundaryAssessment: area.boundaryAssessment, footprint: area.footprint, contourProvenance: area.contourProvenance,
+        patternProvenance: area.patternProvenance, originalPatternProvenance: area.originalPatternProvenance,
         relevantProducts: getPlanningProducts(area.kind, resolveAreaAnswers(area, projectAnswers, preferences).answers), requiredMeasurements: AREA_RULES[area.kind].measurements,
         answers: resolveAreaAnswers(area, projectAnswers, preferences).answers,
         answerProvenance: resolveAreaAnswers(area, projectAnswers, preferences, projectAnswerProvenance).provenance })),
@@ -287,15 +292,21 @@ export function StallplanWorkbench() {
     abortRef.current = controller;
     try {
       setBusy("analyzing");
-      const response = await fetch("/api/analyze", { method: "POST", signal: controller.signal, headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ purpose: "automatic", fileName: nextFile.name, pages: parsedPages.map((page, index) => ({
+      setError(null);
+      const encoded = await encodeAnalysisBody({ purpose: "automatic", fileName: nextFile.name, pages: parsedPages.map((page, index) => ({
           pageNumber: page.pageNumber, width: page.width, height: page.height, text: page.text, textItems: page.textItems,
           lines: page.lines, documentKind: page.documentKind, imageCount: page.imageCount, extractionWarnings: page.extractionWarnings,
-          ...(index < 4 ? { imageDataUrl: page.imageDataUrl, semanticDetails: page.semanticDetails } : {}),
-        })) }) });
+          rasterImages: page.rasterImages, rasterGeometryComplete: page.rasterGeometryComplete,
+          curveInkBounds: page.curveInkBounds, vectorInkComplete: page.vectorInkComplete,
+          ...(index < 4 ? { imageDataUrl: page.imageDataUrl, semanticDetails: page.semanticDetails, semanticAreaImage: page.semanticAreaImage } : {}),
+        })) });
+      const response = await fetch("/api/analyze", { method: "POST", signal: controller.signal, ...encoded });
+      if (!response.headers.get("content-type")?.includes("application/json")) {
+        throw new AnalysisBodyError(response.status === 413 ? "Der Plan enthält zu viele Zeichnungsdaten. Bitte einzelne Seiten hochladen." : "Analyse derzeit nicht verfügbar. Bitte erneut versuchen.", response.status);
+      }
       const data = await response.json() as ApiResponse;
       if (runRef.current !== generation) return;
-      if (!response.ok) throw new Error(data.error || "Bereichsanalyse nicht verfügbar.");
+      if (!response.ok) throw new AnalysisBodyError(data.error || "Bereichsanalyse nicht verfügbar.", response.status);
       setAnalysis({ model: data.model, actualModels: data.actualModels, usage: data.usage, documentSummary: data.documentSummary, warnings: data.warnings, originalAnalysis: data.originalAnalysis });
       const assessed = data.areas.map((area) => ({ ...area, boundaryAssessment: assessAreaBoundary(area, parsedPages) }));
       setAreas((current) => mergeAreas(current, assessed));
@@ -305,8 +316,9 @@ export function StallplanWorkbench() {
       if (!selectionTouchedRef.current) setSelectedAreaId((current) => current ?? data.areas.find((area) => area.status === "unconfirmed")?.id ?? data.areas[0]?.id ?? null);
     } catch (cause) {
       if (runRef.current !== generation || controller.signal.aborted) return;
-      setAnalysis((current) => current && { ...current, warnings: [...current.warnings,
-        cause instanceof Error ? cause.message : "Bereichsanalyse nicht verfügbar."] });
+      const message = cause instanceof AnalysisBodyError ? cause.message : "Analyse derzeit nicht verfügbar. Bitte erneut versuchen.";
+      setError(message);
+      setAnalysis((current) => current && { ...current, warnings: [...current.warnings, message] });
     } finally {
       if (runRef.current === generation) { setBusy(null); abortRef.current = null; }
     }
@@ -623,7 +635,7 @@ export function StallplanWorkbench() {
           })}
         </nav>
         {error && <div role="alert" className="mx-4 mt-3 flex items-start gap-2 rounded-md bg-[#fff4f3] p-2.5 text-xs leading-5 text-[#a33c3c]">
-          <AlertCircle size={13} className="mt-1 shrink-0" /><span className="flex-1">{error}</span><button type="button" aria-label="Fehler schließen" onClick={() => setError(null)}><X size={13} /></button>
+          <AlertCircle size={13} className="mt-1 shrink-0" /><span className="flex-1">{error}{!busy && <button type="button" className="mt-1 block font-medium underline" onClick={() => { if (file) void analyzePlan(file, pages, runRef.current); }}>Erneut versuchen</button>}</span><button type="button" aria-label="Fehler schließen" onClick={() => setError(null)}><X size={13} /></button>
         </div>}
         <div ref={contextRef} className="scrollbar-thin min-h-0 flex-1 overflow-y-auto">
           {panel === "areas" && <div className="px-4 py-5">

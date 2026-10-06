@@ -51,6 +51,7 @@ export interface PdfTextItem {
 
 export interface PdfPageData {
   semanticDetails?: PdfDetailImage[];
+  semanticAreaImage?: { imageDataUrl: string; hiddenLayers: string[] };
   pageNumber: number;
   width: number;
   height: number;
@@ -60,6 +61,13 @@ export interface PdfPageData {
   lines?: PdfLine[];
   documentKind?: DocumentKind;
   imageCount?: number;
+  rasterImages?: NormalizedBox[];
+  rasterGeometryComplete?: boolean;
+  /** Conservative control-hull bounds; >10k paths use 128-cell occupied runs.
+   * These can include empty margins, and never invent straight lines. */
+  curveInkBounds?: NormalizedBox[];
+  /** False when painted vector ink could not be represented completely. */
+  vectorInkComplete?: boolean;
   extractionWarnings?: string[];
 }
 
@@ -95,6 +103,14 @@ export interface Measurement {
 }
 
 export interface DetectedArea {
+  originalPatternProvenance?: DetectedArea["patternProvenance"];
+  patternProvenance?: {
+    method: "repeated-cubicle-geometry";
+    rasterImageIndices: number[];
+    sourceLineIds: string[];
+    dividerCount: number;
+    spacingPoints: number;
+  };
   footprint?: AreaFootprint;
   originalFootprint?: AreaFootprint;
   contourProvenance?: {

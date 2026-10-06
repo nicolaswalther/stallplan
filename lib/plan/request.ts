@@ -19,6 +19,10 @@ export const analysisRequestSchema = z.object({
       orientation: z.number().optional(), fontSize: z.number().positive().optional(), baseline: pointSchema.optional(),
     })).max(100_000),
     imageDataUrl: z.string().regex(/^data:image\/(?:jpeg|png|webp);base64,/).max(15_000_000).optional(),
+    semanticAreaImage: z.object({
+      imageDataUrl: z.string().regex(/^data:image\/(?:jpeg|png|webp);base64,/).max(3_000_000),
+      hiddenLayers: z.array(z.string().max(240)).min(1).max(100),
+    }).optional(),
     semanticDetails: z.array(z.object({
       kind: z.literal("outline-text"), bbox: bboxSchema.refine((box) => box.width > 0 && box.height > 0, "Ausschnitt benötigt eine Fläche."),
       imageDataUrl: z.string().regex(/^data:image\/(?:jpeg|png|webp);base64,/).max(3_000_000),
@@ -28,6 +32,8 @@ export const analysisRequestSchema = z.object({
     lines: z.array(z.object({ id: z.string(), start: pointSchema, end: pointSchema, strokeWidth: z.number().nonnegative().optional() })).max(150_000).optional(),
     documentKind: z.enum(["vector", "raster", "mixed"]).optional(),
     imageCount: z.number().int().nonnegative().optional(), extractionWarnings: z.array(z.string()).optional(),
+    rasterImages: z.array(bboxSchema).max(10_000).optional(), rasterGeometryComplete: z.boolean().optional(),
+    curveInkBounds: z.array(bboxSchema).max(10_000).optional(), vectorInkComplete: z.boolean().optional(),
   })).min(1).max(40),
 }).refine((request) => new Set(request.pages.map((page) => page.pageNumber)).size === request.pages.length, "Seitenzahlen müssen eindeutig sein.");
 

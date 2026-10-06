@@ -10,8 +10,40 @@ function valueOf(text: string, unit?: LengthUnit): number {
   if (unit === "mm" && /^\d{1,3}\.\d{3}$/.test(text)) return Number(text.replace(".", ""));
   return Number(text.replace(",", "."));
 }
+
+function isUnitExponent(exponent: PdfTextItem, base: PdfTextItem, page: PdfPageData): boolean {
+  if (!/^[²³23]$/.test(exponent.text) || !/(?:\d[\d.,]*\s*(?:mm|cm|m)|^(?:mm|cm|m))\s*$/i.test(base.text)) return false;
+  const font = base.fontSize ?? Math.min(base.bbox.width * page.width, base.bbox.height * page.height);
+  const exponentFont = exponent.fontSize ?? Math.min(exponent.bbox.width * page.width, exponent.bbox.height * page.height);
+  if (!(font > 0) || exponentFont >= font * .85 || axisOf(exponent) !== axisOf(base)) return false;
+  const angle = (base.orientation ?? (axisOf(base) === "vertical" ? -90 : 0)) * Math.PI / 180;
+  const direction = { x: Math.cos(angle), y: Math.sin(angle) };
+  const along = (item: PdfTextItem) => {
+    const box = item.bbox;
+    const values = [[box.x, box.y], [box.x + box.width, box.y], [box.x, box.y + box.height], [box.x + box.width, box.y + box.height]]
+      .map(([x, y]) => x * page.width * direction.x + y * page.height * direction.y);
+    return { start: Math.min(...values), end: Math.max(...values) };
+  };
+  const a = along(base), b = along(exponent), gap = b.start - a.end;
+  if (base.baseline && exponent.baseline) {
+    // Some PDF font advance boxes overlap their following superscript. Native
+    // baseline displacement still distinguishes an exponent from nearby text.
+    const dx = (exponent.baseline.x - base.baseline.x) * page.width;
+    const dy = (exponent.baseline.y - base.baseline.y) * page.height;
+    const raised = dx * direction.y - dy * direction.x;
+    return gap >= -(a.end - a.start) * .4 && gap <= font * .9 && raised >= font * .12 && raised <= font * .9;
+  }
+  if (gap <= -font * .35 || gap >= font * .9) return false;
+  if (axisOf(base) === "horizontal") {
+    const dy = (exponent.bbox.y - base.bbox.y) * page.height;
+    return dy > -font * .8 && dy < font * .35;
+  }
+  return Math.abs((exponent.bbox.x - base.bbox.x) * page.width) < font;
+}
+
 function nonLengthContext(item: PdfTextItem, page: PdfPageData): boolean {
   if (excludedContext.test(item.text)) return true;
+  if (/^[²³23]$/.test(item.text) && page.textItems.some((other) => other !== item && isUnitExponent(item, other, page))) return true;
   const box = item.bbox;
   const nearby = page.textItems.filter((other) => {
     if (other === item) return false;
@@ -21,24 +53,7 @@ function nonLengthContext(item: PdfTextItem, page: PdfPageData): boolean {
   });
   if (nearby.some((other) => excludedContext.test(other.text))) return true;
   // PDF superscripts are frequently separate text objects ("9 m" + "3").
-  if (/m\s*$/i.test(item.text)) {
-    const font = item.fontSize ?? Math.min(box.width * page.width, box.height * page.height);
-    const axis = axisOf(item);
-    const hasExponent = page.textItems.some((other) => {
-      if (!/^[²³23]$/.test(other.text)) return false;
-      const smaller = (other.fontSize ?? Math.min(other.bbox.width * page.width, other.bbox.height * page.height)) < font * 0.85;
-      if (!smaller) return false;
-      if (axis === "horizontal") {
-        const dx = (other.bbox.x - (box.x + box.width)) * page.width;
-        const dy = (other.bbox.y - box.y) * page.height;
-        return dx > -font * 0.35 && dx < font * 0.9 && dy > -font * 0.8 && dy < font * 0.35;
-      }
-      const dy = ((box.y - other.bbox.y - other.bbox.height)) * page.height;
-      const dx = (other.bbox.x - box.x) * page.width;
-      return dy > -font * 0.35 && dy < font * 0.9 && Math.abs(dx) < font;
-    });
-    if (hasExponent) return true;
-  }
+  if (/m\s*$/i.test(item.text) && page.textItems.some((other) => other !== item && isUnitExponent(other, item, page))) return true;
   // Elevation labels are often split into a sign and an unsigned decimal.
   return /^\d+[.,]\d+$/.test(item.text) && nearby.some((other) => /^[+−-]$/.test(other.text));
 }
@@ -111,7 +126,15 @@ function assignChains(candidates: Candidate[], page: PdfPageData, unit: LengthUn
 
 function selectAssociation(candidate: Candidate, page: PdfPageData, unit: LengthUnit, supportCache: Map<string, number>): { association: LineAssociation; agreement: number } | null {
   const scale = drawingScale(page);
-  const ranked = candidate.associations.map((a) => {
+  const font = candidate.item.fontSize ?? Math.min(candidate.item.bbox.width * page.width, candidate.item.bbox.height * page.height);
+  const ranked = candidate.associations.filter((association) => {
+    // Letter strokes can have two nearby crossings just like a dimension rail.
+    // A sub-glyph span is insufficient geometric evidence by itself. Genuine
+    // short wall dimensions remain eligible when independent scale/unit data
+    // proves their physical length (for example 6 cm on a 1:100 drawing).
+    if (association.line.length >= Math.max(1, font * .5)) return true;
+    return !!scale && unit !== "unknown" && scaleAgreement(association.line.length, candidate.value, unit, scale) >= .65;
+  }).map((a) => {
     const agreement = scale && unit !== "unknown" ? scaleAgreement(a.line.length, candidate.value, unit, scale) : 0;
     const support = supportCache.get(a.line.source.id) ?? endpointSupport(a.line, page);
     supportCache.set(a.line.source.id, support);

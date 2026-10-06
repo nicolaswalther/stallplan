@@ -74,7 +74,12 @@ export function validateSemanticAreas(input: unknown, pages: PdfPageData[]): { d
     };
   });
   // A generated classification note is not a new observation of equipment.
-  const valid = reconciled.filter(({ area, originalEvidence }) => (area.kind !== "drinker" && area.kind !== "brush") || equipmentHasDocumentEvidence(area.kind, originalEvidence)).map(({ area }) => area);
+  const valid = reconciled.filter(({ area, originalEvidence }) => {
+    // An opening is a local object. A floor-wide group of gates is not one
+    // usable opening footprint and must not cover intervening stall functions.
+    if (area.kind === "gate" && area.bbox.width * area.bbox.height > .035) return false;
+    return (area.kind !== "drinker" && area.kind !== "brush") || equipmentHasDocumentEvidence(area.kind, originalEvidence);
+  }).map(({ area }) => area);
   const warnings = payload.warnings.length ? ["Bei einzelnen Bereichen ist die Erkennung unsicher. Bitte Markierungen prüfen."] : [];
   if (positioned.length < payload.areas.length) warnings.push("Bereiche ohne gültige Planposition wurden verworfen.");
   if (valid.length < positioned.length) warnings.push("Tränken oder Bürsten ohne konkreten Planbeleg wurden verworfen.");
@@ -114,7 +119,7 @@ Jungvieh/Kälber nicht pauschal als Liegeboxen einstufen: einzelne Liegeboxen=cu
 gate umfasst innere Tierdurchgänge und äußere Stallöffnungen: verlange sichtbare Öffnungsgeometrie mit Tor-/Türzeichen oder ausdrücklicher Durchgangsbeschriftung. Eine Wandlücke allein belegt weder ein Tor noch einen gewünschten Einbau. Nur die Öffnung markieren, nicht den angrenzenden Raum.
 drinker/brush nur bei konkretem Text-/Legendenbeleg oder charakteristischer Symbolgeometrie. Für Tränken z.B. Becken-/Trogkontur mit erkennbarem Wasseranschluss, für Bürsten Borsten-/Bürstenkopf-Geometrie. Blaue Farbe, ein beliebiges Rechteck oder ein Kreis allein reichen nicht. Den tatsächlich sichtbaren kleinen Gegenstand markieren, nie den ganzen Raum. Konkreten Beleg in evidence nennen; Confidence höchstens 0.89. Nicht eingezeichnete Wünsche sind keine erkannten Objekte.
 Wenn Geometrie nicht belastbar bestimmbar ist: hasBbox=false. Jede Entscheidung benötigt konkrete Dokumentevidenz.
-Bekannte polnische Beschriftungen: korytarz paszowy=Futtergang/feeding_area, ausdrücklich kein alley; legowiska=Liegeboxen; komunikacja=Laufgang/alley; porodówka=Abkalbung; izolatka=Isolation; jałownik=Jungviehbereich; cielętnik=Kälberbereich; poidło=Tränke; szczotka=Bürste. WC, Büro und Melkhalle nicht als Liegeboxen klassifizieren.
+Bekannte polnische Beschriftungen: korytarz paszowy=Futtergang/feeding_area, ausdrücklich kein alley; legowiska=Liegeboxen; komunikacja=Laufgang/alley; ganek gnojowy=Entmistungs-/Laufgang/alley, ausdrücklich kein feeding_area; porodówka=Abkalbung; izolatka/separatka=Isolation. SEPARATKA - 10 LEGOWISK bezeichnet eine Separationsbucht/isolation mit zehn Liegeplätzen, keine reguläre cubicles-Reihe. Eine Anzahl von Liegeplätzen ändert die ausdrücklich bezeichnete Hauptnutzung nicht; getrennte benachbarte Nutzungen trotzdem getrennt erkennen; jałownik=Jungviehbereich; cielętnik=Kälberbereich; poidło=Tränke; szczotka=Bürste. WC, Büro und Melkhalle nicht als Liegeboxen klassifizieren.
 Vergrößerte Beschriftungsausschnitte können Raumtabellen enthalten. Lies deren tatsächliche Bezeichnungen und ordne ausschließlich wirklich gelesene Raumnummern den direkten PDF-Raumkennzeichen im Grundriss zu. Eine eindeutige Raumtabellen-Bezeichnung hat Vorrang vor einer bloßen optischen Ähnlichkeit. Pro Nutzungsfläche genau ein Bereich; WC/Büro/Technik/Melkräume nicht als Stall-Nutzungsbereiche ausgeben. originalLabel enthält bei gelesener Nummer die wortgetreue Nummer und Bezeichnung. Die Ergebnisbox muss den zugehörigen PDF-Raumanker enthalten. Tabellen sind keine Planbereiche. Gänge können mehrere Arme und Aussparungen haben: keine fremden Räume als Gang markieren, einen vorhandenen Gang auch nicht auf den Bereich unmittelbar um seine Nummer verkürzen.
 ${roomNumberContext(pages)}
 PDF-TEXTOBJEKTE (direkt ausgelesen, nicht neu schätzen):

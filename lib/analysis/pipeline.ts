@@ -8,6 +8,7 @@ import { detectProjectFacts, reconcileProjectFacts } from "./project-facts";
 import { assessAreaBoundary, refineAreaBoundaries } from "../geometry/area-boundaries";
 import type { AnalysisUsage } from "../ai/usage";
 import { applyVectorRoomContours } from "./area-geometry";
+import { reconcileAreaConsistency } from "./area-consistency";
 import type { AnalysisRequest } from "../plan/request";
 
 interface PipelineOptions { apiKey?: string; model?: string }
@@ -46,11 +47,12 @@ export async function analyzePlan(payload: AnalysisRequest, options: PipelineOpt
   ]);
   if (areas.status === "fulfilled" && areas.value) {
     const geometric = applyVectorRoomContours(areas.value.result.areas, payload.pages);
-    result.areas = mergeDetectedAreas(structuralAreas, geometric.map((area) => {
+    const refinedAreas = geometric.map((area) => {
       if (area.contourProvenance) return area;
       const refined = refineAreaBoundaries(area, payload.pages);
       return { ...refined, boundaryAssessment: assessAreaBoundary(refined, payload.pages) };
-    }));
+    });
+    result.areas = mergeDetectedAreas(structuralAreas, reconcileAreaConsistency(refinedAreas, structuralAreas, payload.pages));
     result.documentSummary = `${payload.pages.length} ${payload.pages.length === 1 ? "Seite" : "Seiten"} · ${result.areas.length} Bereiche · ${result.measurements.length} Maße`;
     result.originalAnalysis = areas.value.result.originalAnalysis;
     result.projectFacts = reconcileProjectFacts(payload.pages, result.areas, areas.value.result.projectFacts ?? {});

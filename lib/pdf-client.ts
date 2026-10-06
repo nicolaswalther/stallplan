@@ -2,6 +2,7 @@ import type { PdfDetailImage, PdfPageData } from "./types";
 import { extractTextObjects } from "./pdf/text-extraction";
 import { classifyDocument, extractVectorLines } from "./pdf/vector-extraction";
 import { detectOutlineTextRegions } from "./geometry/semantic-regions";
+import { hideNamedHatching } from "./pdf/semantic-view";
 
 export async function parsePdf(file: File): Promise<PdfPageData[]> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
@@ -23,7 +24,8 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
         // Rendering consumes the typed path buffers, so extract geometry first.
         const geometry = geometryRead.status === "fulfilled"
           ? extractVectorLines(geometryRead.value, pdfjs.OPS, rawViewport, pageNumber)
-          : { lines: [], imageCount: 0, warnings: ["PDF-Geometrie konnte nicht gelesen werden; Textmaße bleiben verfügbar."] };
+          : { lines: [], imageCount: 0, rasterImages: [], rasterGeometryComplete: false, curveInkBounds: [], vectorInkComplete: false,
+            warnings: ["PDF-Geometrie konnte nicht gelesen werden; Textmaße bleiben verfügbar."] };
         const targetWidth = Math.min(2200, Math.max(1400, rawViewport.width * 1.8));
         const viewport = page.getViewport({ scale: targetWidth / rawViewport.width });
         const canvas = document.createElement("canvas");
@@ -33,8 +35,27 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
         const pageData: PdfPageData = { pageNumber, width: rawViewport.width, height: rawViewport.height,
           text: textItems.map((item) => item.text).join(" "), textItems,
           lines: geometry.lines, imageCount: geometry.imageCount,
+          rasterImages: geometry.rasterImages, rasterGeometryComplete: geometry.rasterGeometryComplete,
+          curveInkBounds: geometry.curveInkBounds, vectorInkComplete: geometry.vectorInkComplete,
           documentKind: classifyDocument(textItems.length, geometry.lines.length, geometry.imageCount),
           extractionWarnings: [...warnings, ...geometry.warnings], imageDataUrl: canvas.toDataURL("image/jpeg", 0.88) };
+        if (pageNumber <= 4) {
+          try {
+            // A fresh optional-content config never changes the displayed plan.
+            const config = await pdf.getOptionalContentConfig({ intent: "display" });
+            const hiddenLayers = hideNamedHatching(config);
+            if (hiddenLayers.length) {
+              const semanticCanvas = document.createElement("canvas");
+              semanticCanvas.width = canvas.width; semanticCanvas.height = canvas.height;
+              await page.render({ canvas: semanticCanvas, viewport, intent: "display",
+                optionalContentConfigPromise: Promise.resolve(config) }).promise;
+              const imageDataUrl = semanticCanvas.toDataURL("image/jpeg", 0.88);
+              if (imageDataUrl.length <= 3_000_000 && hiddenLayers.length <= 100 && hiddenLayers.every((name) => name.length <= 240)) {
+                pageData.semanticAreaImage = { imageDataUrl, hiddenLayers };
+              }
+            }
+          } catch { pageData.extractionWarnings?.push("Vereinfachte Planansicht nicht verfügbar; die Erkennung nutzt den Originalplan."); }
+        }
         const semanticDetails: PdfDetailImage[] = [];
         // Re-render actual native vector regions; enlarging the small JPEG would
         // not recover the outlined letters. Keep the established PDF lifecycle.

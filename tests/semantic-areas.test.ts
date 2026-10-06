@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { germanAreaLabel, validateSemanticAreas } from "../lib/ai/areas";
-import { classifyAreaLabel, classifyUnambiguousAreaLabel, detectStructuralAreas } from "../lib/analysis/areas";
-import type { AreaType, PdfPageData } from "../lib/types";
+import { classifyAreaLabel, classifyUnambiguousAreaLabel, detectStructuralAreas, mergeDetectedAreas } from "../lib/analysis/areas";
+import type { AreaType, DetectedArea, PdfPageData } from "../lib/types";
 
 const bbox = { x: 0.4, y: 0.4, width: 0.12, height: 0.015 };
 function enclosurePage(text: string): PdfPageData {
@@ -31,6 +31,16 @@ test("a gate label mentioning its adjacent room cannot reclassify the gate as th
   ] }, [enclosurePage("Stall")]);
   assert.equal(result.areas[0].kind, "gate");
   assert.equal(classifyUnambiguousAreaLabel("Tor"), "gate");
+});
+
+test("a floor-wide collection of gate symbols cannot become one opening footprint", () => {
+  const result = validateSemanticAreas({ documentSummary: "Stall", warnings: [], areas: [
+    { ...candidate("gate", ["Tore und Durchgänge entlang mehrerer Stallreihen"]), bbox: { x: .14, y: .3, width: .74, height: .38 } },
+    candidate("gate", ["Torzeichen an einer einzelnen Öffnung"]),
+  ] }, [enclosurePage("Stall")]);
+  assert.equal(result.areas.length, 1);
+  assert.deepEqual(result.areas[0].bbox, candidate("gate", []).bbox);
+  assert.ok(result.warnings.length);
 });
 
 test("animal pens and isolation labels stay distinct from cubicle rows and calving", () => {
@@ -173,4 +183,66 @@ test("equipment label reconciliation cannot manufacture its own document evidenc
   ] }, [enclosurePage("Stall")]);
   assert.deepEqual(result.areas, []);
   assert.ok(result.warnings.some((warning) => warning.includes("konkreten Planbeleg")));
+});
+
+test("Polish manure lanes and counted furnishings preserve the explicit primary room function", () => {
+  for (const label of ["GANEK GNOJOWY - GRUPA 106 KRÓW", "Korytarz gnojowy", "ganek spacerowy"]) assert.equal(classifyAreaLabel(label), "alley");
+  for (const label of ["SEPARATKA - 10 LEGOWISK", "  SEPARATKA - 10 LEGOWISK ", "16 – SEPARATKA - 10 LEGOWISK", "Isolationsbucht mit 10 Liegeboxen"]) assert.equal(classifyAreaLabel(label), "isolation", label);
+  assert.equal(classifyAreaLabel("PORODÓWKA - 2 LEGOWISKA"), "calving");
+  assert.equal(classifyAreaLabel("10 LEGOWISK"), "cubicles");
+  for (const label of ["SEPARATKA + LEGOWISKA", "Tor der SEPARATKA - 10 LEGOWISK", "SEPARATKA neben 10 LEGOWISK", "GANEK GNOJOWY + STÓŁ PASZOWY"]) assert.equal(classifyUnambiguousAreaLabel(label), null, label);
+  const parsed = validateSemanticAreas({ documentSummary: "Stall", warnings: [], areas: [{ ...candidate("cubicles", ["Beschriftung SEPARATKA - 10 LEGOWISK"]), originalLabel: "SEPARATKA - 10 LEGOWISK" }] }, [enclosurePage("Stall")]);
+  assert.equal(parsed.areas[0].kind, "isolation");
+});
+
+test("identical spaced labels on the same feeding strip share one enclosure while stacked schedules stay excluded", () => {
+  const strip = enclosurePage("STÓŁ PASZOWY");
+  strip.textItems = [{ text: "STÓŁ PASZOWY", bbox: { ...bbox, x: .3, width: .08 } }, { text: "STÓŁ PASZOWY", bbox: { ...bbox, x: .6, width: .08 } }];
+  const detected = detectStructuralAreas([strip]);
+  assert.equal(detected.length, 1); assert.equal(detected[0].kind, "feeding_area");
+  assert.equal(detected[0].originalLabel, "STÓŁ PASZOWY");
+  assert.ok(detected[0].evidence.some((entry) => entry.includes("2 identische")));
+  strip.textItems[1].bbox.y = .5;
+  assert.deepEqual(detectStructuralAreas([strip]), [], "two schedule rows must not become a physical strip");
+});
+
+test("dense identical floor strokes cannot create small room sides around the native label", () => {
+  const plan = enclosurePage("GANEK GNOJOWY");
+  for (let index = 0; index < 50; index++) plan.lines!.push({ id: `floor-${index}`, start: { x: .35 + index * .005, y: .25 }, end: { x: .35 + index * .005, y: .65 } });
+  const result = detectStructuralAreas([plan]);
+  assert.equal(result.length, 1);
+  assert.deepEqual(result[0].bbox, { x: .2, y: .25, width: .6000000000000001, height: .4 });
+});
+
+function mergeArea(kind: AreaType, id: string, bbox: DetectedArea["bbox"], source: DetectedArea["source"], originalLabel: string, confidence = .95): DetectedArea {
+  return { id, kind, label: kind, originalLabel, confidence, bbox, source, status: "unconfirmed", pageNumber: 1, hasBbox: true, evidence: ["Planbeleg"], originalEvidence: [`PDF-Beschriftung: ${originalLabel}`] };
+}
+
+test("a fuller semantic envelope replaces a contained native fragment only with exact document-label identity", () => {
+  const native = mergeArea("feeding_area", "native", { x: .2, y: .3, width: .2, height: .1 }, "geometry", "STÓŁ PASZOWY", .82);
+  const semantic = mergeArea("feeding_area", "vision", { x: .1, y: .29, width: .7, height: .12 }, "ai", "STÓŁ PASZOWY", .97);
+  const result = mergeDetectedAreas([native], [semantic]);
+  assert.equal(result.length, 1); assert.equal(result[0].source, "ai"); assert.equal(result[0].id, native.id); assert.deepEqual(result[0].bbox, semantic.bbox);
+  assert.equal(result[0].confidence, .82); assert.ok(result[0].evidence.some((entry) => entry.includes("PDF-Beschriftung bestätigt")));
+  assert.equal(result[0].status, "unconfirmed");
+  assert.equal(mergeDetectedAreas([native], [{ ...semantic, originalLabel: "Futtertisch Neubau" }]).length, 2, "containing another same-type region is insufficient");
+});
+
+test("native manure-lane proof removes a coincident AI cubicle row after larger envelopes are merged", () => {
+  const native = mergeArea("alley", "native", { x: .3, y: .3, width: .3, height: .08 }, "geometry", "GANEK GNOJOWY - GRUPA 106 KRÓW", .91);
+  const full = mergeArea("alley", "lane", { x: .15, y: .295, width: .7, height: .09 }, "ai", native.originalLabel!, .95);
+  const wrong = mergeArea("cubicles", "wrong", { x: .16, y: .3, width: .65, height: .075 }, "ai", "Liegeboxenreihe");
+  const real = mergeArea("cubicles", "real", { x: .16, y: .5, width: .65, height: .075 }, "ai", "Liegeboxenreihe");
+  const gate = mergeArea("gate", "gate", { x: .3, y: .32, width: .02, height: .02 }, "ai", "Tor");
+  const customer = { ...wrong, id: "customer", source: "manual" as const };
+  const corrected = { ...wrong, id: "corrected", geometryCorrections: [{ at: "2026-10-06", bbox: wrong.bbox, source: "customer" as const }] };
+  const result = mergeDetectedAreas([native], [wrong, real, gate, customer, corrected, full]);
+  assert.deepEqual(new Set(result.map((area) => area.id)), new Set(["native", "real", "gate", "customer", "corrected"]));
+  assert.equal(mergeDetectedAreas([{ ...native, originalLabel: "KOMUNIKACJA" }], [wrong, { ...full, originalLabel: "KOMUNIKACJA" }]).length, 2, "generic circulation text is not exclusive manure-lane proof");
+});
+
+test("an AI cubicle candidate partly crossing a proven lane is retained below the exclusive-overlap threshold", () => {
+  const native = mergeArea("alley", "native", { x: .2, y: .3, width: .6, height: .08 }, "geometry", "GANEK GNOJOWY");
+  const crossing = mergeArea("cubicles", "crossing", { x: .2, y: .3, width: .6, height: .12 }, "ai", "Liegeboxenreihe");
+  assert.equal(mergeDetectedAreas([native], [crossing]).length, 2);
 });
