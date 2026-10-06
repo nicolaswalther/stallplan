@@ -25,6 +25,8 @@ import { detectProjectFacts } from "@/lib/analysis/project-facts";
 import { applyDetectedFacts } from "@/lib/domain/inferred-preferences";
 import { PlanningWishes } from "./planning-wishes";
 import { AreaOutline } from "./area-outline";
+import { AREA_PALETTE, SimplifiedPlanView } from "./simplified-plan";
+import { buildSimplifiedPlan } from "@/lib/pdf/simplified-view";
 import type { AnalysisUsage } from "@/lib/ai/usage";
 import type {
   AreaType, AnswerProvenance, DetectedArea, DomainQuestion, Measurement, NormalizedBox, PdfPageData, PlanningHandoff, PlanningPreferences, ProjectFacts,
@@ -121,6 +123,7 @@ export function StallplanWorkbench() {
   const [measurementFilter, setMeasurementFilter] = useState<"all" | "review">("all");
   const [measurementSearch, setMeasurementSearch] = useState("");
   const [zoom, setZoom] = useState(1);
+  const [planView, setPlanView] = useState<"original" | "simplified">("simplified");
   const [viewportSize, setViewportSize] = useState({ width: 1000, height: 700 });
   const [copied, setCopied] = useState(false);
   const runRef = useRef(0);
@@ -145,6 +148,10 @@ export function StallplanWorkbench() {
     projectAnswerProvenance[id]?.source === "pdf-text" || projectAnswerProvenance[id]?.source === "ai"));
 
   const currentPage = pages.find((page) => page.pageNumber === activePage) ?? pages[0];
+  const simplifiedPlan = useMemo(() => currentPage ? buildSimplifiedPlan(currentPage) : null, [currentPage]);
+  const showingSimplified = planView === "simplified" && !!simplifiedPlan?.available && panel !== "measurements";
+  const pageAreas = useMemo(() => areas.filter((area) => area.pageNumber === activePage && area.status !== "rejected" && area.hasBbox), [areas, activePage]);
+  const pageKinds = [...new Set(pageAreas.map((area) => area.kind))];
   const confirmedAreas = useMemo(() => areas.filter((area) => area.status === "confirmed"), [areas]);
   const openAreas = areas.filter((area) => area.status === "unconfirmed");
   const selectedMeasurement = measurements.find((measurement) => measurement.id === selectedMeasurementId) ?? null;
@@ -282,10 +289,26 @@ export function StallplanWorkbench() {
     if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
     setFile(null); setPages([]); setAreas([]); setMeasurements([]); setPreferences(EMPTY_PLANNING_PREFERENCES); setSelectedGroupId(null); setInitialWishGroup(null); setLastRemovedId(null); setProjectFacts({}); setTechnicalOpen(false); setProjectAnswers({}); setAnalysis(null);
     setActivePage(1); setPanel("areas"); setSelectedAreaId(null); setSelectedMeasurementId(null); setMarkMode(false);
+    setPlanView("simplified");
     setDraftBox(null); dragStartRef.current = null; areaGestureRef.current = null; setAreaDraft(null); setError(null); setBusy(null); setCopied(false);
     setAreaFilter("all"); setMeasurementFilter("all"); setMeasurementSearch(""); zoomRef.current = 1; zoomAnchorRef.current = null; setZoom(1);
     selectionTouchedRef.current = false;
     touchedFactsRef.current.clear(); answersRef.current = {}; preferencesRef.current = EMPTY_PLANNING_PREFERENCES; answerProvenanceRef.current = {}; setProjectAnswerProvenance({});
+  }
+
+  function downloadSvg() {
+    const source = planCanvasRef.current?.querySelector<SVGSVGElement>('svg[data-testid="simplified-plan"]');
+    if (!source || !currentPage) return;
+    const svg = source.cloneNode(true) as SVGSVGElement;
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svg.setAttribute("width", String(currentPage.width)); svg.setAttribute("height", String(currentPage.height));
+    svg.removeAttribute("class");
+    const background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    background.setAttribute("width", "100%"); background.setAttribute("height", "100%"); background.setAttribute("fill", "white");
+    svg.insertBefore(background, svg.firstChild);
+    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml;charset=utf-8" }));
+    const link = document.createElement("a"); link.href = url; link.download = `${file?.name.replace(/\.pdf$/i, "") ?? "Stallplan"}-Seite-${activePage}-Uebersicht.svg`;
+    document.body.append(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   async function analyzePlan(nextFile: File, parsedPages: PdfPageData[], generation: number) {
@@ -572,8 +595,20 @@ export function StallplanWorkbench() {
             <Button variant="ghost" className="h-9 w-9 px-0" label="Vergrößern" disabled={zoom >= 4} onClick={() => setZoom((value) => Math.min(4, value + 0.5))}><Plus size={14} /></Button>
             <Button variant="ghost" className="h-9 w-9 px-0" label="Seite einpassen" onClick={() => setZoom(1)}><Maximize2 size={13} /></Button>
           </div>
-          <Button variant={markMode ? "primary" : "ghost"} className="h-9 px-2" onClick={toggleMark}><MousePointer2 size={13} />{markMode ? "Markieren beenden" : "Bereich markieren"}</Button>
+          <div className="flex flex-wrap items-center gap-2">
+            {simplifiedPlan?.available && panel !== "measurements" && <div role="group" aria-label="Darstellung" className="flex rounded-md border border-[#cbd3cb] bg-white p-0.5">
+              {(["original", "simplified"] as const).map((view) => <button key={view} type="button" aria-pressed={planView === view} onClick={() => setPlanView(view)}
+                className={cn("h-8 rounded px-2.5 text-[11px] font-medium transition", planView === view ? "bg-[#303e34] text-white" : "text-[#5c665e] hover:bg-[#f1f4ef]")}>
+                {view === "original" ? "Original" : "Vereinfacht"}
+              </button>)}
+            </div>}
+            <Button variant={markMode ? "primary" : "ghost"} className="h-9 px-2" onClick={toggleMark}><MousePointer2 size={13} />{markMode ? "Markieren beenden" : "Bereich markieren"}</Button>
+          </div>
         </div>
+        {simplifiedPlan?.available && panel !== "measurements" && <div aria-label="Flächenlegende" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[#dfe3dc] bg-[#fafbf9] px-4 py-2 text-[10px] text-[#4c574e]">
+          {pageKinds.map((kind) => <span key={kind} className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm border" style={{ background: AREA_PALETTE[kind].fill, borderColor: AREA_PALETTE[kind].line }} />{AREA_RULES[kind].title}</span>)}
+          <span className="ml-auto inline-flex items-center gap-1.5 text-[#69726b]"><span className="h-2.5 w-3 border border-dashed border-[#69726b]" />Zu prüfen</span>
+        </div>}
         {markMode && <div className="plan-mark-controls flex items-center gap-2 border-b border-[#dfe3dc] bg-white px-4 py-2 text-xs">
           <select aria-label="Bereichstyp für Markierung" value={manualKind} onChange={(event) => setManualKind(event.target.value as AreaType)} className="field h-8 max-w-44 text-xs">
             {areaTypeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -584,15 +619,16 @@ export function StallplanWorkbench() {
             <div ref={planCanvasRef} data-testid="plan-canvas" className={cn("relative shrink-0 bg-white shadow-[0_3px_18px_rgba(25,34,27,0.12)]", markMode && "cursor-crosshair touch-none select-none")}
               style={{ width: planWidth, aspectRatio: `${currentPage.width} / ${currentPage.height}` }}
               onPointerDown={startMark} onPointerMove={moveMark} onPointerUp={() => finishMark()} onPointerCancel={() => finishMark(true)}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={currentPage.imageDataUrl} alt={`Planseite ${currentPage.pageNumber}`} draggable={false} className="pointer-events-none absolute inset-0 h-full w-full" />
-              {panel !== "measurements" && areas.filter((area) => area.pageNumber === activePage && area.status !== "rejected" && area.hasBbox).map((area) => {
+              {showingSimplified && simplifiedPlan ? <SimplifiedPlanView plan={simplifiedPlan} areas={pageAreas} draft={areaDraft} />
+                // eslint-disable-next-line @next/next/no-img-element
+                : <img src={currentPage.imageDataUrl} alt={`Planseite ${currentPage.pageNumber}`} draggable={false} className="pointer-events-none absolute inset-0 h-full w-full" />}
+              {panel !== "measurements" && pageAreas.map((area) => {
                 const selected = selectedAreaId === area.id;
                 const grouped = panel === "details" && selectedGroup?.kind === area.kind;
                 const editable = selected && panel === "areas" && !markMode;
                 const bbox = areaDraft?.id === area.id ? areaDraft.bbox : area.bbox;
                 return <div key={area.id} className={cn("pointer-events-none absolute", selected && "z-10")} style={boxStyle(bbox)}>
-                  <AreaOutline area={area} bbox={bbox} selected={selected} grouped={grouped} editable={editable} disabled={markMode}
+                  <AreaOutline area={area} bbox={bbox} selected={selected} grouped={grouped} editable={editable} disabled={markMode} simplified={showingSimplified}
                     onSelect={(event) => { event.stopPropagation(); selectArea(area); if (panel !== "details") setPanel("areas"); }}
                     onPointerDown={(event) => startAreaGesture(event, area, "move")} onPointerMove={moveAreaGesture}
                     onPointerUp={(event) => finishAreaGesture(event)} onPointerCancel={(event) => finishAreaGesture(event, true)}
@@ -721,6 +757,8 @@ export function StallplanWorkbench() {
           {panel === "measurements" && <Button variant="secondary" className="w-full" onClick={() => { setPanel("handoff"); setTechnicalOpen(false); }}>Zurück zur Übersicht</Button>}
           <button type="button" aria-expanded={technicalOpen} onClick={() => setTechnicalOpen((current) => !current)} className="mt-3 flex w-full items-center justify-center gap-1.5 py-1 text-xs text-[var(--text-muted)]"><Settings2 size={11} />Technische Details</button>
           {technicalOpen && <div className="scrollbar-thin mt-2 max-h-64 overflow-y-auto border-t border-[#edf0ea] pt-3 text-[11px] text-[var(--text-muted)]">
+            {simplifiedPlan?.available && <p className="mb-3 leading-5">Vereinfachte Ansicht: PDF-Linien und Nutzungsflächen. {simplifiedPlan.stats.hiddenHatchingLines + simplifiedPlan.stats.hiddenAnnotationLines > 0 ? "Schraffur- und Beschriftungslayer ausgeblendet. " : "Kurze Details reduziert. "}Kurven und Rasterobjekte im Original prüfen.</p>}
+            {showingSimplified && <Button variant="secondary" className="mb-3 h-8 w-full px-2" onClick={downloadSvg} disabled={!!areaDraft}><Download size={11} />SVG herunterladen</Button>}
             <div className="mb-3 flex justify-between"><span>{usableMeasurements.length} Maße erkannt</span><button type="button" className="font-medium text-[#17633a]" onClick={() => { setPanel("measurements"); setTechnicalOpen(false); }}>Maße ansehen</button></div>
             {reviewMeasurements.length > 0 && <p className="mb-3 text-[10px]">{reviewMeasurements.length} Maße werden von der Fachplanung geprüft.</p>}
             <div className="flex gap-2"><Button variant="secondary" className="h-8 flex-1 px-2" disabled={!handoff} onClick={downloadHandoff}><Download size={11} />JSON herunterladen</Button><Button variant="ghost" className="h-8 px-2" disabled={!handoff} onClick={copyHandoff}>{copied ? <Check size={11} /> : <Clipboard size={11} />}{copied ? "Kopiert" : "Kopieren"}</Button></div>

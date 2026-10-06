@@ -24,8 +24,14 @@ interface VectorExtraction {
 }
 
 /** Read PDF.js 6 typed draw buffers before rendering replaces them with Path2D. */
-export function extractVectorLines(operatorList: Operators, ops: Record<string, number>, viewport: PdfViewport, pageNumber: number): VectorExtraction {
+export function extractVectorLines(operatorList: Operators, ops: Record<string, number>, viewport: PdfViewport, pageNumber: number,
+  layerNames: ReadonlyMap<string, string> = new Map()): VectorExtraction {
   const lines: PdfLine[] = [], stack: GraphicsState[] = [], warnings: string[] = [], rasterImages: NormalizedBox[] = [], curveInkBounds: NormalizedBox[] = [];
+  // Marked content has its own nesting, independent of q/Q graphics states.
+  // Only a single, known OCG identifies a source layer reliably. OCMD Boolean
+  // expressions and unknown group references must not invent a layer name.
+  const markedContentStack: Array<string | undefined> = [];
+  let layerName: string | undefined;
   let rasterGeometryComplete = true, vectorInkComplete = true;
   let state: GraphicsState = { transform: [...IDENTITY], strokeWidth: 1 }, imageCount = 0;
   const painted = new Set([ops.stroke, ops.closeStroke, ops.fill, ops.eoFill, ops.fillStroke, ops.eoFillStroke, ops.closeFillStroke, ops.closeEOFillStroke]);
@@ -99,10 +105,20 @@ export function extractVectorLines(operatorList: Operators, ops: Record<string, 
     if (Math.hypot((end.x - start.x) * viewport.width, (end.y - start.y) * viewport.height) < 0.15) return;
     // Clip-paths are ignored; reject off-page drawing segments without moving their endpoints.
     if ([start, end].some((p) => p.x < -0.01 || p.y < -0.01 || p.x > 1.01 || p.y > 1.01)) return;
-    lines.push({ id: `line-${pageNumber}-${lines.length}`, start, end, strokeWidth: state.strokeWidth * Math.hypot(state.transform[0], state.transform[1]) });
+    lines.push({ id: `line-${pageNumber}-${lines.length}`, start, end, strokeWidth: state.strokeWidth * Math.hypot(state.transform[0], state.transform[1]),
+      ...(layerName ? { layerName } : {}) });
   };
   for (let index = 0; index < operatorList.fnArray.length; index++) {
     const op = operatorList.fnArray[index], args = operatorList.argsArray[index] ?? [];
+    if (op === ops.beginMarkedContent || op === ops.beginMarkedContentProps) {
+      markedContentStack.push(layerName);
+      if (op === ops.beginMarkedContentProps && args[0] === "OC") {
+        const group = args[1] as { type?: unknown; id?: unknown } | undefined;
+        layerName = group?.type === "OCG" && typeof group.id === "string" ? layerNames.get(group.id) : undefined;
+      }
+      continue;
+    }
+    if (op === ops.endMarkedContent) { layerName = markedContentStack.pop(); continue; }
     if (op === ops.save || op === ops.paintFormXObjectBegin || op === ops.beginGroup) {
       stack.push({ transform: [...state.transform], strokeWidth: state.strokeWidth });
       if (op === ops.beginGroup && (args[0] as { matrix?: unknown } | undefined)?.matrix) {

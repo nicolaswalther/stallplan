@@ -8,6 +8,12 @@ const page = { pageNumber: 1, width: 1684, height: 1191, text: "", textItems: []
   imageDataUrl: "data:image/jpeg;base64,YQ==" };
 const tile = { bbox: { x: .1, y: .2, width: .25, height: .4 }, imageDataUrl: "data:image/jpeg;base64,YQ==", pixelWidth: 1200, pixelHeight: 800 };
 
+test("native CAD layer provenance survives request validation without changing geometry", () => {
+  const line = { id: "wall", start: { x: .1, y: .2 }, end: { x: .9, y: .2 }, strokeWidth: .4, layerName: "A-Wall" };
+  assert.deepEqual(parseAnalysisRequest({ fileName: "Plan.pdf", pages: [{ ...page, lines: [line] }] }).pages[0].lines![0], line);
+  assert.throws(() => parseAnalysisRequest({ fileName: "Plan.pdf", pages: [{ ...page, lines: [{ ...line, layerName: "A".repeat(241) }] }] }));
+});
+
 test("a 180145-segment CAD drawing survives compressed transport and request validation intact", async () => {
   const lines = Array.from({ length: 180_145 }, (_, index) => {
     const x = (index % 601) / 602, y = Math.floor(index / 601) / 301;

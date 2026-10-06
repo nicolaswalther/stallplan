@@ -32,7 +32,9 @@ export function applyAreaGeometryCorrection(area: DetectedArea, bbox: Normalized
     originalFootprint: area.originalFootprint ?? area.footprint,
     originalContourProvenance: area.originalContourProvenance ?? area.contourProvenance,
     originalPatternProvenance: area.originalPatternProvenance ?? area.patternProvenance,
+    originalStripProvenance: area.originalStripProvenance ?? area.stripProvenance,
     patternProvenance: undefined,
+    stripProvenance: undefined,
     footprint, contourProvenance: undefined,
     originalConfidence: area.originalConfidence !== undefined ? area.originalConfidence : area.confidence,
     bbox, hasBbox: true, source: "manual", confidence: null, boundaryAssessment: undefined,
@@ -152,6 +154,7 @@ export function mergeAreas(base: DetectedArea[], incoming: DetectedArea[]) {
       // associates it with a more complete semantic boundary. Apply that fused
       // geometry; otherwise the initial fallback would remain stuck on screen.
       const associatedNative = current.source === "geometry" && candidate.source === "ai"
+        && !current.stripProvenance
         && current.id === candidate.id && current.kind === candidate.kind && current.pageNumber === candidate.pageNumber;
       merged[index] = { ...(associatedNative ? candidate : current), evidence: [...new Set([...current.evidence, ...candidate.evidence])] };
     }

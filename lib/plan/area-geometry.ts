@@ -46,3 +46,11 @@ export function footprintPathInBox(footprint: AreaFootprint, box: NormalizedBox)
   const ringPath = (ring: PlanPoint[]) => ring.map((point, index) => `${index ? "L" : "M"}${number((point.x - box.x) / box.width)},${number((point.y - box.y) / box.height)}`).join(" ") + " Z";
   return footprint.parts.flatMap((part) => [ringPath(part.outer), ...(part.holes ?? []).map(ringPath)]).join(" ");
 }
+
+/** Page-point paths keep fills and SVG patterns in the same native coordinate frame. */
+export function footprintPathOnPage(footprint: AreaFootprint, width: number, height: number): string {
+  if (!isValidAreaFootprint(footprint) || !Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return "";
+  const number = (value: number) => String(Math.round(value * 10_000) / 10_000);
+  const ringPath = (ring: PlanPoint[]) => ring.map((point, index) => `${index ? "L" : "M"}${number(point.x * width)},${number(point.y * height)}`).join(" ") + " Z";
+  return footprint.parts.flatMap((part) => [ringPath(part.outer), ...(part.holes ?? []).map(ringPath)]).join(" ");
+}

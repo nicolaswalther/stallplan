@@ -22,7 +22,11 @@ export type LengthUnit = "m" | "cm" | "mm" | "unknown";
 export type DocumentKind = "vector" | "raster" | "mixed";
 
 export interface PlanPoint { x: number; y: number }
-export interface PdfLine { id: string; start: PlanPoint; end: PlanPoint; strokeWidth?: number }
+export interface PdfLine {
+  id: string; start: PlanPoint; end: PlanPoint; strokeWidth?: number;
+  /** Actual optional-content layer name, when the PDF provides a single OCG. */
+  layerName?: string;
+}
 export interface PdfDetailImage {
   kind: "outline-text";
   bbox: NormalizedBox;
@@ -110,6 +114,12 @@ export interface Measurement {
 }
 
 export interface DetectedArea {
+  stripProvenance?: {
+    method: "labelled-cubicle-adjacent-band";
+    sourceLineIds: string[];
+    textItemIds: string[];
+  };
+  originalStripProvenance?: DetectedArea["stripProvenance"];
   originalPatternProvenance?: DetectedArea["patternProvenance"];
   patternProvenance?: {
     method: "repeated-cubicle-geometry";

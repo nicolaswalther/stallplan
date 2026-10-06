@@ -145,3 +145,24 @@ test("moving a vector-pattern area preserves its original proof without claiming
   assert.deepEqual(corrected.originalPatternProvenance, patternProvenance);
   assert.deepEqual(corrected.originalBbox, original.bbox);
 });
+
+test("moving a native alley retains strip proof only for its original geometry", () => {
+  const stripProvenance = { method: "labelled-cubicle-adjacent-band" as const, sourceLineIds: ["upper-rail", "lower-rail"], textItemIds: ["alley-label-1", "alley-label-2"] };
+  const original = area({ kind: "alley", source: "geometry", stripProvenance });
+  const first = applyAreaGeometryCorrection(original, { ...original.bbox, y: .4 });
+  assert.equal(first.stripProvenance, undefined);
+  assert.deepEqual(first.originalStripProvenance, stripProvenance);
+  const second = applyAreaGeometryCorrection(first, { ...first.bbox, x: .3 });
+  assert.deepEqual(second.originalStripProvenance, stripProvenance);
+  assert.equal(second.geometryCorrections?.length, 2);
+});
+
+test("a late semantic result cannot shorten a client-side native alley band", () => {
+  const native = area({ id: "native-band", kind: "alley", source: "geometry", bbox: { x: .2, y: .3, width: .6, height: .1 },
+    stripProvenance: { method: "labelled-cubicle-adjacent-band", sourceLineIds: ["rail-1", "rail-2"], textItemIds: ["label-1", "label-2"] } });
+  const short = area({ id: native.id, kind: "alley", source: "ai", bbox: { ...native.bbox, width: .2 } });
+  const merged = mergeAreas([native], [short]);
+  assert.equal(merged.length, 1);
+  assert.deepEqual(merged[0].bbox, native.bbox);
+  assert.deepEqual(merged[0].stripProvenance, native.stripProvenance);
+});

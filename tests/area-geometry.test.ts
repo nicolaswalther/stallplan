@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { footprintPathInBox, isValidAreaFootprint, transformAreaFootprint, type AreaFootprint } from "../lib/plan/area-geometry";
+import { footprintPathInBox, footprintPathOnPage, isValidAreaFootprint, transformAreaFootprint, type AreaFootprint } from "../lib/plan/area-geometry";
 
 const box = { x: .1, y: .2, width: .8, height: .6 };
 const ring = (x: number, y: number, width: number, height: number) => [{ x, y }, { x: x + width, y }, { x: x + width, y: y + height }, { x, y: y + height }];
@@ -8,6 +8,16 @@ const footprint: AreaFootprint = { parts: [
   { outer: ring(.1, .2, .6, .6), holes: [ring(.3, .4, .2, .2)] },
   { outer: ring(.8, .6, .1, .2) },
 ] };
+
+test("page SVG fills preserve native position, holes and draft corrections in one coordinate frame", () => {
+  const path = footprintPathOnPage(footprint, 1000, 800);
+  assert.equal(path.match(/ Z/g)?.length, 3);
+  assert.ok(path.startsWith("M100,160 L700,160 L700,640 L100,640 Z M300,320"));
+  const draft = transformAreaFootprint(footprint, box, { ...box, x: .2, y: .1 });
+  assert.ok(footprintPathOnPage(draft, 1000, 800).startsWith("M200,80"));
+  assert.equal(footprintPathOnPage(footprint, 0, 800), "");
+  assert.equal(footprintPathOnPage(footprint, 1000, Number.NaN), "");
+});
 
 test("moving a polygon translates every part and hole without changing the saved geometry", () => {
   const transformed = transformAreaFootprint(footprint, box, { ...box, x: .2, y: .1 });

@@ -14,6 +14,14 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
   let remainingAreaDetails = MAX_AREA_DETAIL_IMAGES;
   try {
     const pdf = await loadingTask.promise;
+    const layerNames = new Map<string, string>();
+    try {
+      // Metadata only: preserve every geometry object regardless of visibility.
+      // PDF.js 6 exposes optional-content groups through its iterable config.
+      for (const [id, group] of await pdf.getOptionalContentConfig({ intent: "display" })) {
+        if (typeof group.name === "string" && group.name) layerNames.set(id, group.name);
+      }
+    } catch { /* Layer metadata is optional; native extraction stays usable. */ }
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
       const page = await pdf.getPage(pageNumber);
       try {
@@ -25,7 +33,7 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
         if (textRead.status === "rejected") warnings.push("PDF-Text konnte nicht gelesen werden; die Planansicht bleibt verfügbar.");
         // Rendering consumes the typed path buffers, so extract geometry first.
         const geometry = geometryRead.status === "fulfilled"
-          ? extractVectorLines(geometryRead.value, pdfjs.OPS, rawViewport, pageNumber)
+          ? extractVectorLines(geometryRead.value, pdfjs.OPS, rawViewport, pageNumber, layerNames)
           : { lines: [], imageCount: 0, rasterImages: [], rasterGeometryComplete: false, curveInkBounds: [], vectorInkComplete: false,
             warnings: ["PDF-Geometrie konnte nicht gelesen werden; Textmaße bleiben verfügbar."] };
         const targetWidth = Math.min(2200, Math.max(1400, rawViewport.width * 1.8));
