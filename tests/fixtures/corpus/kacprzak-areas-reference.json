@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "unscoredKinds": [
+    "gate",
+    "drinker",
+    "brush",
+    "unknown"
+  ],
+  "document": {
+    "filename": "Kacprzak projekt.pdf",
+    "sha256": "997837fe6def20f6c19013a5bb7f939635dac34580aad162c37114c3f1617b69",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 596.0,
+        "heightPoints": 842.0,
+        "rotation": 0,
+        "vectorPaths": 0,
+        "rasterImages": 1,
+        "nativeTextCharacters": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual review of entire scanned PDF and image detail crops. Handwritten labels read directly; no model or production predictions used.",
+    "areaCoverage": "PARTIAL: central feeding table and ten sketched bull pens (five on each side).",
+    "coordinateConvention": "Normalized unrotated viewport x,y,width,height.",
+    "scope": "Dashed horizontal gate lines define sketched pen partitions; gaps and doors are not precise engineered openings. Evaluate atomic pens with this reference, or the separate grouped fixture for two pen groups.",
+    "limitations": [
+      "Complete-page raster image (1654×2338), no native text or vector drawing objects.",
+      "Hand sketch is not a dimensioned CAD plan and need not be drawn to scale.",
+      "Labels BULLEN STALLE and FUTTERTISCH support bull housing and feeding table; no cubicle rows are shown.",
+      "Side notes L-5000 are readable, but the final left summary says L-6000 GATE 5 STÜCK, conflicting with 5000 written repeatedly inside the sketch.",
+      "The unit of 5000/6000 and the repeated 2/3 marks is not explicitly supplied; unit remains unknown.",
+      "REF 34… is a reference/article annotation, not a defensible herd count.",
+      "Small equipment, gate opening geometries, and outer envelope dimensions are not comprehensively annotated."
+    ]
+  },
+  "areas": [
+    {
+      "id": "ref-feed-central",
+      "kind": "feeding_area",
+      "label": "Zentraler Futtertisch",
+      "originalLabel": "FUTTERTISCH",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.305,
+        "y": 0.3055,
+        "width": 0.206,
+        "height": 0.4795
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-left-1",
+      "kind": "pens",
+      "label": "Bullenbucht links 1",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.121,
+        "y": 0.3055,
+        "width": 0.184,
+        "height": 0.09650000000000003
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-left-2",
+      "kind": "pens",
+      "label": "Bullenbucht links 2",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.121,
+        "y": 0.402,
+        "width": 0.184,
+        "height": 0.09599999999999997
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-left-3",
+      "kind": "pens",
+      "label": "Bullenbucht links 3",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.121,
+        "y": 0.498,
+        "width": 0.184,
+        "height": 0.09599999999999997
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-left-4",
+      "kind": "pens",
+      "label": "Bullenbucht links 4",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.121,
+        "y": 0.594,
+        "width": 0.184,
+        "height": 0.09599999999999997
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-left-5",
+      "kind": "pens",
+      "label": "Bullenbucht links 5",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.121,
+        "y": 0.69,
+        "width": 0.184,
+        "height": 0.09500000000000008
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-right-1",
+      "kind": "pens",
+      "label": "Bullenbucht rechts 1",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.511,
+        "y": 0.3055,
+        "width": 0.184,
+        "height": 0.09650000000000003
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-right-2",
+      "kind": "pens",
+      "label": "Bullenbucht rechts 2",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.511,
+        "y": 0.402,
+        "width": 0.184,
+        "height": 0.09599999999999997
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-right-3",
+      "kind": "pens",
+      "label": "Bullenbucht rechts 3",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.511,
+        "y": 0.498,
+        "width": 0.184,
+        "height": 0.09599999999999997
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-right-4",
+      "kind": "pens",
+      "label": "Bullenbucht rechts 4",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.511,
+        "y": 0.594,
+        "width": 0.184,
+        "height": 0.09599999999999997
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-pens-right-5",
+      "kind": "pens",
+      "label": "Bullenbucht rechts 5",
+      "originalLabel": "BULLEN STALLE",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.511,
+        "y": 0.69,
+        "width": 0.184,
+        "height": 0.09500000000000008
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    }
+  ],
+  "excludedAreas": []
+}

@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "plan-corpus-reference/1.0",
+  "review": {
+    "purpose": "Unabhängig visuell geprüfte Teilreferenzen für reproduzierbare Regressionstests; keine Trainingslabels oder vollständige Fachplaner-Segmentierung.",
+    "coordinateConvention": "BBox und Footprint sind normalisierte ungedrehte Viewport-Koordinaten 0..1. Optionale bboxPoints der Maßreferenzen bewahren native PDF-Punkte zur Prüfung.",
+    "referencePaths": "Relative Pfade ab dem Verzeichnis dieser Manifestdatei.",
+    "sourceDocuments": "Original-PDFs und private Renderings werden separat aufbewahrt und sind nicht Teil dieser Sammlung."
+  },
+  "documents": [
+    {
+      "id": "latvia",
+      "filename": "LP-DzB_AR-1.1-i1 1. stāva plāns_2026-08-12.pdf",
+      "sha256": "2490ceaa70d15d50b62f67bdd07d82e51d57de6b7b0df3c09ddb49519c91f1df",
+      "areaReference": {
+        "path": "latvia-areas-reference.json",
+        "coverage": "partial",
+        "geometryQuality": "coarse",
+        "granularity": "row-groups",
+        "scope": "Vier Abkalbebuchten-Reihengruppen und zwei Hauptgänge; Kleinausstattung und unklare Außenstreifen unbewertet."
+      },
+      "measurementReference": {
+        "path": "latvia-measurements-reference.json",
+        "coverage": "partial",
+        "positionSource": "reviewed-native-pdf-text",
+        "scope": "49 standalone native linear dimension occurrences within the actual drawing. Native heights, section/axis identifiers, title block, dates and room area were excluded."
+      }
+    },
+    {
+      "id": "flexicubicles",
+      "filename": "Flexicubicles.pdf",
+      "sha256": "d9892cddd138aa762ea72ce4683d7a6b743319e9a3a6abe4cae4fa4acff68894",
+      "areaReference": {
+        "path": "flexicubicles-areas-reference.json",
+        "coverage": "partial",
+        "geometryQuality": "coarse",
+        "granularity": "connected-cubicle-blocks-and-grouped-alley-strips",
+        "scope": "Acht Liegeboxenblöcke, zentraler Futtertisch und vier Gangbänder; Schnitte und zusätzliche Querpassagen ausgeschlossen."
+      }
+    },
+    {
+      "id": "rzut",
+      "filename": "Rzut przyziemia wersja PDF.pdf",
+      "sha256": "4ab624f7c5c35535835b48b0743527fc763ecb286b01af39d2172f0439e63aa0",
+      "areaReference": {
+        "path": "rzut-areas-reference.json",
+        "coverage": "partial",
+        "geometryQuality": "coarse",
+        "granularity": "connected-cubicle-blocks-and-main-room-regions",
+        "scope": "Sieben Liegeboxenblöcke, zwei Futtertische, vier Hauptgänge, Separation, Trockenkuh- und Abkalbebucht; Zusatzgänge/Technikanbau ausgeschlossen."
+      }
+    },
+    {
+      "id": "szekszard-calving",
+      "filename": "04 Szekszárd- Ellető- Alaprajz.pdf",
+      "sha256": "3a33fd5fae38cdd8e8b83e8ec8fe109b0a083c2aa87f4f505e69e14eb55b0c9c",
+      "areaReference": {
+        "path": "szekszard-calving-areas-reference.json",
+        "coverage": "partial",
+        "geometryQuality": "coarse",
+        "granularity": "named-main-functional-regions",
+        "scope": "Sicher benannte Hauptfunktionen; rosa Tierplatzreihen mit unbestätigtem Haltungssystem separat ausgeschlossen."
+      },
+      "measurementReference": {
+        "path": "szekszard-calving-measurements-reference.json",
+        "coverage": "partial",
+        "positionSource": "reviewed-native-pdf-text",
+        "scope": "Partielle Referenz: untere äußere Achs-/Maßkette plus ausgewählte sichtbare Gesamt-/Teilmaße. Nicht als vollständiger Recall-Test des gesamten Blatts verwenden."
+      }
+    },
+    {
+      "id": "szekszard-production",
+      "filename": "03 Szekszárd- Termelő- Alaprajz.pdf",
+      "sha256": "cacf083c228faa0a33f9a8154a518bc64bfa44d20d97d58a7aedaa7ceba85b2f",
+      "areaReference": {
+        "path": "szekszard-production-areas-reference.json",
+        "coverage": "partial",
+        "geometryQuality": "coarse",
+        "granularity": "connected-cubicle-blocks-and-main-alley-strips",
+        "scope": "Zwanzig verbundene Liegeboxenblöcke, acht Mistgänge, zwei Futtergänge und zentraler Viehtreibgang; Querpassagen ausgeschlossen."
+      },
+      "measurementReference": {
+        "path": "szekszard-production-measurements-reference.json",
+        "coverage": "partial",
+        "positionSource": "reviewed-native-pdf-text",
+        "scope": "Partielle Referenz: untere äußere Achs-/Maßkette plus ausgewählte sichtbare Gesamt-/Teilmaße. Nicht als vollständiger Recall-Test des gesamten Blatts verwenden."
+      }
+    },
+    {
+      "id": "kacprzak",
+      "filename": "Kacprzak projekt.pdf",
+      "sha256": "997837fe6def20f6c19013a5bb7f939635dac34580aad162c37114c3f1617b69",
+      "areaReference": {
+        "path": "kacprzak-areas-reference.json",
+        "coverage": "partial",
+        "geometryQuality": "coarse",
+        "granularity": "individual-pens",
+        "scope": "Zehn skizzierte Bullenbuchten und zentraler Futtertisch; kleine Tore und Geräte unbewertet."
+      },
+      "alternativeAreaReferences": [
+        {
+          "path": "kacprzak-areas-reference-grouped.json",
+          "coverage": "partial",
+          "geometryQuality": "coarse",
+          "granularity": "pen-groups",
+          "scope": "Zwei Gruppen aus je fünf Bullenbuchten plus zentraler Futtertisch; passend zu gruppierten Ausgaben bewerten."
+        }
+      ]
+    }
+  ]
+}

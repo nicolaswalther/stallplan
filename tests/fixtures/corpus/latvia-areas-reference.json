@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "document": {
+    "filename": "LP-DzB_AR-1.1-i1 1. stāva plāns_2026-08-12.pdf",
+    "sha256": "2490ceaa70d15d50b62f67bdd07d82e51d57de6b7b0df3c09ddb49519c91f1df",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 1684.0,
+        "heightPoints": 1191.0,
+        "rotation": 0,
+        "vectorPaths": 126117,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual review of full-page PDF render and 3× PyMuPDF detail crops; native text used only to corroborate explicit labels and unit notes. No production or AI detections used.",
+    "areaCoverage": "Four row groups of large calving pens, the principal horizontal access alley and a right connecting alley.",
+    "coordinateConvention": "Normalized viewport x,y,width,height; unrotated page.",
+    "scope": "Partial coarse principal functional regions. Not exact expert segmentation and not whole-document precision.",
+    "limitations": [
+      "Dzemdību bloks explicitly identifies a calving block. Four rows of approximately six large pens are not conventional small cubicle rows.",
+      "Row grouping is intentional; individual-pen granularity must not be compared to these row-group boxes as identical objects.",
+      "Technology locations are described as approximate in the native drawing note.",
+      "Exterior perimeter/apron bands have no sufficiently explicit feeding label and are outside this classification reference.",
+      "No explicit total animal count was found. Drawn pen capacity is not the same as herd size."
+    ]
+  },
+  "areas": [
+    {
+      "id": "latvia-calving-row-1",
+      "kind": "calving",
+      "label": "Abkalbebuchten, obere Reihe",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135,
+        "y": 0.205,
+        "width": 0.655,
+        "height": 0.082
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "latvia-calving-row-2",
+      "kind": "calving",
+      "label": "Abkalbebuchten, zweite Reihe",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135,
+        "y": 0.294,
+        "width": 0.655,
+        "height": 0.089
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "latvia-calving-row-3",
+      "kind": "calving",
+      "label": "Abkalbebuchten, dritte Reihe",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135,
+        "y": 0.43,
+        "width": 0.655,
+        "height": 0.088
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "latvia-calving-row-4",
+      "kind": "calving",
+      "label": "Abkalbebuchten, untere Reihe",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135,
+        "y": 0.526,
+        "width": 0.643,
+        "height": 0.078
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "latvia-alley-main",
+      "kind": "alley",
+      "label": "Mittlerer Zugangsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.135,
+        "y": 0.384,
+        "width": 0.655,
+        "height": 0.045
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "latvia-alley-right",
+      "kind": "alley",
+      "label": "Rechter Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.791,
+        "y": 0.202,
+        "width": 0.037,
+        "height": 0.403
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    }
+  ],
+  "unscoredKinds": [
+    "gate",
+    "drinker",
+    "brush",
+    "feeding_area",
+    "unknown",
+    "isolation"
+  ],
+  "excludedAreas": []
+}

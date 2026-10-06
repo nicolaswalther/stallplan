@@ -1,0 +1,1115 @@
+{
+  "schemaVersion": "1.0",
+  "document": {
+    "filename": "LP-DzB_AR-1.1-i1 1. stāva plāns_2026-08-12.pdf",
+    "sha256": "2490ceaa70d15d50b62f67bdd07d82e51d57de6b7b0df3c09ddb49519c91f1df",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 1684.0,
+        "heightPoints": 1191.0,
+        "rotation": 0,
+        "vectorPaths": 126117,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual audit of actual native labels and their adjacent dimension rails; PDF text geometry attached after review, no production detector used.",
+    "measurementCoverage": "49 standalone native linear dimension occurrences within the actual drawing. Native heights, section/axis identifiers, title block, dates and room area were excluded.",
+    "coordinateConvention": "Normalized viewport x,y,width,height; unrotated page.",
+    "limitations": [
+      "Text box is native-font bbox; dimensional relation endpoints are not all manually annotated.",
+      "No universal accuracy beyond these reviewed occurrences is implied."
+    ]
+  },
+  "unitEvidence": {
+    "unit": "mm",
+    "confidence": 1,
+    "evidence": [
+      "Native note: Rasējumos dotās mērķēdes norādītas milimetros (mm), augstuma atzīmes norādītas metros (m).",
+      "Bottom axis chain: six occurrences of 5900 plus 5925 equals 41325.",
+      "Left internal chain: 610 + 3000 + 620 + 3500 + 2230 + 3500 + 620 + 3000 + 620 = 17700."
+    ]
+  },
+  "measurements": [
+    {
+      "id": "latvia-ref-m001",
+      "text": "4700",
+      "value": 4700,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.059049,
+        0.1310367,
+        0.0051733,
+        0.016268
+      ],
+      "bboxPoints": [
+        99.43853759765625,
+        156.06475830078125,
+        108.15042114257812,
+        175.44000244140625
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m002",
+      "text": "17700",
+      "value": 17700,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.059049,
+        0.3958866,
+        0.0051733,
+        0.0203351
+      ],
+      "bboxPoints": [
+        99.43853759765625,
+        471.50091552734375,
+        108.15042114257812,
+        495.72003173828125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m003",
+      "text": "4690",
+      "value": 4690,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.059049,
+        0.6640343,
+        0.0051733,
+        0.016268
+      ],
+      "bboxPoints": [
+        99.43853759765625,
+        790.8648071289062,
+        108.15042114257812,
+        810.239990234375
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m004",
+      "text": "18100",
+      "value": 18100,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0522794,
+        0.3958866,
+        0.0051733,
+        0.0203351
+      ],
+      "bboxPoints": [
+        88.03853607177734,
+        471.50091552734375,
+        96.75041961669922,
+        495.72003173828125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m005",
+      "text": "5900",
+      "value": 5900,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.173943,
+        0.7396125,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        292.91998291015625,
+        880.8785400390625,
+        312.2951965332031,
+        889.5904541015625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m006",
+      "text": "41325",
+      "value": 41325,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.4707363,
+        0.7491844,
+        0.0143819,
+        0.0073148
+      ],
+      "bboxPoints": [
+        792.719970703125,
+        892.278564453125,
+        816.9390869140625,
+        900.990478515625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m007",
+      "text": "5925",
+      "value": 5925,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.2734204,
+        0.7396125,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        460.44000244140625,
+        880.8785400390625,
+        479.815185546875,
+        889.5904541015625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m008",
+      "text": "5900",
+      "value": 5900,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.3729691,
+        0.7396125,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        628.0799560546875,
+        880.8785400390625,
+        647.4552612304688,
+        889.5904541015625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m009",
+      "text": "5900",
+      "value": 5900,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.472304,
+        0.7396125,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        795.3599853515625,
+        880.8785400390625,
+        814.7352905273438,
+        889.5904541015625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m010",
+      "text": "5900",
+      "value": 5900,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.5716389,
+        0.7396125,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        962.6399536132812,
+        880.8785400390625,
+        982.0152587890625,
+        889.5904541015625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m011",
+      "text": "5900",
+      "value": 5900,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.6709026,
+        0.7396125,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        1129.7999267578125,
+        880.8785400390625,
+        1149.1751708984375,
+        889.5904541015625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m012",
+      "text": "5900",
+      "value": 5900,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.7702375,
+        0.7396125,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        1297.0799560546875,
+        880.8785400390625,
+        1316.4552001953125,
+        889.5904541015625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m013",
+      "text": "3000",
+      "value": 3000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.5578377,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        664.3847045898438,
+        119.430419921875,
+        683.760009765625
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m014",
+      "text": "620",
+      "value": 620,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.6030131,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        718.1885986328125,
+        119.430419921875,
+        732.719970703125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m015",
+      "text": "620",
+      "value": 620,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.516867,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        615.5885620117188,
+        119.430419921875,
+        630.1199951171875
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m016",
+      "text": "3500",
+      "value": 3500,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.465747,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        554.7047119140625,
+        119.430419921875,
+        574.0800170898438
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m017",
+      "text": "2230",
+      "value": 2230,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.3975355,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        473.4647216796875,
+        119.430419921875,
+        492.84002685546875
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m018",
+      "text": "3500",
+      "value": 3500,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.3294246,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        392.3447265625,
+        119.430419921875,
+        411.72003173828125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m019",
+      "text": "620",
+      "value": 620,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.2824085,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        336.34857177734375,
+        119.430419921875,
+        350.8800048828125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m020",
+      "text": "3000",
+      "value": 3000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.2373339,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        282.66473388671875,
+        119.430419921875,
+        302.0400390625
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m021",
+      "text": "610",
+      "value": 610,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.1963632,
+        0.0051733,
+        0.0122011
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        233.8685302734375,
+        119.430419921875,
+        248.4000244140625
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m022",
+      "text": "200",
+      "value": 200,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.6384791,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        760.4285888671875,
+        119.430419921875,
+        774.9600219726562
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m023",
+      "text": "190",
+      "value": 190,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.0657473,
+        0.1698644,
+        0.0051733,
+        0.0122011
+      ],
+      "bboxPoints": [
+        110.71853637695312,
+        202.30853271484375,
+        119.430419921875,
+        216.84002685546875
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m024",
+      "text": "3360",
+      "value": 3360,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.2373339,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        282.66473388671875,
+        1250.67041015625,
+        302.0400390625
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m025",
+      "text": "200",
+      "value": 200,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.7439184,
+        0.1723833,
+        0.0051733,
+        0.0122011
+      ],
+      "bboxPoints": [
+        1252.758544921875,
+        205.30853271484375,
+        1261.470458984375,
+        219.84002685546875
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m026",
+      "text": "300",
+      "value": 300,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.2673959,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        318.46856689453125,
+        1250.67041015625,
+        333.0
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m027",
+      "text": "430",
+      "value": 430,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.2079501,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        247.6685791015625,
+        1250.67041015625,
+        262.20001220703125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m028",
+      "text": "3780",
+      "value": 3780,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.3294246,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        392.3447265625,
+        1250.67041015625,
+        411.72003173828125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m029",
+      "text": "3780",
+      "value": 3780,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.465747,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        554.7047119140625,
+        1250.67041015625,
+        574.0800170898438
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m030",
+      "text": "1950",
+      "value": 1950,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.3978377,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        473.82470703125,
+        1250.67041015625,
+        493.20001220703125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m031",
+      "text": "300",
+      "value": 300,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.5035672,
+        0.0051733,
+        0.0122011
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        599.74853515625,
+        1250.67041015625,
+        614.280029296875
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m032",
+      "text": "3370",
+      "value": 3370,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.5580392,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        664.6246948242188,
+        1250.67041015625,
+        684.0
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m033",
+      "text": "430",
+      "value": 430,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.5890081,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        701.5086059570312,
+        1250.67041015625,
+        716.0400390625
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m034",
+      "text": "17850",
+      "value": 17850,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.7442747,
+        0.3941737,
+        0.0051733,
+        0.0203351
+      ],
+      "bboxPoints": [
+        1253.3585205078125,
+        469.46087646484375,
+        1262.0704345703125,
+        493.67999267578125
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m035",
+      "text": "3000",
+      "value": 3000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.6488202,
+        0.0051733,
+        0.016268
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        772.7448120117188,
+        1250.67041015625,
+        792.1199951171875
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m036",
+      "text": "200",
+      "value": 200,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.7455573,
+        0.6290081,
+        0.0051733,
+        0.012201
+      ],
+      "bboxPoints": [
+        1255.5185546875,
+        749.1486206054688,
+        1264.23046875,
+        763.6800537109375
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m037",
+      "text": "1500",
+      "value": 1500,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.7026237,
+        0.0051733,
+        0.016268
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        836.8247680664062,
+        1250.67041015625,
+        856.2000122070312
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m038",
+      "text": "3000",
+      "value": 3000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.1466538,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        174.66473388671875,
+        1250.67041015625,
+        194.0400390625
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m039",
+      "text": "1500",
+      "value": 1500,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.737505,
+        0.0933541,
+        0.0051733,
+        0.0162681
+      ],
+      "bboxPoints": [
+        1241.95849609375,
+        111.18476104736328,
+        1250.67041015625,
+        130.56005859375
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m040",
+      "text": "2000",
+      "value": 2000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.7980285,
+        0.7306453,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        1343.8800048828125,
+        870.1985473632812,
+        1363.2552490234375,
+        878.9104614257812
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m041",
+      "text": "650",
+      "value": 650,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.8367933,
+        0.7306453,
+        0.0086292,
+        0.0073148
+      ],
+      "bboxPoints": [
+        1409.159912109375,
+        870.1985473632812,
+        1423.69140625,
+        878.9104614257812
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m042",
+      "text": "1200",
+      "value": 1200,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.7708788,
+        0.7306453,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        1298.159912109375,
+        870.1985473632812,
+        1317.53515625,
+        878.9104614257812
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m043",
+      "text": "36950",
+      "value": 36950,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.4485748,
+        0.7306453,
+        0.0143819,
+        0.0073148
+      ],
+      "bboxPoints": [
+        755.3999633789062,
+        870.1985473632812,
+        779.6190795898438,
+        878.9104614257812
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m044",
+      "text": "1000",
+      "value": 1000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.1304038,
+        0.730343,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        219.59999084472656,
+        869.8385009765625,
+        238.97520446777344,
+        878.5504150390625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m045",
+      "text": "150",
+      "value": 150,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.1120903,
+        0.730343,
+        0.0086291,
+        0.0073148
+      ],
+      "bboxPoints": [
+        188.75999450683594,
+        869.8385009765625,
+        203.29139709472656,
+        878.5504150390625
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m046",
+      "text": "1000",
+      "value": 1000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.813848,
+        0.0652548,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        1370.52001953125,
+        77.71852111816406,
+        1389.895263671875,
+        86.43040466308594
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m047",
+      "text": "39600",
+      "value": 39600,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.4708788,
+        0.0652548,
+        0.0143819,
+        0.0073148
+      ],
+      "bboxPoints": [
+        792.9599609375,
+        77.71852111816406,
+        817.1790771484375,
+        86.43040466308594
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m048",
+      "text": "1000",
+      "value": 1000,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.1304038,
+        0.0652548,
+        0.0115055,
+        0.0073148
+      ],
+      "bboxPoints": [
+        219.59999084472656,
+        77.71852111816406,
+        238.97520446777344,
+        86.43040466308594
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    },
+    {
+      "id": "latvia-ref-m049",
+      "text": "150",
+      "value": 150,
+      "unit": "mm",
+      "page": 1,
+      "bbox": [
+        0.1113064,
+        0.0652548,
+        0.0086291,
+        0.0073148
+      ],
+      "bboxPoints": [
+        187.44000244140625,
+        77.71852111816406,
+        201.97140502929688,
+        86.43040466308594
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true
+    }
+  ]
+}

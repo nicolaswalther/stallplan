@@ -1,0 +1,1116 @@
+{
+  "schemaVersion": "1.0",
+  "document": {
+    "filename": "03 Szekszárd- Termelő- Alaprajz.pdf",
+    "sha256": "cacf083c228faa0a33f9a8154a518bc64bfa44d20d97d58a7aedaa7ceba85b2f",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 7653.5400390625,
+        "heightPoints": 1683.780029296875,
+        "rotation": 0,
+        "vectorPaths": 53428,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Unabhängige visuelle Prüfung des vollständigen PDFs und gezielter Detailrenderings, anschließend Zuordnung der nativen Textobjekte und Füllpolygon-Grenzen. Keine Anwendungsausgaben oder KI-Vorschläge wurden zur Referenzbildung verwendet.",
+    "measurementCoverage": "Partielle Referenz: untere äußere Achs-/Maßkette plus ausgewählte sichtbare Gesamt-/Teilmaße. Nicht als vollständiger Recall-Test des gesamten Blatts verwenden.",
+    "coordinateConvention": "Normalisierte PDF-Viewport-Koordinaten x,y,width,height, Ursprung links oben."
+  },
+  "unitEvidence": {
+    "unit": "mixed",
+    "confidence": 0.99,
+    "scale": 100,
+    "evidence": [
+      "Natives Titelblocktext M = 1:100.",
+      "5,00-Module: benachbarte Beschriftungsmitten und gezeichnete Achsen liegen ca. 141,733 PDF-pt auseinander; bei 1:100 entspricht das 5,00 m.",
+      "Bare 20/15/10 in Wandmaßketten bezeichnen Zentimeter, keine Meter; daher ist die globale Einheit ausdrücklich gemischt.",
+      "Die hier aufgenommenen Dezimalmaße gehören zur geometrisch überprüften Metermasskette, nicht zu Fläche, Gefälle, Höhe oder Achsnummern."
+    ]
+  },
+  "measurements": [
+    {
+      "id": "ref-length-001",
+      "text": "38,26",
+      "value": 38.26,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.062841,
+        0.511367,
+        0.001082,
+        0.008788
+      ],
+      "bboxPoints": [
+        480.953,
+        861.029,
+        489.234,
+        875.827
+      ],
+      "orientation": "vertical",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 136
+    },
+    {
+      "id": "ref-length-002",
+      "text": "228,96",
+      "value": 228.96,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.493212,
+        0.148013,
+        0.002363,
+        0.004921
+      ],
+      "bboxPoints": [
+        3774.815,
+        249.221,
+        3792.898,
+        257.508
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 137
+    },
+    {
+      "id": "ref-length-003",
+      "text": "117,38",
+      "value": 117.38,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.286951,
+        0.154851,
+        0.002363,
+        0.004921
+      ],
+      "bboxPoints": [
+        2196.192,
+        260.734,
+        2214.274,
+        269.021
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 245
+    },
+    {
+      "id": "ref-length-004",
+      "text": "111,48",
+      "value": 111.48,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.710768,
+        0.155217,
+        0.002363,
+        0.004921
+      ],
+      "bboxPoints": [
+        5439.889,
+        261.351,
+        5457.971,
+        269.638
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 246
+    },
+    {
+      "id": "ref-length-005",
+      "text": "15,00",
+      "value": 15.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.176729,
+        0.875386,
+        0.001933,
+        0.004918
+      ],
+      "bboxPoints": [
+        1352.6,
+        1473.958,
+        1367.397,
+        1482.239
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 247
+    },
+    {
+      "id": "ref-length-006",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.513981,
+        0.875677,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        3933.776,
+        1474.448,
+        3945.288,
+        1482.723
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 248
+    },
+    {
+      "id": "ref-length-007",
+      "text": "6,30",
+      "value": 6.3,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.081942,
+        0.875309,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        627.15,
+        1473.828,
+        638.662,
+        1482.103
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 249
+    },
+    {
+      "id": "ref-length-008",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.532499,
+        0.875695,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        4075.506,
+        1474.478,
+        4087.018,
+        1482.753
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 250
+    },
+    {
+      "id": "ref-length-009",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.102868,
+        0.875327,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        787.308,
+        1473.858,
+        798.82,
+        1482.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 251
+    },
+    {
+      "id": "ref-length-010",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.551018,
+        0.875713,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        4217.237,
+        1474.508,
+        4228.749,
+        1482.783
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 252
+    },
+    {
+      "id": "ref-length-011",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.121387,
+        0.875339,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        929.04,
+        1473.878,
+        940.552,
+        1482.153
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 253
+    },
+    {
+      "id": "ref-length-012",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.569536,
+        0.875731,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        4358.967,
+        1474.538,
+        4370.479,
+        1482.813
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 254
+    },
+    {
+      "id": "ref-length-013",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.139905,
+        0.875357,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        1070.77,
+        1473.908,
+        1082.281,
+        1482.183
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 255
+    },
+    {
+      "id": "ref-length-014",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.588054,
+        0.875743,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        4500.697,
+        1474.558,
+        4512.209,
+        1482.833
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 256
+    },
+    {
+      "id": "ref-length-015",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.306572,
+        0.875499,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        2346.363,
+        1474.148,
+        2357.875,
+        1482.423
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 257
+    },
+    {
+      "id": "ref-length-016",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.606574,
+        0.87576,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        4642.438,
+        1474.588,
+        4653.949,
+        1482.863
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 258
+    },
+    {
+      "id": "ref-length-017",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.21398,
+        0.875422,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        1637.701,
+        1474.018,
+        1649.213,
+        1482.293
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 259
+    },
+    {
+      "id": "ref-length-018",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.625092,
+        0.875778,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        4784.168,
+        1474.618,
+        4795.68,
+        1482.893
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 260
+    },
+    {
+      "id": "ref-length-019",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.232498,
+        0.875434,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        1779.431,
+        1474.038,
+        1790.943,
+        1482.313
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 261
+    },
+    {
+      "id": "ref-length-020",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.251017,
+        0.875452,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        1921.172,
+        1474.068,
+        1932.683,
+        1482.343
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 262
+    },
+    {
+      "id": "ref-length-021",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.64361,
+        0.87579,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        4925.898,
+        1474.638,
+        4937.41,
+        1482.913
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 263
+    },
+    {
+      "id": "ref-length-022",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.269536,
+        0.875469,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        2062.902,
+        1474.098,
+        2074.414,
+        1482.373
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 264
+    },
+    {
+      "id": "ref-length-023",
+      "text": "10,00",
+      "value": 10.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.671174,
+        0.875814,
+        0.001933,
+        0.004918
+      ],
+      "bboxPoints": [
+        5136.859,
+        1474.678,
+        5151.656,
+        1482.959
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 265
+    },
+    {
+      "id": "ref-length-024",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.288054,
+        0.875487,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        2204.632,
+        1474.128,
+        2216.144,
+        1482.403
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 266
+    },
+    {
+      "id": "ref-length-025",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.699167,
+        0.875838,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        5351.099,
+        1474.718,
+        5362.611,
+        1482.993
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 267
+    },
+    {
+      "id": "ref-length-026",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.717685,
+        0.875856,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        5492.829,
+        1474.748,
+        5504.341,
+        1483.023
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 268
+    },
+    {
+      "id": "ref-length-027",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.736203,
+        0.875873,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        5634.56,
+        1474.778,
+        5646.071,
+        1483.053
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 269
+    },
+    {
+      "id": "ref-length-028",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.325092,
+        0.875517,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        2488.103,
+        1474.178,
+        2499.615,
+        1482.453
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 270
+    },
+    {
+      "id": "ref-length-029",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.754723,
+        0.875885,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        5776.3,
+        1474.798,
+        5787.812,
+        1483.073
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 271
+    },
+    {
+      "id": "ref-length-030",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.34361,
+        0.875535,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        2629.833,
+        1474.208,
+        2641.345,
+        1482.483
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 272
+    },
+    {
+      "id": "ref-length-031",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.362128,
+        0.875547,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        2771.563,
+        1474.228,
+        2783.075,
+        1482.503
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 273
+    },
+    {
+      "id": "ref-length-032",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.773241,
+        0.875903,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        5918.03,
+        1474.828,
+        5929.542,
+        1483.103
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 274
+    },
+    {
+      "id": "ref-length-033",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.380647,
+        0.875565,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        2913.294,
+        1474.258,
+        2924.806,
+        1482.533
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 275
+    },
+    {
+      "id": "ref-length-034",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.791759,
+        0.875921,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        6059.761,
+        1474.858,
+        6071.272,
+        1483.133
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 276
+    },
+    {
+      "id": "ref-length-035",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.810277,
+        0.875939,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        6201.491,
+        1474.888,
+        6213.002,
+        1483.163
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 277
+    },
+    {
+      "id": "ref-length-036",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.399166,
+        0.875582,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        3055.034,
+        1474.288,
+        3066.546,
+        1482.563
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 278
+    },
+    {
+      "id": "ref-length-037",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.828796,
+        0.875951,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        6343.221,
+        1474.908,
+        6354.733,
+        1483.183
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 279
+    },
+    {
+      "id": "ref-length-038",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.417684,
+        0.875594,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        3196.764,
+        1474.308,
+        3208.276,
+        1482.583
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 280
+    },
+    {
+      "id": "ref-length-039",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.847315,
+        0.875968,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        6484.961,
+        1474.938,
+        6496.474,
+        1483.213
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 281
+    },
+    {
+      "id": "ref-length-040",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.436203,
+        0.875612,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        3338.494,
+        1474.338,
+        3350.007,
+        1482.613
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 282
+    },
+    {
+      "id": "ref-length-041",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.865834,
+        0.875986,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        6626.692,
+        1474.968,
+        6638.204,
+        1483.243
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 283
+    },
+    {
+      "id": "ref-length-042",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.454721,
+        0.87563,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        3480.225,
+        1474.368,
+        3491.737,
+        1482.643
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 284
+    },
+    {
+      "id": "ref-length-043",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.884352,
+        0.875998,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        6768.422,
+        1474.988,
+        6779.934,
+        1483.263
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 285
+    },
+    {
+      "id": "ref-length-044",
+      "text": "5,00",
+      "value": 5.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.473239,
+        0.875642,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        3621.955,
+        1474.388,
+        3633.467,
+        1482.663
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 286
+    },
+    {
+      "id": "ref-length-045",
+      "text": "6,30",
+      "value": 6.3,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.905278,
+        0.876016,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        6928.582,
+        1475.018,
+        6940.094,
+        1483.293
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 287
+    },
+    {
+      "id": "ref-length-046",
+      "text": "6,00",
+      "value": 6.0,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.49361,
+        0.87566,
+        0.001504,
+        0.004915
+      ],
+      "bboxPoints": [
+        3777.865,
+        1474.418,
+        3789.378,
+        1482.693
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 288
+    },
+    {
+      "id": "ref-length-047",
+      "text": "228,96",
+      "value": 228.96,
+      "unit": "m",
+      "page": 1,
+      "bbox": [
+        0.493182,
+        0.867262,
+        0.002363,
+        0.004921
+      ],
+      "bboxPoints": [
+        3774.585,
+        1460.278,
+        3792.668,
+        1468.565
+      ],
+      "orientation": "horizontal",
+      "role": "plan-dimension",
+      "reviewed": true,
+      "sourceSpanIndex": 289
+    }
+  ]
+}

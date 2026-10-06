@@ -1,0 +1,433 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "unscoredKinds": [
+    "gate",
+    "drinker",
+    "brush",
+    "unknown",
+    "service",
+    "milking"
+  ],
+  "document": {
+    "filename": "Rzut przyziemia wersja PDF.pdf",
+    "sha256": "4ab624f7c5c35535835b48b0743527fc763ecb286b01af39d2172f0439e63aa0",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 1683.780029296875,
+        "heightPoints": 1190.551025390625,
+        "rotation": 0,
+        "vectorPaths": 338424,
+        "rasterImages": 0,
+        "nativeTextCharacters": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual review of full rendered PDF and multiple 4x/7x native vector detail crops. No model or production detection output was consulted. Outlined labels were read directly in the rendered drawing.",
+    "areaCoverage": "PARTIAL: two feeding tables, seven connected cubicle blocks, four principal manure-alley strips, separation, dry-cow and calving pens (16 regions).",
+    "coordinateConvention": "Normalized unrotated viewport x,y,width,height.",
+    "scope": "Atomic connected cubicle blocks; two auxiliary left cubicle blocks are included. Additional connector/robot passages, equipment and right service annex excluded.",
+    "limitations": [
+      "Coarse visual extents, not exact expert segmentation.",
+      "Zero native text and zero raster images: this is a vector drawing with outlined text, not a scanned raster page.",
+      "Unit cm is strongly plausible from 125-wide cubicles and 600 axis modules, but no explicit drawing-unit or scale legend was found. Do not promote plausibility into unit ground truth.",
+      "Cubicle position numbers 1–39 repeat by row and are not linear dimensions or independent animal counts.",
+      "Small gates, drinkers, brushes and robot details are not completely annotated.",
+      "The dry-cow pen has a corner ventilation structure and an offset left edge; its rectangle is intentionally coarse, not a precise occupied-floor mask."
+    ]
+  },
+  "areas": [
+    {
+      "id": "ref-feeding-upper",
+      "kind": "feeding_area",
+      "label": "Futtertisch oben",
+      "originalLabel": "stół paszowy",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.0885,
+        "y": 0.2615,
+        "width": 0.787,
+        "height": 0.0545
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-feeding-lower",
+      "kind": "feeding_area",
+      "label": "Futtertisch unten",
+      "originalLabel": "stół paszowy",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.0885,
+        "y": 0.6795,
+        "width": 0.787,
+        "height": 0.0545
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-upper-left",
+      "kind": "cubicles",
+      "label": "Liegeboxen oben links im Hauptstall",
+      "originalLabel": "Liegeboxen oben links im Hauptstall",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.395,
+        "y": 0.3685,
+        "width": 0.192,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-upper-right",
+      "kind": "cubicles",
+      "label": "Liegeboxen oben rechts im Hauptstall",
+      "originalLabel": "Liegeboxen oben rechts im Hauptstall",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.6135,
+        "y": 0.3685,
+        "width": 0.2125,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-middle",
+      "kind": "cubicles",
+      "label": "Liegeboxen mittlere durchgehende Reihe",
+      "originalLabel": "Liegeboxen mittlere durchgehende Reihe",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.395,
+        "y": 0.4665,
+        "width": 0.431,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-lower-left",
+      "kind": "cubicles",
+      "label": "Liegeboxen unten links im Hauptstall",
+      "originalLabel": "Liegeboxen unten links im Hauptstall",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.395,
+        "y": 0.5655,
+        "width": 0.192,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-lower-right",
+      "kind": "cubicles",
+      "label": "Liegeboxen unten rechts im Hauptstall",
+      "originalLabel": "Liegeboxen unten rechts im Hauptstall",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.6135,
+        "y": 0.5655,
+        "width": 0.2125,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-auxiliary-single",
+      "kind": "cubicles",
+      "label": "Liegeboxen einseitige Reihe links",
+      "originalLabel": "Liegeboxen einseitige Reihe links",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.1255,
+        "y": 0.496,
+        "width": 0.164,
+        "height": 0.034
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-auxiliary-double",
+      "kind": "cubicles",
+      "label": "Liegeboxen Doppelreihe unten links",
+      "originalLabel": "Liegeboxen Doppelreihe unten links",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.128,
+        "y": 0.5655,
+        "width": 0.1435,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-upper",
+      "kind": "alley",
+      "label": "Mist-/Laufgang upper",
+      "originalLabel": "korytarz gnojowy",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.395,
+        "y": 0.317,
+        "width": 0.4795,
+        "height": 0.0515
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-middle-upper",
+      "kind": "alley",
+      "label": "Mist-/Laufgang middle-upper",
+      "originalLabel": "korytarz gnojowy",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.395,
+        "y": 0.4315,
+        "width": 0.4795,
+        "height": 0.035
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-middle-lower",
+      "kind": "alley",
+      "label": "Mist-/Laufgang middle-lower",
+      "originalLabel": "korytarz gnojowy",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.395,
+        "y": 0.5295,
+        "width": 0.4795,
+        "height": 0.036
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-lower",
+      "kind": "alley",
+      "label": "Mist-/Laufgang lower",
+      "originalLabel": "korytarz gnojowy",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.395,
+        "y": 0.6285,
+        "width": 0.4795,
+        "height": 0.051
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-isolation",
+      "kind": "isolation",
+      "label": "Separationsbucht oben links",
+      "originalLabel": "separatka",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.0885,
+        "y": 0.317,
+        "width": 0.21,
+        "height": 0.051
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-dry-cows",
+      "kind": "pens",
+      "label": "Bucht für trockenstehende Kühe",
+      "originalLabel": "krowy zasuszone",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.099,
+        "y": 0.3685,
+        "width": 0.0925,
+        "height": 0.098
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-calving",
+      "kind": "calving",
+      "label": "Abkalbebucht links",
+      "originalLabel": "porodówka",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.192,
+        "y": 0.3685,
+        "width": 0.0975,
+        "height": 0.098
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    }
+  ],
+  "excludedAreas": [
+    {
+      "id": "exclude-alley-left-cross-upper",
+      "kind": "alley",
+      "label": "Zusätzlicher Quer-/Verbindungsgang",
+      "originalLabel": "Zusätzlicher Quer-/Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.0885,
+        "y": 0.4665,
+        "width": 0.21,
+        "height": 0.0295
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Legitimer zusätzlicher Gang außerhalb der vier Haupt-Mistgangstreifen; nicht als Falschpositiv werten."
+    },
+    {
+      "id": "exclude-alley-left-cross-middle",
+      "kind": "alley",
+      "label": "Zusätzlicher Quer-/Verbindungsgang",
+      "originalLabel": "Zusätzlicher Quer-/Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.0885,
+        "y": 0.53,
+        "width": 0.21,
+        "height": 0.0355
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Legitimer zusätzlicher Gang außerhalb der vier Haupt-Mistgangstreifen; nicht als Falschpositiv werten."
+    },
+    {
+      "id": "exclude-alley-left-cross-lower",
+      "kind": "alley",
+      "label": "Zusätzlicher Quer-/Verbindungsgang",
+      "originalLabel": "Zusätzlicher Quer-/Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.0885,
+        "y": 0.6285,
+        "width": 0.21,
+        "height": 0.051
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Legitimer zusätzlicher Gang außerhalb der vier Haupt-Mistgangstreifen; nicht als Falschpositiv werten."
+    },
+    {
+      "id": "exclude-alley-robot-corridor",
+      "kind": "alley",
+      "label": "Zusätzlicher Quer-/Verbindungsgang",
+      "originalLabel": "Zusätzlicher Quer-/Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.3515,
+        "y": 0.3685,
+        "width": 0.0435,
+        "height": 0.26
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Legitimer zusätzlicher Gang außerhalb der vier Haupt-Mistgangstreifen; nicht als Falschpositiv werten."
+    },
+    {
+      "id": "exclude-alley-upper-cross",
+      "kind": "alley",
+      "label": "Zusätzlicher Quer-/Verbindungsgang",
+      "originalLabel": "Zusätzlicher Quer-/Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.587,
+        "y": 0.3685,
+        "width": 0.0265,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Legitimer zusätzlicher Gang außerhalb der vier Haupt-Mistgangstreifen; nicht als Falschpositiv werten."
+    },
+    {
+      "id": "exclude-alley-lower-cross",
+      "kind": "alley",
+      "label": "Zusätzlicher Quer-/Verbindungsgang",
+      "originalLabel": "Zusätzlicher Quer-/Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.587,
+        "y": 0.5655,
+        "width": 0.0265,
+        "height": 0.063
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Legitimer zusätzlicher Gang außerhalb der vier Haupt-Mistgangstreifen; nicht als Falschpositiv werten."
+    },
+    {
+      "id": "exclude-alley-right-end",
+      "kind": "alley",
+      "label": "Zusätzlicher Quer-/Verbindungsgang",
+      "originalLabel": "Zusätzlicher Quer-/Verbindungsgang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.826,
+        "y": 0.3685,
+        "width": 0.0485,
+        "height": 0.26
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Legitimer zusätzlicher Gang außerhalb der vier Haupt-Mistgangstreifen; nicht als Falschpositiv werten."
+    },
+    {
+      "id": "exclude-robots",
+      "kind": "milking",
+      "label": "Melkrobotergruppe",
+      "originalLabel": "Melkrobotergruppe",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.306,
+        "y": 0.33,
+        "width": 0.0455,
+        "height": 0.337
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Nicht Teil der bewerteten Stall-Hauptbereiche."
+    },
+    {
+      "id": "exclude-service",
+      "kind": "service",
+      "label": "Technik-, Büro- und Milchtank-Anbau rechts",
+      "originalLabel": "Technik-, Büro- und Milchtank-Anbau rechts",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.881,
+        "y": 0.3685,
+        "width": 0.045,
+        "height": 0.16
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Nicht Teil der bewerteten Stall-Hauptbereiche."
+    },
+    {
+      "id": "exclude-upper-canopy",
+      "kind": "service",
+      "label": "Überdachung rechts oben",
+      "originalLabel": "Überdachung rechts oben",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.875,
+        "y": 0.262,
+        "width": 0.051,
+        "height": 0.1065
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Nicht Teil der bewerteten Stall-Hauptbereiche."
+    },
+    {
+      "id": "exclude-lower-canopy",
+      "kind": "service",
+      "label": "Überdachung rechts unten",
+      "originalLabel": "Überdachung rechts unten",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.875,
+        "y": 0.5295,
+        "width": 0.051,
+        "height": 0.205
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Nicht Teil der bewerteten Stall-Hauptbereiche."
+    }
+  ]
+}

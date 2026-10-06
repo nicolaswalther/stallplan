@@ -1,0 +1,612 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "unscoredKinds": [
+    "gate",
+    "drinker",
+    "brush"
+  ],
+  "document": {
+    "filename": "04 Szekszárd- Ellető- Alaprajz.pdf",
+    "sha256": "3a33fd5fae38cdd8e8b83e8ec8fe109b0a083c2aa87f4f505e69e14eb55b0c9c",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 5952.759765625,
+        "heightPoints": 1683.780029296875,
+        "rotation": 0,
+        "vectorPaths": 48816,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Unabhängige visuelle Prüfung des vollständigen PDFs und gezielter Detailrenderings, anschließend Zuordnung der nativen Textobjekte und Füllpolygon-Grenzen. Keine Anwendungsausgaben oder KI-Vorschläge wurden zur Referenzbildung verwendet.",
+    "areaCoverage": "Konservative partielle Hauptflächenreferenz; keine vollständige Experten-Segmentierung.",
+    "coordinateConvention": "Normalisierte PDF-Viewport-Koordinaten x,y,width,height, Ursprung links oben.",
+    "provenance": "Aus Original-PDF erstellte Referenz vor dem Vergleich mit Produktionsvorhersagen.",
+    "scope": "12 sicher benannte Hauptflächen: 7 Mistgänge, 2 Futtergänge, 1 zentraler Viehtreibgang, 1 Abkalbeboxenfläche und 1 Kälberboxen-/Auslaufstreifen. Die 12 rosa Rinderplatzreihen sind ohne explizite Liegeboxenbezeichnung separat ausgeschlossen.",
+    "limitations": [
+      "Die ausgeschlossenen rosa Tierplatzblöcke entsprechen geometrisch Liegeplatzrastern (ca.1,25m je Platz), aber ihr konkretes Haltungssystem ist nicht fachlich bestätigt.",
+      "Einige Querpassagen sind als Tränken-/Quertriebszone gefärbt; konkrete Tränkenprodukte sind nicht vollständig identifizierbar.",
+      "Der rechte Kellergrundriss ist eine separate technische Nebenzeichnung.",
+      "Grenzen der Mistgänge und des Außen-Kälberstreifens sind grob anhand visuell geprüfter angrenzender PDF-Füllgeometrie ermittelt."
+    ]
+  },
+  "areas": [
+    {
+      "label": "Futtergang",
+      "kind": "feeding_area",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.038966,
+        "y": 0.448527,
+        "width": 0.524263,
+        "height": 0.090911
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "originalLabel": "Etetőút",
+      "id": "ref-szekszard-calving-01"
+    },
+    {
+      "label": "Futtergang",
+      "kind": "feeding_area",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.591801,
+        "y": 0.448448,
+        "width": 0.262795,
+        "height": 0.090911
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "originalLabel": "Etetőút",
+      "id": "ref-szekszard-calving-02"
+    },
+    {
+      "label": "Abkalbeboxen",
+      "kind": "calving",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.592515,
+        "y": 0.608967,
+        "width": 0.237762,
+        "height": 0.157073
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "originalLabel": "Ellető boxok",
+      "id": "ref-szekszard-calving-03"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.277988,
+        "width": 0.523359,
+        "height": 0.050505
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-calving-04"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.382372,
+        "width": 0.523359,
+        "height": 0.066155
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-calving-05"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.539441,
+        "width": 0.523359,
+        "height": 0.066161
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-calving-06"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.659475,
+        "width": 0.386372,
+        "height": 0.050499
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-calving-07"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.591801,
+        "y": 0.277994,
+        "width": 0.262796,
+        "height": 0.050499
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-calving-08"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.591801,
+        "y": 0.382372,
+        "width": 0.262796,
+        "height": 0.066078
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-calving-09"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.591801,
+        "y": 0.539358,
+        "width": 0.262796,
+        "height": 0.069611
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút (vízöblítés nélkül)",
+      "id": "ref-szekszard-calving-10"
+    },
+    {
+      "label": "Viehtreibgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.56323,
+        "y": 0.221929,
+        "width": 0.028572,
+        "height": 0.547477
+      },
+      "geometryQuality": "visually-reviewed-main-corridor-extent",
+      "originalLabel": "Felhajtóút",
+      "id": "ref-szekszard-calving-11"
+    },
+    {
+      "label": "Kälberboxen mit Auslauf",
+      "kind": "pens",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.591801,
+        "y": 0.769406,
+        "width": 0.262796,
+        "height": 0.067343
+      },
+      "geometryQuality": "visually-reviewed-boxes-and-outdoor-run-extent",
+      "originalLabel": "Borjúnevelő boxok kifutóval",
+      "id": "ref-szekszard-calving-12"
+    }
+  ],
+  "excludedAreas": [
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.221928,
+        "width": 0.523358,
+        "height": 0.056062
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-01"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.591801,
+        "y": 0.22193,
+        "width": 0.262357,
+        "height": 0.056062
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-02"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.063228,
+        "y": 0.328494,
+        "width": 0.119762,
+        "height": 0.053874
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-03"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.206085,
+        "y": 0.328495,
+        "width": 0.095952,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-04"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.325133,
+        "y": 0.328495,
+        "width": 0.095952,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-05"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.444181,
+        "y": 0.328495,
+        "width": 0.095239,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-06"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.61561,
+        "y": 0.328495,
+        "width": 0.095238,
+        "height": 0.053874
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-07"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.734658,
+        "y": 0.328497,
+        "width": 0.095238,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-08"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.063228,
+        "y": 0.605602,
+        "width": 0.119762,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-09"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.206085,
+        "y": 0.605602,
+        "width": 0.095952,
+        "height": 0.053874
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-10"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.325133,
+        "y": 0.605603,
+        "width": 0.095952,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-11"
+    },
+    {
+      "label": "Tierplatzblock, Nutzung noch fachlich zu prüfen",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.709976,
+        "width": 0.403595,
+        "height": 0.059429
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Rosa Tierplatzraster und Stückzahl sind sichtbar. Die Legende sagt lediglich szarvasmarha férőhely (Rinderplätze), nicht explizit Liegeboxen; die Funktion wird deshalb nicht als sichere Ground Truth klassifiziert.",
+      "id": "excluded-szekszard-calving-12"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.328494,
+        "width": 0.022643,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-13"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.18299,
+        "y": 0.328495,
+        "width": 0.022381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-14"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.302038,
+        "y": 0.328495,
+        "width": 0.022381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-15"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.421086,
+        "y": 0.328495,
+        "width": 0.022381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-16"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.53942,
+        "y": 0.328495,
+        "width": 0.02381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-17"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.591801,
+        "y": 0.328495,
+        "width": 0.02381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-18"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.711563,
+        "y": 0.328497,
+        "width": 0.022381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-19"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.83061,
+        "y": 0.328497,
+        "width": 0.022643,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-20"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.039871,
+        "y": 0.605602,
+        "width": 0.022643,
+        "height": 0.053869
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-21"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.18299,
+        "y": 0.605602,
+        "width": 0.022381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-22"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.302038,
+        "y": 0.605603,
+        "width": 0.022381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-23"
+    },
+    {
+      "label": "Querpassage mit Tränkenzone",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.421086,
+        "y": 0.605603,
+        "width": 0.022381,
+        "height": 0.053872
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Blau gekennzeichnete Querpassagen/Tränkenzonen außerhalb der Hauptstreifen-Referenz; kleine Geräte wurden nicht vollständig annotiert.",
+      "originalLabel": "itató, áthajtó",
+      "id": "excluded-szekszard-calving-24"
+    },
+    {
+      "label": "Melk- und Nebenräume",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.443467,
+        "y": 0.605602,
+        "width": 0.119763,
+        "height": 0.163804
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "FEJŐGÉP, TEJHÁZ, GONDOZÓI PIHENŐ und Zsúfolótér sind sichtbar; außerhalb des partiellen Hauptstallbereich-Scope.",
+      "id": "excluded-szekszard-calving-25"
+    },
+    {
+      "label": "Geräte- und Betreuerräume",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.830277,
+        "y": 0.608969,
+        "width": 0.02432,
+        "height": 0.157069
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "ESZKÖZ TÁROLÓ / GONDOZÓI ŐRHELY: Nebenräume, kein Abkalbeboxenraum.",
+      "id": "excluded-szekszard-calving-26"
+    },
+    {
+      "label": "Kellergrundriss",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.880264,
+        "y": 0.237561,
+        "width": 0.110033,
+        "height": 0.332585
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Separater Kellergrundriss mit Gépészeti akna 1/2; keine weitere Stallnutzungsfläche und keine Wiederholung des Hauptgrundrisses.",
+      "originalLabel": "Pince",
+      "id": "excluded-szekszard-calving-27"
+    },
+    {
+      "label": "Legende und Titelblock",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.922261,
+        "y": 0.641414,
+        "width": 0.077611,
+        "height": 0.358123
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Jelmagyarázat und Zeichnungstitel, keine Stallfläche.",
+      "id": "excluded-szekszard-calving-28"
+    }
+  ]
+}

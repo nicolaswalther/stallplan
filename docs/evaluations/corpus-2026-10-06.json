@@ -1,0 +1,2807 @@
+{
+  "schemaVersion": "plan-corpus-investigation/1.0",
+  "date": "2026-10-06",
+  "implementationCommit": "16d9a35cbfb40ae06b2cbab2093706b8ece56a13",
+  "baselineCommit": "1dee67ef3ecb3428a47e5f391a04b45c2153f9a0",
+  "method": "Original-PDF zuerst unabhängig visuell und strukturell geprüft; danach reale Browseruploads, positionsbezogene Referenzauswertung, mehrere Entwicklungs- und Wiederholungsrunden. Letzte Maß-ID-/Schriftgrößen-Gegenbeispiele wurden zwischen final und verified korrigiert; Bereichsprompt unverändert.",
+  "areaThresholds": {
+    "associationIoU": 0.1,
+    "localizationIoU": 0.5,
+    "matching": "class-agnostic one-to-one maximum-weight bbox assignment; wrong overlapping duplicates can displace a correct candidate"
+  },
+  "documents": [
+    {
+      "id": "latvia",
+      "filename": "LP-DzB_AR-1.1-i1 1. stāva plāns_2026-08-12.pdf",
+      "sha256": "2490ceaa70d15d50b62f67bdd07d82e51d57de6b7b0df3c09ddb49519c91f1df",
+      "scope": "Unabhängige grobe Teilreferenz; keine dokumentweite Genauigkeit oder Fachplanerfreigabe",
+      "runs": [
+        {
+          "phase": "baseline",
+          "apiStatus": 200,
+          "uploadSeconds": 20.93,
+          "expectedPrincipalAreas": 6,
+          "predictedAreas": 1,
+          "scoredPredictedAreas": 1,
+          "detection": {
+            "truePositives": 0,
+            "falsePositives": 1,
+            "falseNegatives": 6,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "meanFootprintIoUAllReferences": 0.03256982897779757,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 2,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 2,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "calving": {
+              "expectedCount": 4,
+              "predictionCount": 1,
+              "truePositives": 0,
+              "falsePositives": 1,
+              "falseNegatives": 4,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "measurementsReturned": 12,
+          "payload": [
+            {
+              "bytes": 1690548,
+              "decodedBytes": 13457129,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 200,
+                  "lines": 77120
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 8366,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 8363,
+              "outputTokens": 660,
+              "reasoningTokens": 349,
+              "totalTokens": 9026,
+              "durationMs": 14122,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.001375675,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "improved",
+          "apiStatus": 200,
+          "uploadSeconds": 28.34,
+          "expectedPrincipalAreas": 6,
+          "predictedAreas": 3,
+          "scoredPredictedAreas": 3,
+          "detection": {
+            "truePositives": 1,
+            "falsePositives": 2,
+            "falseNegatives": 5,
+            "precision": 0.3333333333333333,
+            "recall": 0.16666666666666666,
+            "f1": 0.2222222222222222
+          },
+          "meanFootprintIoUAllReferences": 0.3031797867982871,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 2,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "calving": {
+              "expectedCount": 4,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 4,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "pens": {
+              "expectedCount": 0,
+              "predictionCount": 2,
+              "truePositives": 0,
+              "falsePositives": 2,
+              "falseNegatives": 0,
+              "precision": 0,
+              "recall": null,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 43,
+          "payload": [
+            {
+              "bytes": 1690548,
+              "decodedBytes": 13457129,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 200,
+                  "lines": 77120,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 8938,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 8935,
+              "outputTokens": 1132,
+              "reasoningTokens": 594,
+              "totalTokens": 10070,
+              "durationMs": 18284,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0016831749999999999,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "final",
+          "apiStatus": 200,
+          "uploadSeconds": 34.51,
+          "expectedPrincipalAreas": 6,
+          "predictedAreas": 5,
+          "scoredPredictedAreas": 5,
+          "detection": {
+            "truePositives": 5,
+            "falsePositives": 0,
+            "falseNegatives": 1,
+            "precision": 1,
+            "recall": 0.8333333333333334,
+            "f1": 0.9090909090909091
+          },
+          "meanFootprintIoUAllReferences": 0.7662591421429951,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 2,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "calving": {
+              "expectedCount": 4,
+              "predictionCount": 4,
+              "truePositives": 4,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 43,
+          "payload": [
+            {
+              "bytes": 1690548,
+              "decodedBytes": 13457129,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 200,
+                  "lines": 77120,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 9097,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 9094,
+              "outputTokens": 1705,
+              "reasoningTokens": 673,
+              "totalTokens": 10802,
+              "durationMs": 22082,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0019895499999999997,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "verified",
+          "apiStatus": 200,
+          "uploadSeconds": 35.53,
+          "expectedPrincipalAreas": 6,
+          "predictedAreas": 5,
+          "scoredPredictedAreas": 5,
+          "detection": {
+            "truePositives": 4,
+            "falsePositives": 1,
+            "falseNegatives": 2,
+            "precision": 0.8,
+            "recall": 0.6666666666666666,
+            "f1": 0.7272727272727272
+          },
+          "meanFootprintIoUAllReferences": 0.571788847012059,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 2,
+              "predictionCount": 1,
+              "truePositives": 0,
+              "falsePositives": 1,
+              "falseNegatives": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "calving": {
+              "expectedCount": 4,
+              "predictionCount": 4,
+              "truePositives": 4,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 43,
+          "payload": [
+            {
+              "bytes": 1690548,
+              "decodedBytes": 13457129,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 200,
+                  "lines": 77120,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 9097,
+              "cachedInputTokens": 9094,
+              "cacheWriteTokens": 0,
+              "outputTokens": 1615,
+              "reasoningTokens": 516,
+              "totalTokens": 10712,
+              "durationMs": 22101,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00089874,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flexicubicles",
+      "filename": "Flexicubicles.pdf",
+      "sha256": "d9892cddd138aa762ea72ce4683d7a6b743319e9a3a6abe4cae4fa4acff68894",
+      "scope": "Unabhängige grobe Teilreferenz; keine dokumentweite Genauigkeit oder Fachplanerfreigabe",
+      "runs": [
+        {
+          "phase": "baseline",
+          "apiStatus": 200,
+          "uploadSeconds": 28.91,
+          "expectedPrincipalAreas": 13,
+          "predictedAreas": 11,
+          "scoredPredictedAreas": 11,
+          "detection": {
+            "truePositives": 10,
+            "falsePositives": 1,
+            "falseNegatives": 3,
+            "precision": 0.9090909090909091,
+            "recall": 0.7692307692307693,
+            "f1": 0.8333333333333333
+          },
+          "meanFootprintIoUAllReferences": 0.6742455570909384,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 3,
+              "truePositives": 2,
+              "falsePositives": 1,
+              "falseNegatives": 2,
+              "precision": 0.6666666666666666,
+              "recall": 0.5,
+              "f1": 0.5714285714285715
+            },
+            "cubicles": {
+              "expectedCount": 8,
+              "predictionCount": 8,
+              "truePositives": 8,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 0,
+          "payload": [
+            {
+              "bytes": 1762467,
+              "decodedBytes": 15922196,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 2,
+                  "lines": 101184
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 4763,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 4760,
+              "outputTokens": 1552,
+              "reasoningTokens": 354,
+              "totalTokens": 6315,
+              "durationMs": 21836,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0013713,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "improved",
+          "apiStatus": 200,
+          "uploadSeconds": 28.68,
+          "expectedPrincipalAreas": 13,
+          "predictedAreas": 8,
+          "scoredPredictedAreas": 8,
+          "detection": {
+            "truePositives": 8,
+            "falsePositives": 0,
+            "falseNegatives": 5,
+            "precision": 1,
+            "recall": 0.6153846153846154,
+            "f1": 0.761904761904762
+          },
+          "meanFootprintIoUAllReferences": 0.5001471026355127,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 4,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "cubicles": {
+              "expectedCount": 8,
+              "predictionCount": 8,
+              "truePositives": 8,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 12,
+          "payload": [
+            {
+              "bytes": 1762467,
+              "decodedBytes": 15922196,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 2,
+                  "lines": 101184,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 5335,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 5332,
+              "outputTokens": 1585,
+              "reasoningTokens": 349,
+              "totalTokens": 6920,
+              "durationMs": 20318,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0014593,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3708,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 3705,
+              "outputTokens": 1557,
+              "reasoningTokens": 503,
+              "totalTokens": 5265,
+              "durationMs": 20079,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.001241925,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "final",
+          "apiStatus": 200,
+          "uploadSeconds": 34.76,
+          "expectedPrincipalAreas": 13,
+          "predictedAreas": 12,
+          "scoredPredictedAreas": 12,
+          "detection": {
+            "truePositives": 10,
+            "falsePositives": 2,
+            "falseNegatives": 3,
+            "precision": 0.8333333333333334,
+            "recall": 0.7692307692307693,
+            "f1": 0.8
+          },
+          "meanFootprintIoUAllReferences": 0.6854434996477159,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 4,
+              "truePositives": 2,
+              "falsePositives": 2,
+              "falseNegatives": 2,
+              "precision": 0.5,
+              "recall": 0.5,
+              "f1": 0.5
+            },
+            "cubicles": {
+              "expectedCount": 8,
+              "predictionCount": 8,
+              "truePositives": 8,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 11,
+          "payload": [
+            {
+              "bytes": 1762104,
+              "decodedBytes": 15922156,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 2,
+                  "lines": 101184,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 5494,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 5491,
+              "outputTokens": 1875,
+              "reasoningTokens": 467,
+              "totalTokens": 7369,
+              "durationMs": 21809,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0016241749999999998,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3708,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 3705,
+              "outputTokens": 1343,
+              "reasoningTokens": 293,
+              "totalTokens": 5051,
+              "durationMs": 14823,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.001134925,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "verified",
+          "apiStatus": 200,
+          "uploadSeconds": 33.52,
+          "expectedPrincipalAreas": 13,
+          "predictedAreas": 9,
+          "scoredPredictedAreas": 9,
+          "detection": {
+            "truePositives": 8,
+            "falsePositives": 1,
+            "falseNegatives": 5,
+            "precision": 0.8888888888888888,
+            "recall": 0.6153846153846154,
+            "f1": 0.7272727272727274
+          },
+          "meanFootprintIoUAllReferences": 0.41489668980824784,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 1,
+              "truePositives": 0,
+              "falsePositives": 1,
+              "falseNegatives": 4,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "cubicles": {
+              "expectedCount": 8,
+              "predictionCount": 8,
+              "truePositives": 8,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 12,
+          "payload": [
+            {
+              "bytes": 1762467,
+              "decodedBytes": 15922196,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 2,
+                  "lines": 101184,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 5494,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 5491,
+              "outputTokens": 1437,
+              "reasoningTokens": 393,
+              "totalTokens": 6931,
+              "durationMs": 19841,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0014051749999999998,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3708,
+              "cachedInputTokens": 3705,
+              "cacheWriteTokens": 0,
+              "outputTokens": 1549,
+              "reasoningTokens": 448,
+              "totalTokens": 5257,
+              "durationMs": 18653,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00081185,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rzut",
+      "filename": "Rzut przyziemia wersja PDF.pdf",
+      "sha256": "4ab624f7c5c35535835b48b0743527fc763ecb286b01af39d2172f0439e63aa0",
+      "scope": "Unabhängige grobe Teilreferenz; keine dokumentweite Genauigkeit oder Fachplanerfreigabe",
+      "runs": [
+        {
+          "phase": "baseline",
+          "apiStatus": 400,
+          "uploadSeconds": 10.27,
+          "expectedPrincipalAreas": 16,
+          "predictedAreas": 0,
+          "scoredPredictedAreas": 0,
+          "detection": {
+            "truePositives": 0,
+            "falsePositives": 0,
+            "falseNegatives": 16,
+            "precision": null,
+            "recall": 0,
+            "f1": null
+          },
+          "meanFootprintIoUAllReferences": 0,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 4,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "cubicles": {
+              "expectedCount": 7,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 7,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 2,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "isolation": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 0,
+          "payload": [
+            {
+              "bytes": 2821202,
+              "decodedBytes": 27854569,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 0,
+                  "lines": 180145
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [
+            "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+          ],
+          "actualUsage": []
+        },
+        {
+          "phase": "improved",
+          "apiStatus": 200,
+          "uploadSeconds": 28.59,
+          "expectedPrincipalAreas": 16,
+          "predictedAreas": 9,
+          "scoredPredictedAreas": 9,
+          "detection": {
+            "truePositives": 8,
+            "falsePositives": 1,
+            "falseNegatives": 8,
+            "precision": 0.8888888888888888,
+            "recall": 0.5,
+            "f1": 0.64
+          },
+          "meanFootprintIoUAllReferences": 0.44930802138546544,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 2,
+              "truePositives": 2,
+              "falsePositives": 0,
+              "falseNegatives": 2,
+              "precision": 1,
+              "recall": 0.5,
+              "f1": 0.6666666666666666
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "cubicles": {
+              "expectedCount": 7,
+              "predictionCount": 7,
+              "truePositives": 6,
+              "falsePositives": 1,
+              "falseNegatives": 1,
+              "precision": 0.8571428571428571,
+              "recall": 0.8571428571428571,
+              "f1": 0.8571428571428571
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 2,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "isolation": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 7,
+          "payload": [
+            {
+              "bytes": 2821202,
+              "decodedBytes": 27854569,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 0,
+                  "lines": 180145,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 6842,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 6839,
+              "outputTokens": 1284,
+              "reasoningTokens": 316,
+              "totalTokens": 8126,
+              "durationMs": 16442,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.001497175,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3649,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 3646,
+              "outputTokens": 1075,
+              "reasoningTokens": 375,
+              "totalTokens": 4724,
+              "durationMs": 15808,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00099355,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "final",
+          "apiStatus": 200,
+          "uploadSeconds": 31.14,
+          "expectedPrincipalAreas": 16,
+          "predictedAreas": 12,
+          "scoredPredictedAreas": 12,
+          "detection": {
+            "truePositives": 8,
+            "falsePositives": 4,
+            "falseNegatives": 8,
+            "precision": 0.6666666666666666,
+            "recall": 0.5,
+            "f1": 0.5714285714285715
+          },
+          "meanFootprintIoUAllReferences": 0.538590600306597,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 3,
+              "truePositives": 1,
+              "falsePositives": 2,
+              "falseNegatives": 3,
+              "precision": 0.3333333333333333,
+              "recall": 0.25,
+              "f1": 0.28571428571428575
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "cubicles": {
+              "expectedCount": 7,
+              "predictionCount": 7,
+              "truePositives": 7,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 2,
+              "truePositives": 0,
+              "falsePositives": 2,
+              "falseNegatives": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "isolation": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 11,
+          "payload": [
+            {
+              "bytes": 2821202,
+              "decodedBytes": 27854569,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 0,
+                  "lines": 180145,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 7001,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 6998,
+              "outputTokens": 1721,
+              "reasoningTokens": 405,
+              "totalTokens": 8722,
+              "durationMs": 20525,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00173555,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3649,
+              "cachedInputTokens": 3646,
+              "cacheWriteTokens": 0,
+              "outputTokens": 1840,
+              "reasoningTokens": 380,
+              "totalTokens": 5489,
+              "durationMs": 19154,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0009567600000000001,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "verified",
+          "apiStatus": 200,
+          "uploadSeconds": 34.03,
+          "expectedPrincipalAreas": 16,
+          "predictedAreas": 9,
+          "scoredPredictedAreas": 9,
+          "detection": {
+            "truePositives": 8,
+            "falsePositives": 1,
+            "falseNegatives": 8,
+            "precision": 0.8888888888888888,
+            "recall": 0.5,
+            "f1": 0.64
+          },
+          "meanFootprintIoUAllReferences": 0.470026635257572,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 4,
+              "predictionCount": 2,
+              "truePositives": 1,
+              "falsePositives": 1,
+              "falseNegatives": 3,
+              "precision": 0.5,
+              "recall": 0.25,
+              "f1": 0.3333333333333333
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "cubicles": {
+              "expectedCount": 7,
+              "predictionCount": 7,
+              "truePositives": 7,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 2,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "isolation": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 1,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 14,
+          "payload": [
+            {
+              "bytes": 2821202,
+              "decodedBytes": 27854569,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 0,
+                  "lines": 180145,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 7001,
+              "cachedInputTokens": 6998,
+              "cacheWriteTokens": 0,
+              "outputTokens": 1731,
+              "reasoningTokens": 370,
+              "totalTokens": 8732,
+              "durationMs": 20981,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00093578,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3649,
+              "cachedInputTokens": 3646,
+              "cacheWriteTokens": 0,
+              "outputTokens": 1755,
+              "reasoningTokens": 403,
+              "totalTokens": 5404,
+              "durationMs": 22276,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0009142600000000001,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "szekszard-calving",
+      "filename": "04 Szekszárd- Ellető- Alaprajz.pdf",
+      "sha256": "3a33fd5fae38cdd8e8b83e8ec8fe109b0a083c2aa87f4f505e69e14eb55b0c9c",
+      "scope": "Unabhängige grobe Teilreferenz; keine dokumentweite Genauigkeit oder Fachplanerfreigabe",
+      "runs": [
+        {
+          "phase": "baseline",
+          "apiStatus": 200,
+          "uploadSeconds": 32.14,
+          "expectedPrincipalAreas": 12,
+          "predictedAreas": 13,
+          "scoredPredictedAreas": 13,
+          "detection": {
+            "truePositives": 5,
+            "falsePositives": 8,
+            "falseNegatives": 7,
+            "precision": 0.38461538461538464,
+            "recall": 0.4166666666666667,
+            "f1": 0.4
+          },
+          "meanFootprintIoUAllReferences": 0.49930476245681726,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 8,
+              "predictionCount": 9,
+              "truePositives": 1,
+              "falsePositives": 8,
+              "falseNegatives": 7,
+              "precision": 0.1111111111111111,
+              "recall": 0.125,
+              "f1": 0.11764705882352941
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 2,
+              "truePositives": 2,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 165,
+          "payload": [
+            {
+              "bytes": 870495,
+              "decodedBytes": 6676719,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 469,
+                  "lines": 37956
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 7402,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 7399,
+              "outputTokens": 1967,
+              "reasoningTokens": 451,
+              "totalTokens": 9369,
+              "durationMs": 24182,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0019086749999999999,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "improved",
+          "apiStatus": 200,
+          "uploadSeconds": 37.97,
+          "expectedPrincipalAreas": 12,
+          "predictedAreas": 19,
+          "scoredPredictedAreas": 17,
+          "detection": {
+            "truePositives": 8,
+            "falsePositives": 9,
+            "falseNegatives": 4,
+            "precision": 0.47058823529411764,
+            "recall": 0.6666666666666666,
+            "f1": 0.5517241379310345
+          },
+          "meanFootprintIoUAllReferences": 0.6645158705069959,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 8,
+              "predictionCount": 8,
+              "truePositives": 7,
+              "falsePositives": 1,
+              "falseNegatives": 1,
+              "precision": 0.875,
+              "recall": 0.875,
+              "f1": 0.875
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "cubicles": {
+              "expectedCount": 0,
+              "predictionCount": 4,
+              "truePositives": 0,
+              "falsePositives": 4,
+              "falseNegatives": 0,
+              "precision": 0,
+              "recall": null,
+              "f1": null
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 2,
+              "truePositives": 0,
+              "falsePositives": 2,
+              "falseNegatives": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 2,
+              "truePositives": 0,
+              "falsePositives": 2,
+              "falseNegatives": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            }
+          },
+          "measurementsReturned": 175,
+          "payload": [
+            {
+              "bytes": 1588905,
+              "decodedBytes": 7882422,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 469,
+                  "lines": 37956,
+                  "areaDetailImages": 3
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 15836,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 15833,
+              "outputTokens": 2578,
+              "reasoningTokens": 286,
+              "totalTokens": 18414,
+              "durationMs": 27846,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.003268425,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "final",
+          "apiStatus": 200,
+          "uploadSeconds": 35.27,
+          "expectedPrincipalAreas": 12,
+          "predictedAreas": 19,
+          "scoredPredictedAreas": 16,
+          "detection": {
+            "truePositives": 12,
+            "falsePositives": 4,
+            "falseNegatives": 0,
+            "precision": 0.75,
+            "recall": 1,
+            "f1": 0.8571428571428571
+          },
+          "meanFootprintIoUAllReferences": 0.8551235293322769,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 8,
+              "predictionCount": 8,
+              "truePositives": 8,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "cubicles": {
+              "expectedCount": 0,
+              "predictionCount": 4,
+              "truePositives": 0,
+              "falsePositives": 4,
+              "falseNegatives": 0,
+              "precision": 0,
+              "recall": null,
+              "f1": null
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 2,
+              "truePositives": 2,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 171,
+          "payload": [
+            {
+              "bytes": 1588881,
+              "decodedBytes": 7882446,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 469,
+                  "lines": 37956,
+                  "areaDetailImages": 3
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 15995,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 15992,
+              "outputTokens": 2274,
+              "reasoningTokens": 334,
+              "totalTokens": 18269,
+              "durationMs": 25483,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0031363,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "verified",
+          "apiStatus": 200,
+          "uploadSeconds": 40.99,
+          "expectedPrincipalAreas": 12,
+          "predictedAreas": 25,
+          "scoredPredictedAreas": 13,
+          "detection": {
+            "truePositives": 12,
+            "falsePositives": 1,
+            "falseNegatives": 0,
+            "precision": 0.9230769230769231,
+            "recall": 1,
+            "f1": 0.9600000000000001
+          },
+          "meanFootprintIoUAllReferences": 0.8941851003469901,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 8,
+              "predictionCount": 8,
+              "truePositives": 8,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "calving": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "cubicles": {
+              "expectedCount": 0,
+              "predictionCount": 1,
+              "truePositives": 0,
+              "falsePositives": 1,
+              "falseNegatives": 0,
+              "precision": 0,
+              "recall": null,
+              "f1": null
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 2,
+              "truePositives": 2,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "pens": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 170,
+          "payload": [
+            {
+              "bytes": 1588881,
+              "decodedBytes": 7882446,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 469,
+                  "lines": 37956,
+                  "areaDetailImages": 3
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 15995,
+              "cachedInputTokens": 15992,
+              "cacheWriteTokens": 0,
+              "outputTokens": 3353,
+              "reasoningTokens": 363,
+              "totalTokens": 19348,
+              "durationMs": 32029,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00183672,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "szekszard-production",
+      "filename": "03 Szekszárd- Termelő- Alaprajz.pdf",
+      "sha256": "cacf083c228faa0a33f9a8154a518bc64bfa44d20d97d58a7aedaa7ceba85b2f",
+      "scope": "Unabhängige grobe Teilreferenz; keine dokumentweite Genauigkeit oder Fachplanerfreigabe",
+      "runs": [
+        {
+          "phase": "baseline",
+          "apiStatus": 200,
+          "uploadSeconds": 28.21,
+          "expectedPrincipalAreas": 31,
+          "predictedAreas": 6,
+          "scoredPredictedAreas": 6,
+          "detection": {
+            "truePositives": 2,
+            "falsePositives": 4,
+            "falseNegatives": 29,
+            "precision": 0.3333333333333333,
+            "recall": 0.06451612903225806,
+            "f1": 0.1081081081081081
+          },
+          "meanFootprintIoUAllReferences": 0.09587412442598105,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 9,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 9,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            },
+            "cubicles": {
+              "expectedCount": 20,
+              "predictionCount": 4,
+              "truePositives": 0,
+              "falsePositives": 4,
+              "falseNegatives": 20,
+              "precision": 0,
+              "recall": 0,
+              "f1": 0
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 2,
+              "truePositives": 2,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 158,
+          "payload": [
+            {
+              "bytes": 1042058,
+              "decodedBytes": 5731382,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 443,
+                  "lines": 32754
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 6770,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 6767,
+              "outputTokens": 1593,
+              "reasoningTokens": 516,
+              "totalTokens": 8363,
+              "durationMs": 21393,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.001642675,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "improved",
+          "apiStatus": 200,
+          "uploadSeconds": 54.84,
+          "expectedPrincipalAreas": 31,
+          "predictedAreas": 40,
+          "scoredPredictedAreas": 38,
+          "detection": {
+            "truePositives": 25,
+            "falsePositives": 13,
+            "falseNegatives": 6,
+            "precision": 0.6578947368421053,
+            "recall": 0.8064516129032258,
+            "f1": 0.7246376811594202
+          },
+          "meanFootprintIoUAllReferences": 0.7527329950513206,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 9,
+              "predictionCount": 15,
+              "truePositives": 7,
+              "falsePositives": 8,
+              "falseNegatives": 2,
+              "precision": 0.4666666666666667,
+              "recall": 0.7777777777777778,
+              "f1": 0.5833333333333334
+            },
+            "cubicles": {
+              "expectedCount": 20,
+              "predictionCount": 20,
+              "truePositives": 16,
+              "falsePositives": 4,
+              "falseNegatives": 4,
+              "precision": 0.8,
+              "recall": 0.8,
+              "f1": 0.8000000000000002
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 3,
+              "truePositives": 2,
+              "falsePositives": 1,
+              "falseNegatives": 0,
+              "precision": 0.6666666666666666,
+              "recall": 1,
+              "f1": 0.8
+            }
+          },
+          "measurementsReturned": 176,
+          "payload": [
+            {
+              "bytes": 2065480,
+              "decodedBytes": 7338390,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 443,
+                  "lines": 32754,
+                  "areaDetailImages": 4
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 17631,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 17628,
+              "outputTokens": 5032,
+              "reasoningTokens": 439,
+              "totalTokens": 22663,
+              "durationMs": 47807,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0047198,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "final",
+          "apiStatus": 200,
+          "uploadSeconds": 44.66,
+          "expectedPrincipalAreas": 31,
+          "predictedAreas": 42,
+          "scoredPredictedAreas": 40,
+          "detection": {
+            "truePositives": 14,
+            "falsePositives": 26,
+            "falseNegatives": 17,
+            "precision": 0.35,
+            "recall": 0.45161290322580644,
+            "f1": 0.3943661971830986
+          },
+          "meanFootprintIoUAllReferences": 0.4910300693212292,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 9,
+              "predictionCount": 17,
+              "truePositives": 9,
+              "falsePositives": 8,
+              "falseNegatives": 0,
+              "precision": 0.5294117647058824,
+              "recall": 1,
+              "f1": 0.6923076923076924
+            },
+            "cubicles": {
+              "expectedCount": 20,
+              "predictionCount": 20,
+              "truePositives": 3,
+              "falsePositives": 17,
+              "falseNegatives": 17,
+              "precision": 0.15,
+              "recall": 0.15,
+              "f1": 0.15
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 3,
+              "truePositives": 2,
+              "falsePositives": 1,
+              "falseNegatives": 0,
+              "precision": 0.6666666666666666,
+              "recall": 1,
+              "f1": 0.8
+            }
+          },
+          "measurementsReturned": 173,
+          "payload": [
+            {
+              "bytes": 2065480,
+              "decodedBytes": 7338390,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 443,
+                  "lines": 32754,
+                  "areaDetailImages": 4
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 17790,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 17787,
+              "outputTokens": 4563,
+              "reasoningTokens": 479,
+              "totalTokens": 22353,
+              "durationMs": 37379,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.004505175,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "verified",
+          "apiStatus": 200,
+          "uploadSeconds": 44.53,
+          "expectedPrincipalAreas": 31,
+          "predictedAreas": 35,
+          "scoredPredictedAreas": 33,
+          "detection": {
+            "truePositives": 26,
+            "falsePositives": 7,
+            "falseNegatives": 5,
+            "precision": 0.7878787878787878,
+            "recall": 0.8387096774193549,
+            "f1": 0.8125
+          },
+          "meanFootprintIoUAllReferences": 0.8115963406514441,
+          "perCategory": {
+            "alley": {
+              "expectedCount": 9,
+              "predictionCount": 11,
+              "truePositives": 4,
+              "falsePositives": 7,
+              "falseNegatives": 5,
+              "precision": 0.36363636363636365,
+              "recall": 0.4444444444444444,
+              "f1": 0.39999999999999997
+            },
+            "cubicles": {
+              "expectedCount": 20,
+              "predictionCount": 20,
+              "truePositives": 20,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "feeding_area": {
+              "expectedCount": 2,
+              "predictionCount": 2,
+              "truePositives": 2,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 173,
+          "payload": [
+            {
+              "bytes": 2065480,
+              "decodedBytes": 7338390,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "vector",
+                  "textObjects": 443,
+                  "lines": 32754,
+                  "areaDetailImages": 4
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 17790,
+              "cachedInputTokens": 17787,
+              "cacheWriteTokens": 0,
+              "outputTokens": 3607,
+              "reasoningTokens": 614,
+              "totalTokens": 21397,
+              "durationMs": 37366,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00198167,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kacprzak",
+      "filename": "Kacprzak projekt.pdf",
+      "sha256": "997837fe6def20f6c19013a5bb7f939635dac34580aad162c37114c3f1617b69",
+      "scope": "Unabhängige grobe Teilreferenz; keine dokumentweite Genauigkeit oder Fachplanerfreigabe",
+      "runs": [
+        {
+          "phase": "baseline",
+          "apiStatus": 200,
+          "uploadSeconds": 21.17,
+          "expectedPrincipalAreas": 11,
+          "predictedAreas": 11,
+          "scoredPredictedAreas": 1,
+          "detection": {
+            "truePositives": 1,
+            "falsePositives": 0,
+            "falseNegatives": 10,
+            "precision": 1,
+            "recall": 0.09090909090909091,
+            "f1": 0.16666666666666669
+          },
+          "meanFootprintIoUAllReferences": 0.08709891238048179,
+          "perCategory": {
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "pens": {
+              "expectedCount": 10,
+              "predictionCount": 0,
+              "truePositives": 0,
+              "falsePositives": 0,
+              "falseNegatives": 10,
+              "precision": null,
+              "recall": 0,
+              "f1": null
+            }
+          },
+          "measurementsReturned": 10,
+          "payload": [
+            {
+              "bytes": 281615,
+              "decodedBytes": 382995,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "raster",
+                  "textObjects": 0,
+                  "lines": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 4699,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 4696,
+              "outputTokens": 1666,
+              "reasoningTokens": 424,
+              "totalTokens": 6365,
+              "durationMs": 19476,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0014202999999999998,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3633,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 3630,
+              "outputTokens": 1463,
+              "reasoningTokens": 414,
+              "totalTokens": 5096,
+              "durationMs": 15536,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00118555,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "improved",
+          "apiStatus": 200,
+          "uploadSeconds": 27.31,
+          "expectedPrincipalAreas": 11,
+          "predictedAreas": 11,
+          "scoredPredictedAreas": 11,
+          "detection": {
+            "truePositives": 11,
+            "falsePositives": 0,
+            "falseNegatives": 0,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "meanFootprintIoUAllReferences": 0.9033082199145634,
+          "perCategory": {
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "pens": {
+              "expectedCount": 10,
+              "predictionCount": 10,
+              "truePositives": 10,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 11,
+          "payload": [
+            {
+              "bytes": 281615,
+              "decodedBytes": 382995,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "raster",
+                  "textObjects": 0,
+                  "lines": 0,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 5271,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 5268,
+              "outputTokens": 1840,
+              "reasoningTokens": 516,
+              "totalTokens": 7111,
+              "durationMs": 25633,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.0015788,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3644,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 3641,
+              "outputTokens": 1157,
+              "reasoningTokens": 236,
+              "totalTokens": 4801,
+              "durationMs": 16108,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.001033925,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "final",
+          "apiStatus": 200,
+          "uploadSeconds": 23.77,
+          "expectedPrincipalAreas": 11,
+          "predictedAreas": 11,
+          "scoredPredictedAreas": 11,
+          "detection": {
+            "truePositives": 11,
+            "falsePositives": 0,
+            "falseNegatives": 0,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "meanFootprintIoUAllReferences": 0.8458414371901021,
+          "perCategory": {
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "pens": {
+              "expectedCount": 10,
+              "predictionCount": 10,
+              "truePositives": 10,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 10,
+          "payload": [
+            {
+              "bytes": 281615,
+              "decodedBytes": 382995,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "raster",
+                  "textObjects": 0,
+                  "lines": 0,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 5430,
+              "cachedInputTokens": 0,
+              "cacheWriteTokens": 5427,
+              "outputTokens": 1815,
+              "reasoningTokens": 583,
+              "totalTokens": 7245,
+              "durationMs": 20786,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.001586175,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3644,
+              "cachedInputTokens": 3641,
+              "cacheWriteTokens": 0,
+              "outputTokens": 1374,
+              "reasoningTokens": 412,
+              "totalTokens": 5018,
+              "durationMs": 15751,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00072371,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        },
+        {
+          "phase": "verified",
+          "apiStatus": 200,
+          "uploadSeconds": 28.26,
+          "expectedPrincipalAreas": 11,
+          "predictedAreas": 11,
+          "scoredPredictedAreas": 11,
+          "detection": {
+            "truePositives": 11,
+            "falsePositives": 0,
+            "falseNegatives": 0,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "meanFootprintIoUAllReferences": 0.9409252334898454,
+          "perCategory": {
+            "feeding_area": {
+              "expectedCount": 1,
+              "predictionCount": 1,
+              "truePositives": 1,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            },
+            "pens": {
+              "expectedCount": 10,
+              "predictionCount": 10,
+              "truePositives": 10,
+              "falsePositives": 0,
+              "falseNegatives": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1": 1
+            }
+          },
+          "measurementsReturned": 12,
+          "payload": [
+            {
+              "bytes": 281615,
+              "decodedBytes": 382995,
+              "encoding": "gzip",
+              "pages": [
+                {
+                  "page": 1,
+                  "kind": "raster",
+                  "textObjects": 0,
+                  "lines": 0,
+                  "areaDetailImages": 0
+                }
+              ]
+            }
+          ],
+          "pageErrors": [],
+          "consoleErrors": [],
+          "actualUsage": [
+            {
+              "step": "areas",
+              "model": "gpt-6-luna",
+              "inputTokens": 5430,
+              "cachedInputTokens": 5427,
+              "cacheWriteTokens": 0,
+              "outputTokens": 2019,
+              "reasoningTokens": 589,
+              "totalTokens": 7449,
+              "durationMs": 26557,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00106407,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            },
+            {
+              "step": "measurements",
+              "model": "gpt-6-luna",
+              "inputTokens": 3644,
+              "cachedInputTokens": 3641,
+              "cacheWriteTokens": 0,
+              "outputTokens": 1535,
+              "reasoningTokens": 471,
+              "totalTokens": 5179,
+              "durationMs": 16655,
+              "serviceTier": "default",
+              "estimatedCostUsd": 0.00080421,
+              "pricingDate": "2026-10-05",
+              "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "nativeMeasurements": [
+    {
+      "id": "latvia",
+      "coverage": "49 standalone native linear dimension occurrences within the actual drawing. Native heights, section/axis identifiers, title block, dates and room area were excluded.",
+      "before": {
+        "nativeCount": 12,
+        "referenceCount": 49,
+        "matchedValueAndPosition": 12,
+        "matchedUnitAccuracy": 1,
+        "meanBoxIoU": 0.8750217304839693,
+        "units": {
+          "m": 0,
+          "cm": 0,
+          "mm": 12,
+          "unknown": 0
+        },
+        "missingInReference": [
+          {
+            "id": "latvia-ref-m001",
+            "value": 4700
+          },
+          {
+            "id": "latvia-ref-m003",
+            "value": 4690
+          },
+          {
+            "id": "latvia-ref-m005",
+            "value": 5900
+          },
+          {
+            "id": "latvia-ref-m007",
+            "value": 5925
+          },
+          {
+            "id": "latvia-ref-m008",
+            "value": 5900
+          },
+          {
+            "id": "latvia-ref-m009",
+            "value": 5900
+          },
+          {
+            "id": "latvia-ref-m010",
+            "value": 5900
+          },
+          {
+            "id": "latvia-ref-m011",
+            "value": 5900
+          },
+          {
+            "id": "latvia-ref-m012",
+            "value": 5900
+          },
+          {
+            "id": "latvia-ref-m014",
+            "value": 620
+          },
+          {
+            "id": "latvia-ref-m015",
+            "value": 620
+          },
+          {
+            "id": "latvia-ref-m016",
+            "value": 3500
+          },
+          {
+            "id": "latvia-ref-m017",
+            "value": 2230
+          },
+          {
+            "id": "latvia-ref-m018",
+            "value": 3500
+          },
+          {
+            "id": "latvia-ref-m019",
+            "value": 620
+          },
+          {
+            "id": "latvia-ref-m020",
+            "value": 3000
+          },
+          {
+            "id": "latvia-ref-m021",
+            "value": 610
+          },
+          {
+            "id": "latvia-ref-m022",
+            "value": 200
+          },
+          {
+            "id": "latvia-ref-m024",
+            "value": 3360
+          },
+          {
+            "id": "latvia-ref-m026",
+            "value": 300
+          },
+          {
+            "id": "latvia-ref-m027",
+            "value": 430
+          },
+          {
+            "id": "latvia-ref-m028",
+            "value": 3780
+          },
+          {
+            "id": "latvia-ref-m029",
+            "value": 3780
+          },
+          {
+            "id": "latvia-ref-m030",
+            "value": 1950
+          },
+          {
+            "id": "latvia-ref-m031",
+            "value": 300
+          },
+          {
+            "id": "latvia-ref-m032",
+            "value": 3370
+          },
+          {
+            "id": "latvia-ref-m033",
+            "value": 430
+          },
+          {
+            "id": "latvia-ref-m035",
+            "value": 3000
+          },
+          {
+            "id": "latvia-ref-m037",
+            "value": 1500
+          },
+          {
+            "id": "latvia-ref-m038",
+            "value": 3000
+          },
+          {
+            "id": "latvia-ref-m039",
+            "value": 1500
+          },
+          {
+            "id": "latvia-ref-m040",
+            "value": 2000
+          },
+          {
+            "id": "latvia-ref-m041",
+            "value": 650
+          },
+          {
+            "id": "latvia-ref-m042",
+            "value": 1200
+          },
+          {
+            "id": "latvia-ref-m044",
+            "value": 1000
+          },
+          {
+            "id": "latvia-ref-m046",
+            "value": 1000
+          },
+          {
+            "id": "latvia-ref-m048",
+            "value": 1000
+          }
+        ],
+        "fullScopeFalsePositiveCount": 0,
+        "measurementPrecision": 1,
+        "measurementRecall": 0.24489795918367346
+      },
+      "after": {
+        "nativeCount": 43,
+        "referenceCount": 49,
+        "matchedValueAndPosition": 43,
+        "matchedUnitAccuracy": 1,
+        "meanBoxIoU": 0.8750294483934627,
+        "units": {
+          "m": 0,
+          "cm": 0,
+          "mm": 43,
+          "unknown": 0
+        },
+        "missingInReference": [
+          {
+            "id": "latvia-ref-m022",
+            "value": 200
+          },
+          {
+            "id": "latvia-ref-m026",
+            "value": 300
+          },
+          {
+            "id": "latvia-ref-m027",
+            "value": 430
+          },
+          {
+            "id": "latvia-ref-m031",
+            "value": 300
+          },
+          {
+            "id": "latvia-ref-m033",
+            "value": 430
+          },
+          {
+            "id": "latvia-ref-m041",
+            "value": 650
+          }
+        ],
+        "fullScopeFalsePositiveCount": 0,
+        "measurementPrecision": 1,
+        "measurementRecall": 0.8775510204081632
+      },
+      "removedCandidates": []
+    },
+    {
+      "id": "szekszard-calving",
+      "coverage": "Partielle Referenz: untere äußere Achs-/Maßkette plus ausgewählte sichtbare Gesamt-/Teilmaße. Nicht als vollständiger Recall-Test des gesamten Blatts verwenden.",
+      "before": {
+        "nativeCount": 165,
+        "referenceCount": 39,
+        "matchedValueAndPosition": 39,
+        "matchedUnitAccuracy": 0,
+        "meanBoxIoU": 0.9995922954769666,
+        "units": {
+          "m": 0,
+          "cm": 0,
+          "mm": 0,
+          "unknown": 165
+        },
+        "missingInReference": [],
+        "accuracyScope": "Partial independently reviewed dimensions only; unannotated extra candidates are unscored."
+      },
+      "after": {
+        "nativeCount": 170,
+        "referenceCount": 39,
+        "matchedValueAndPosition": 39,
+        "matchedUnitAccuracy": 1,
+        "meanBoxIoU": 0.9995922954769666,
+        "units": {
+          "m": 117,
+          "cm": 53,
+          "mm": 0,
+          "unknown": 0
+        },
+        "missingInReference": [],
+        "accuracyScope": "Partial independently reviewed dimensions only; unannotated extra candidates are unscored."
+      },
+      "removedCandidates": [
+        {
+          "value": 9,
+          "textObjectId": "text-1-68"
+        },
+        {
+          "value": 10,
+          "textObjectId": "text-1-71"
+        },
+        {
+          "value": 20,
+          "textObjectId": "text-1-101"
+        },
+        {
+          "value": 30,
+          "textObjectId": "text-1-131"
+        },
+        {
+          "value": 4,
+          "textObjectId": "text-1-445"
+        },
+        {
+          "value": 5,
+          "textObjectId": "text-1-528"
+        },
+        {
+          "value": 6,
+          "textObjectId": "text-1-529"
+        },
+        {
+          "value": 5,
+          "textObjectId": "text-1-535"
+        },
+        {
+          "value": 10,
+          "textObjectId": "text-1-547"
+        },
+        {
+          "value": 11,
+          "textObjectId": "text-1-548"
+        }
+      ]
+    },
+    {
+      "id": "szekszard-production",
+      "coverage": "Partielle Referenz: untere äußere Achs-/Maßkette plus ausgewählte sichtbare Gesamt-/Teilmaße. Nicht als vollständiger Recall-Test des gesamten Blatts verwenden.",
+      "before": {
+        "nativeCount": 158,
+        "referenceCount": 47,
+        "matchedValueAndPosition": 44,
+        "matchedUnitAccuracy": 0,
+        "meanBoxIoU": 0.999507700854794,
+        "units": {
+          "m": 0,
+          "cm": 0,
+          "mm": 0,
+          "unknown": 158
+        },
+        "missingInReference": [
+          {
+            "id": "ref-length-002",
+            "value": 228.96
+          },
+          {
+            "id": "ref-length-003",
+            "value": 117.38
+          },
+          {
+            "id": "ref-length-004",
+            "value": 111.48
+          }
+        ],
+        "accuracyScope": "Partial independently reviewed dimensions only; unannotated extra candidates are unscored."
+      },
+      "after": {
+        "nativeCount": 173,
+        "referenceCount": 47,
+        "matchedValueAndPosition": 47,
+        "matchedUnitAccuracy": 1,
+        "meanBoxIoU": 0.9995107423914683,
+        "units": {
+          "m": 122,
+          "cm": 51,
+          "mm": 0,
+          "unknown": 0
+        },
+        "missingInReference": [],
+        "accuracyScope": "Partial independently reviewed dimensions only; unannotated extra candidates are unscored."
+      },
+      "removedCandidates": []
+    }
+  ],
+  "solExperiment": {
+    "purpose": "Gleicher Produktionsplan, identischer Request, zwei geplante Sol-Durchläufe",
+    "runs": [
+      {
+        "run": 1,
+        "status": "partial",
+        "requestedModel": "gpt-6.1-sol",
+        "model": "none",
+        "actualModels": {},
+        "latencyMs": 56197,
+        "usage": [],
+        "costIncomplete": true,
+        "sourceHash": "cacf083c228faa0a33f9a8154a518bc64bfa44d20d97d58a7aedaa7ceba85b2f",
+        "inputHash": "c51133fbbb1a76e01d157ec8f88049330e37b7b00c6221c708a92b6962870f1e",
+        "metadata": {
+          "sourceMethodHash": "68d4154b2f8bec5bfc60ff7b380a1abf58f2df592bb420762d1540732fe36be5",
+          "promptSourceHash": "1aaae256c1496b709327788cc30f7d0c4ec6bea1001df60899eaf41baf3801a6",
+          "pipelineRevision": {
+            "commit": "1dee67ef3ecb3428a47e5f391a04b45c2153f9a0",
+            "dirty": true
+          }
+        }
+      },
+      {
+        "run": 2,
+        "status": "partial",
+        "requestedModel": "gpt-6.1-sol",
+        "model": "none",
+        "actualModels": {},
+        "latencyMs": 56312,
+        "usage": [],
+        "costIncomplete": true,
+        "sourceHash": "cacf083c228faa0a33f9a8154a518bc64bfa44d20d97d58a7aedaa7ceba85b2f",
+        "inputHash": "c51133fbbb1a76e01d157ec8f88049330e37b7b00c6221c708a92b6962870f1e",
+        "metadata": {
+          "sourceMethodHash": "68d4154b2f8bec5bfc60ff7b380a1abf58f2df592bb420762d1540732fe36be5",
+          "promptSourceHash": "1aaae256c1496b709327788cc30f7d0c4ec6bea1001df60899eaf41baf3801a6",
+          "pipelineRevision": {
+            "commit": "1dee67ef3ecb3428a47e5f391a04b45c2153f9a0",
+            "dirty": true
+          }
+        }
+      }
+    ],
+    "interpretation": "Beide SDK-Timeout nach55s. Keine Modellantwort oder Usage; tatsächliches Modell und Kosten unbekannt. Deterministische Fallbackwerte sind keine Sol-Qualitätswerte."
+  },
+  "verification": {
+    "testsPassed": 244,
+    "typeScript": "passed",
+    "eslint": "passed",
+    "productionBuild": "passed",
+    "liveBrowserUploads": 26,
+    "lastLiveBrowserDocuments": [
+      "latvia",
+      "flexicubicles",
+      "rzut",
+      "szekszard-calving",
+      "szekszard-production",
+      "kacprzak",
+      "obora",
+      "burdelak"
+    ],
+    "lastLiveBrowserNoErrors": true,
+    "interactionReplay": {
+      "durationSeconds": 18.46,
+      "checks": [
+        "Real PDF parse/render/gzip; UI interactions replay saved real API response (separate live API corpus run)",
+        "Zoom in/out over area",
+        "Discard and undo",
+        "Manual mark and delete",
+        "JSON export keeps all180145vectors, original text and captured real usage; no image bytes in documents",
+        "Measurement selection highlights located dimension candidate",
+        "Grouped wishes open",
+        "Mobile no horizontal overflow",
+        "Restart clears project"
+      ],
+      "payload": [
+        {
+          "bytes": 2821202,
+          "decodedBytes": 27854569,
+          "encoding": "gzip",
+          "pages": [
+            {
+              "number": 1,
+              "texts": 0,
+              "lines": 180145,
+              "hiddenLayers": []
+            }
+          ]
+        }
+      ],
+      "apiStatus": 200,
+      "areas": 9,
+      "measurements": 7,
+      "warnings": [
+        "Bei einzelnen Bereichen ist die Erkennung unsicher. Bitte Markierungen prüfen.",
+        "Einzelne Bildmaße sind unsicher. Die Fachplanung prüft diese Werte."
+      ],
+      "pageErrors": [],
+      "consoleErrors": []
+    },
+    "originalOverviewUnchanged": true,
+    "nativeEndpointAudit": {
+      "production": 173,
+      "calving": 170,
+      "latvia": 43,
+      "allPresentInOriginalVectors": true
+    }
+  },
+  "limitations": [
+    "Die Referenzen sind Entwicklungsdaten, kein unabhängiger Hold-out-Test.",
+    "Ungarische Maßreferenzen decken39/47Vorkommen ab, nicht alle170/173Kandidaten.",
+    "Flächenreferenzen sind grob und teilweise gruppiert; Kategorie- und Granularitätsfehler getrennt lesen.",
+    "Bildmaßwerte sind Vorschläge mit eigener Unsicherheit, keine vollständige Maß-Ground-Truth.",
+    "Best-of-Läufe nicht als Produktgenauigkeit behandeln; beide letzten Bereichsläufe ausweisen."
+  ]
+}

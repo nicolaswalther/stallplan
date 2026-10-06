@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "document": {
+    "filename": "Flexicubicles.pdf",
+    "sha256": "d9892cddd138aa762ea72ce4683d7a6b743319e9a3a6abe4cae4fa4acff68894",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 841.9200439453125,
+        "heightPoints": 1190.52001953125,
+        "rotation": 0,
+        "vectorPaths": 83310,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual review of full-page PDF render and 3× PyMuPDF detail crops; native text used only to corroborate explicit labels and unit notes. No production or AI detections used.",
+    "areaCoverage": "Eight distinct cubicle blocks (four single-sided and four double-sided), one central feeding table and four long access alley bands.",
+    "coordinateConvention": "Normalized viewport x,y,width,height; unrotated page.",
+    "scope": "Partial coarse principal functional regions. Not exact expert segmentation and not whole-document precision.",
+    "limitations": [
+      "The same page also contains sections A–A and B–B below the floor plan. These section graphics are not extra floor-plan areas.",
+      "Almost all numerals, labels and dimension marks are outline vector paths, not native PDF text. Native text extraction alone cannot recover them.",
+      "Long alley strips are intentionally grouped across the central cross-passage; the cross-passage and end turnarounds are not individually annotated.",
+      "The left lateral room contains equipment and an animal outline; its exact use is unlabelled and is not asserted.",
+      "Fans and possible other equipment symbols are unannotated; small drinkers, brushes and gates require separate expert review.",
+      "Red numbers 30/28/22/23/1 mark positions or capacity within cubicle rows. They are not linear dimensions and are not a confirmed herd count."
+    ]
+  },
+  "areas": [
+    {
+      "id": "flex-cubicles-left-upper",
+      "kind": "cubicles",
+      "label": "Einseitige Liegeboxen links oben",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.326,
+        "y": 0.088,
+        "width": 0.038,
+        "height": 0.374
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-cubicles-left-lower",
+      "kind": "cubicles",
+      "label": "Einseitige Liegeboxen links unten",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.326,
+        "y": 0.475,
+        "width": 0.038,
+        "height": 0.374
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-cubicles-middle-left-upper",
+      "kind": "cubicles",
+      "label": "Doppelte Liegeboxen links oben",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.409,
+        "y": 0.13,
+        "width": 0.07,
+        "height": 0.298
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-cubicles-middle-left-lower",
+      "kind": "cubicles",
+      "label": "Doppelte Liegeboxen links unten",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.409,
+        "y": 0.507,
+        "width": 0.07,
+        "height": 0.297
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-cubicles-middle-right-upper",
+      "kind": "cubicles",
+      "label": "Doppelte Liegeboxen rechts oben",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.645,
+        "y": 0.13,
+        "width": 0.072,
+        "height": 0.285
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-cubicles-middle-right-lower",
+      "kind": "cubicles",
+      "label": "Doppelte Liegeboxen rechts unten",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.645,
+        "y": 0.507,
+        "width": 0.072,
+        "height": 0.297
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-cubicles-right-upper",
+      "kind": "cubicles",
+      "label": "Einseitige Liegeboxen rechts oben",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.761,
+        "y": 0.091,
+        "width": 0.037,
+        "height": 0.349
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-cubicles-right-lower",
+      "kind": "cubicles",
+      "label": "Einseitige Liegeboxen rechts unten",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.761,
+        "y": 0.497,
+        "width": 0.037,
+        "height": 0.352
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-feeding-central",
+      "kind": "feeding_area",
+      "label": "Mittlerer Futtertisch",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.539,
+        "y": 0.075,
+        "width": 0.046,
+        "height": 0.788
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-alley-long-1",
+      "kind": "alley",
+      "label": "Längsgang 1",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.366,
+        "y": 0.089,
+        "width": 0.043,
+        "height": 0.76
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-alley-long-2",
+      "kind": "alley",
+      "label": "Längsgang 2",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.479,
+        "y": 0.089,
+        "width": 0.056,
+        "height": 0.76
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-alley-long-3",
+      "kind": "alley",
+      "label": "Längsgang 3",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.589,
+        "y": 0.089,
+        "width": 0.056,
+        "height": 0.76
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "flex-alley-long-4",
+      "kind": "alley",
+      "label": "Längsgang 4",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.717,
+        "y": 0.089,
+        "width": 0.043,
+        "height": 0.76
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    }
+  ],
+  "unscoredKinds": [
+    "gate",
+    "drinker",
+    "brush",
+    "pens",
+    "calving",
+    "isolation",
+    "unknown"
+  ],
+  "excludedAreas": [
+    {
+      "id": "flex-section-A",
+      "kind": "cubicles",
+      "label": "Schnitt A–A, kein zusätzlicher Grundrissbereich",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.322,
+        "y": 0.904,
+        "width": 0.483,
+        "height": 0.03
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Sections duplicate equipment in a vertical view; not ground-plan areas."
+    },
+    {
+      "id": "flex-section-B",
+      "kind": "cubicles",
+      "label": "Schnitt B–B, kein zusätzlicher Grundrissbereich",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.322,
+        "y": 0.948,
+        "width": 0.483,
+        "height": 0.029
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Sections duplicate equipment in a vertical view; not ground-plan areas."
+    },
+    {
+      "id": "flex-excluded-upper-left",
+      "kind": "alley",
+      "label": "Oberer linker Wendebereich",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.365,
+        "y": 0.085,
+        "width": 0.17,
+        "height": 0.052
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid connecting or turning area, outside the four longitudinal alley strips evaluated in this partial reference."
+    },
+    {
+      "id": "flex-excluded-upper-right",
+      "kind": "alley",
+      "label": "Oberer rechter Wendebereich",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.589,
+        "y": 0.085,
+        "width": 0.172,
+        "height": 0.052
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid connecting or turning area, outside the four longitudinal alley strips evaluated in this partial reference."
+    },
+    {
+      "id": "flex-excluded-lower-left",
+      "kind": "alley",
+      "label": "Unterer linker Wendebereich",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.365,
+        "y": 0.799,
+        "width": 0.17,
+        "height": 0.05
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid connecting or turning area, outside the four longitudinal alley strips evaluated in this partial reference."
+    },
+    {
+      "id": "flex-excluded-lower-right",
+      "kind": "alley",
+      "label": "Unterer rechter Wendebereich",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.589,
+        "y": 0.799,
+        "width": 0.172,
+        "height": 0.05
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid connecting or turning area, outside the four longitudinal alley strips evaluated in this partial reference."
+    },
+    {
+      "id": "flex-excluded-cross-left",
+      "kind": "alley",
+      "label": "Mittlerer linker Quergang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.324,
+        "y": 0.462,
+        "width": 0.211,
+        "height": 0.035
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid connecting or turning area, outside the four longitudinal alley strips evaluated in this partial reference."
+    },
+    {
+      "id": "flex-excluded-cross-right",
+      "kind": "alley",
+      "label": "Mittlerer rechter Quergang",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.589,
+        "y": 0.439,
+        "width": 0.262,
+        "height": 0.06
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid connecting or turning area, outside the four longitudinal alley strips evaluated in this partial reference."
+    }
+  ]
+}

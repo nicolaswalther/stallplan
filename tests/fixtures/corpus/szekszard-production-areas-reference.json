@@ -1,0 +1,806 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "unscoredKinds": [
+    "gate",
+    "drinker",
+    "brush"
+  ],
+  "document": {
+    "filename": "03 Szekszárd- Termelő- Alaprajz.pdf",
+    "sha256": "cacf083c228faa0a33f9a8154a518bc64bfa44d20d97d58a7aedaa7ceba85b2f",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 7653.5400390625,
+        "heightPoints": 1683.780029296875,
+        "rotation": 0,
+        "vectorPaths": 53428,
+        "rasterImages": 0
+      }
+    ]
+  },
+  "review": {
+    "method": "Unabhängige visuelle Prüfung des vollständigen PDFs und gezielter Detailrenderings, anschließend Zuordnung der nativen Textobjekte und Füllpolygon-Grenzen. Keine Anwendungsausgaben oder KI-Vorschläge wurden zur Referenzbildung verwendet.",
+    "areaCoverage": "Konservative partielle Hauptflächenreferenz; keine vollständige Experten-Segmentierung.",
+    "coordinateConvention": "Normalisierte PDF-Viewport-Koordinaten x,y,width,height, Ursprung links oben.",
+    "provenance": "Aus Original-PDF erstellte Referenz vor dem Vergleich mit Produktionsvorhersagen.",
+    "scope": "31 atomare Hauptflächen: 20 Liegeboxenblöcke, 8 Mistgänge, 2 Futtergänge und 1 zentraler Viehtreibgang. Innere Doppelreihen werden je verbundenem Block zusammengefasst; Querpassagen sind ausgeschlossen.",
+    "limitations": [
+      "Keine vollständige Geräteannotation für Tränken, Tore, Bürsten oder einzelne Produktbügel.",
+      "Für die acht Mistgangstreifen sind Grenzen grob an den angrenzenden Füllpolygonen abgelesen; geringe lokale Versätze unter 1 PDF-pt werden nicht getrennt modelliert.",
+      "Die inneren rosa Flächen sind Konzept-Liegeplatzblöcke mit Kopf-an-Kopf-Raster; einzelne Bügelprodukte sind hier nicht ausgeplant."
+    ]
+  },
+  "areas": [
+    {
+      "label": "Futtergang",
+      "kind": "feeding_area",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.070744,
+        "y": 0.470314,
+        "width": 0.412523,
+        "height": 0.091266
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "originalLabel": "Etetőút",
+      "id": "ref-szekszard-production-01"
+    },
+    {
+      "label": "Futtergang",
+      "kind": "feeding_area",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505486,
+        "y": 0.470689,
+        "width": 0.412523,
+        "height": 0.091266
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "originalLabel": "Etetőút",
+      "id": "ref-szekszard-production-02"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075868,
+        "y": 0.197086,
+        "width": 0.40741,
+        "height": 0.056413
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-03"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505497,
+        "y": 0.197456,
+        "width": 0.407412,
+        "height": 0.056414
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-04"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.094361,
+        "y": 0.303669,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-05"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.186974,
+        "y": 0.303748,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-06"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.279566,
+        "y": 0.303829,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-07"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.37216,
+        "y": 0.303908,
+        "width": 0.092596,
+        "height": 0.092674
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-08"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.524012,
+        "y": 0.304039,
+        "width": 0.092596,
+        "height": 0.092672
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-09"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.635123,
+        "y": 0.304135,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-10"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.727716,
+        "y": 0.304216,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-11"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.820309,
+        "y": 0.304295,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-12"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.094347,
+        "y": 0.635319,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-13"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.18696,
+        "y": 0.635398,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-14"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.279552,
+        "y": 0.635479,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-15"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.372145,
+        "y": 0.635558,
+        "width": 0.092596,
+        "height": 0.092674
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-16"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.523997,
+        "y": 0.635689,
+        "width": 0.092596,
+        "height": 0.092672
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-17"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.635109,
+        "y": 0.635785,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-18"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.727701,
+        "y": 0.635864,
+        "width": 0.074078,
+        "height": 0.092658
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-19"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.820294,
+        "y": 0.635945,
+        "width": 0.074078,
+        "height": 0.092657
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-20"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075844,
+        "y": 0.7784,
+        "width": 0.407409,
+        "height": 0.056413
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-21"
+    },
+    {
+      "label": "Liegeboxen",
+      "kind": "cubicles",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505475,
+        "y": 0.77877,
+        "width": 0.407408,
+        "height": 0.056414
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "semanticEvidence": "Die Außenreihen sind ausdrücklich als pihenő boxok bezeichnet; innere Doppelblöcke zeigen dasselbe Platzraster und 2X16db bzw. 2X20db.",
+      "originalLabel": "pihenő boxok",
+      "id": "ref-szekszard-production-22"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075867,
+        "y": 0.253501,
+        "width": 0.407413,
+        "height": 0.050167
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-23"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075867,
+        "y": 0.396584,
+        "width": 0.407413,
+        "height": 0.073727
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-24"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075867,
+        "y": 0.561956,
+        "width": 0.407413,
+        "height": 0.073733
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-25"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075867,
+        "y": 0.728617,
+        "width": 0.407413,
+        "height": 0.049781
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-26"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505497,
+        "y": 0.253501,
+        "width": 0.407413,
+        "height": 0.050167
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-27"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505497,
+        "y": 0.396584,
+        "width": 0.407413,
+        "height": 0.073727
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-28"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505497,
+        "y": 0.561956,
+        "width": 0.407413,
+        "height": 0.073733
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-29"
+    },
+    {
+      "label": "Mistgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505497,
+        "y": 0.728617,
+        "width": 0.407413,
+        "height": 0.049781
+      },
+      "geometryQuality": "visually-reviewed-strip-between-pdf-fills",
+      "originalLabel": "Trágyaút",
+      "id": "ref-szekszard-production-30"
+    },
+    {
+      "label": "Viehtreibgang",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.48328,
+        "y": 0.197086,
+        "width": 0.022217,
+        "height": 0.6381
+      },
+      "geometryQuality": "visually-reviewed-main-corridor-extent",
+      "originalLabel": "Felhajtóút",
+      "id": "ref-szekszard-production-31"
+    }
+  ],
+  "excludedAreas": [
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075862,
+        "y": 0.303652,
+        "width": 0.017967,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-01"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.16899,
+        "y": 0.303733,
+        "width": 0.017412,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-02"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.261603,
+        "y": 0.303812,
+        "width": 0.017412,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-03"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.354196,
+        "y": 0.303893,
+        "width": 0.017412,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-04"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.465308,
+        "y": 0.303989,
+        "width": 0.017967,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-05"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505494,
+        "y": 0.304022,
+        "width": 0.017967,
+        "height": 0.09261
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-06"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.61716,
+        "y": 0.30412,
+        "width": 0.017411,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-07"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.709753,
+        "y": 0.304199,
+        "width": 0.017411,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-08"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.802346,
+        "y": 0.30428,
+        "width": 0.017411,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-09"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.894939,
+        "y": 0.304359,
+        "width": 0.017967,
+        "height": 0.09261
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-10"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.075848,
+        "y": 0.635302,
+        "width": 0.017967,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-11"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.168977,
+        "y": 0.635383,
+        "width": 0.017412,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-12"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.261589,
+        "y": 0.635462,
+        "width": 0.017412,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-13"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.354182,
+        "y": 0.635543,
+        "width": 0.017411,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-14"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.465294,
+        "y": 0.635639,
+        "width": 0.017967,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-15"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.505479,
+        "y": 0.635672,
+        "width": 0.017967,
+        "height": 0.09261
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-16"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.617146,
+        "y": 0.63577,
+        "width": 0.017411,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-17"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.709738,
+        "y": 0.635849,
+        "width": 0.017411,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-18"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.802331,
+        "y": 0.63593,
+        "width": 0.017411,
+        "height": 0.092608
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-19"
+    },
+    {
+      "label": "Querpassage",
+      "kind": "alley",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.894924,
+        "y": 0.636009,
+        "width": 0.017967,
+        "height": 0.09261
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Querpassagen zwischen Liegeboxenblöcken sind separat sichtbar, hier aber außerhalb des Hauptstreifen-Scope. Sie sind keine zusätzlichen Liegeboxen.",
+      "originalLabel": "átjáró",
+      "id": "excluded-szekszard-production-20"
+    },
+    {
+      "label": "Titelblock",
+      "kind": "unknown",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.971446,
+        "y": 0.617658,
+        "width": 0.028092,
+        "height": 0.381879
+      },
+      "geometryQuality": "visually-reviewed-pdf-fill-extent",
+      "exclusionReason": "Zeichnungstitel und Kontaktdaten, kein Stallbereich.",
+      "id": "excluded-szekszard-production-21"
+    }
+  ]
+}
