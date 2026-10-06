@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "plan-investigation/1.0",
+  "date": "2026-10-06",
+  "document": {
+    "name": "Burdelak_Piotr_k001.pdf",
+    "sha256": "4d8db49a7f32b2a795a227a6828fd4b148fa9ca57ab2ae1efacf8bcd0fb54e47",
+    "pages": 1,
+    "textObjects": 89,
+    "vectorLines": 149003
+  },
+  "implementationCommit": "5f475559337f431de972935217b27e98da8265af",
+  "scope": "Unabhängig geprüfte Teilreferenz mit 14 Hauptflächen. Weitere Gänge und Geräte ausgeschlossen oder unbewertet. Ein letzter Modelllauf belegt keine allgemeine Genauigkeit.",
+  "native": {
+    "cubicleBlocksExpected": 5,
+    "cubicleBlocksLocated": 5,
+    "cubicleBlockMeanIoU": 0.981,
+    "nativePrincipalRegionsLocalized": 11,
+    "baselineFalseNativeMeasurements": 21,
+    "finalFalseNativeMeasurements": 0,
+    "curveInkBounds": 780,
+    "curveInkComplete": true
+  },
+  "finalBrowser": {
+    "durationSeconds": 45.67,
+    "checks": [
+      "Echter PDF-Upload, Gzip-Request, Originalrendering und vollständiger Analyse-Endpunkt",
+      "Zoom über Bereichsmarkierung",
+      "Verwerfen und Rückgängig",
+      "Manuelles Markieren und Löschen",
+      "JSON-Export mit149003Vektorlinien, fünf Musterbelegen, Originaltext, Layer-Audit und tatsächlicher Usage",
+      "Maßauswahl mit Positionshervorhebung",
+      "Gemeinsame Wünsche",
+      "Mobiles Layout ohne horizontalen Überlauf",
+      "Neustart löscht Projektzustand"
+    ],
+    "payload": [
+      {
+        "bytes": 2659878,
+        "decodedBytes": 24139206,
+        "encoding": "gzip",
+        "pages": [
+          {
+            "number": 1,
+            "texts": 89,
+            "lines": 149003,
+            "hiddenLayers": [
+              "A-Detl-Patt",
+              "GEA_Kreskowanie_ruszta",
+              "GEA_Kreskowanie_sloma"
+            ]
+          }
+        ]
+      }
+    ],
+    "apiStatus": 200,
+    "areas": 20,
+    "measurements": 27,
+    "warnings": [
+      "Bei einzelnen Bereichen ist die Erkennung unsicher. Bitte Markierungen prüfen.",
+      "Tränken oder Bürsten ohne konkreten Planbeleg wurden verworfen.",
+      "Einzelne Rastermaße sind unsicher. Die Fachplanung prüft diese Werte.",
+      "Nichtlineare oder nicht ausreichend lokalisierbare Maßvorschläge wurden verworfen."
+    ],
+    "pageErrors": [],
+    "consoleErrors": []
+  },
+  "finalPrincipalAreas": {
+    "references": 14,
+    "rawPredictions": 20,
+    "scoredPredictions": 17,
+    "detection": {
+      "truePositives": 12,
+      "falsePositives": 5,
+      "falseNegatives": 2,
+      "precision": 0.7058823529411765,
+      "recall": 0.8571428571428571,
+      "f1": 0.7741935483870968
+    },
+    "meanFootprintIoU": 0.8103489906530271,
+    "perCategory": {
+      "alley": {
+        "expectedCount": 4,
+        "predictionCount": 6,
+        "truePositives": 4,
+        "falsePositives": 2,
+        "falseNegatives": 0,
+        "precision": 0.6666666666666666,
+        "recall": 1,
+        "f1": 0.8
+      },
+      "calving": {
+        "expectedCount": 2,
+        "predictionCount": 3,
+        "truePositives": 1,
+        "falsePositives": 2,
+        "falseNegatives": 1,
+        "precision": 0.3333333333333333,
+        "recall": 0.5,
+        "f1": 0.4
+      },
+      "cubicles": {
+        "expectedCount": 5,
+        "predictionCount": 5,
+        "truePositives": 5,
+        "falsePositives": 0,
+        "falseNegatives": 0,
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "feeding_area": {
+        "expectedCount": 2,
+        "predictionCount": 2,
+        "truePositives": 2,
+        "falsePositives": 0,
+        "falseNegatives": 0,
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "isolation": {
+        "expectedCount": 1,
+        "predictionCount": 1,
+        "truePositives": 0,
+        "falsePositives": 1,
+        "falseNegatives": 1,
+        "precision": 0,
+        "recall": 0,
+        "f1": 0
+      }
+    },
+    "notSufficientlyLocalized": [
+      "ref-calving-upper",
+      "ref-isolation"
+    ],
+    "excludedPredictionCount": 3
+  },
+  "measurementPositionGuard": {
+    "recordedVisionCandidates": 26,
+    "emptyOrInsufficientlyLocatedRejected": 17,
+    "independentlyPositionedOCRCandidatesPreserved": 29,
+    "proof": "Nur Positionsbeleg durch PDF-Tinte, kein Beweis für Ziffernwert oder Einheit."
+  },
+  "experimentalOCR": {
+    "production": false,
+    "scope": "Drei manuell ausgewählte Außenmaßketten",
+    "referenceCount": 30,
+    "valueAndPositionCorrect": 29,
+    "unit": "unknown",
+    "missing": "Ein oberer 6.00-Wert wegen Lüftersymbol"
+  },
+  "regression": {
+    "oboraMeasurements": 194,
+    "nativeLinesUnchanged": true,
+    "nativeTextUnchanged": true
+  },
+  "checks": {
+    "unitTestsPassed": 209,
+    "typecheck": true,
+    "lint": true,
+    "build": true,
+    "hosting413RecoverySimulation": true
+  },
+  "usage": [
+    {
+      "step": "areas",
+      "model": "gpt-6-luna",
+      "inputTokens": 6869,
+      "cachedInputTokens": 6866,
+      "cacheWriteTokens": 0,
+      "outputTokens": 3611,
+      "reasoningTokens": 309,
+      "totalTokens": 10480,
+      "durationMs": 34578,
+      "serviceTier": "default",
+      "estimatedCostUsd": 0.00187446,
+      "pricingDate": "2026-10-05",
+      "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+    },
+    {
+      "step": "measurements",
+      "model": "gpt-6-luna",
+      "inputTokens": 6473,
+      "cachedInputTokens": 6470,
+      "cacheWriteTokens": 0,
+      "outputTokens": 2845,
+      "reasoningTokens": 490,
+      "totalTokens": 9318,
+      "durationMs": 23758,
+      "serviceTier": "default",
+      "estimatedCostUsd": 0.0014874999999999999,
+      "pricingDate": "2026-10-05",
+      "pricingSource": "https://platform.openai.com/docs/models/gpt-6-luna"
+    }
+  ],
+  "finalMeasurements": {
+    "candidates": 27,
+    "unit": "unknown",
+    "reviewedReferenceScope": "Drei Außenmaßketten mit30Vorkommen;38.00rechts liegt außerhalb dieser Teilreferenz und wurde separat visuell geprüft.",
+    "matchingValueAndPositionWithin12PdfPoints": 19,
+    "positionDriftCandidatesInScope": 7,
+    "unmatchedReferenceOccurrences": 11,
+    "missingLeftValues": [
+      11.6,
+      17.83,
+      8.58,
+      38.0
+    ],
+    "additionalVisuallyVerifiedOutsideReferenceValue": 38.0,
+    "ocrTextboxCoverageAtLeastHalf": {
+      "passing": 17,
+      "comparable": 25
+    },
+    "limitations": "Zwölf PDF-Punkte Abstandstoleranz garantieren keine präzise Textbox. Alle Werte bleiben unbestätigt. Keine dokumentweite Precision.",
+    "scoredPredictions": 26,
+    "positionPrecisionWithinPartialReference": 0.7307692307692307,
+    "positionRecallWithinPartialReference": 0.6333333333333333
+  }
+}

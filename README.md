@@ -64,4 +64,6 @@ Die Evaluation prüft den SHA-256 des Dokuments und vergleicht jedes Maßvorkomm
 
 Details: [Architektur](docs/ARCHITECTURE.md), [Evaluation und bekannte Grenzen](docs/EVALUATION.md), [Vektorgrenzen-Vergleich](docs/BOUNDARY-QUALITY.md). Der vorbereitete historische Dataset Builder liegt in `lib/evaluation/dataset.ts`; finale Systeme benötigen explizite Planerannotationen. Es findet kein Modelltraining statt.
 
+Der zweite Testplan wird gesondert geprüft: [Burdelak: Ursachen, Reparaturen und verbleibende Grenzen](docs/BURDELAK-INVESTIGATION.md). Dichte CAD-Anfragen werden verlustfrei komprimiert; ausdrücklich benannte Schraffurlayer können für eine separate Bereichsansicht ausgeblendet werden. Unterstützte Doppel-Liegeboxenreihen besitzen einen unabhängigen geometrischen Fallback.
+
 Für wiederholte Bereichstests: [A/B-Ergebnisse und Referenz](docs/AREA-AB-EVALUATION.md), [tatsächliche Modellkosten](docs/MODEL-COSTS.md), [Qualitätsarbeit mit 100 Plänen](docs/DATASET-QUALITY-WORKFLOW.md). Der [Umsetzungsauftrag für die Unternehmenspipeline](docs/COMPANY-IMPLEMENTATION-PROMPT.md) beschreibt den aktuellen Stand und die erforderlichen Abnahmetests. Tokenverbrauch und geschätzte Standard-API-Kosten jedes erfolgreichen Analyseschritts stehen im technischen Audit; unbekannte Tarife werden nicht erfunden.

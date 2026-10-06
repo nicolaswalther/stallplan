@@ -1,0 +1,389 @@
+{
+  "schemaVersion": "area-reference/1.0",
+  "unscoredKinds": [
+    "gate",
+    "drinker",
+    "brush",
+    "unknown",
+    "pens"
+  ],
+  "document": {
+    "filename": "Burdelak_Piotr_k001.pdf",
+    "sha256": "4d8db49a7f32b2a795a227a6828fd4b148fa9ca57ab2ae1efacf8bcd0fb54e47",
+    "pages": [
+      {
+        "page": 1,
+        "widthPoints": 2384,
+        "heightPoints": 1684,
+        "rotation": 0,
+        "vectorPaths": 116514,
+        "lineSegments": 149003,
+        "rasterImages": 44
+      }
+    ]
+  },
+  "review": {
+    "method": "Independent visual review of full PDF and native-resolution detail crops. Native PDF labels and structural rails corroborated classifications and extents. Model output was not used to set boundaries.",
+    "areaCoverage": "PARTIAL principal regions: two feeding tables, five connected double-cubicle blocks, four manure-alley strips, two calving regions and one isolation/separation region.",
+    "coordinateConvention": "Normalized viewport x,y,width,height; unrotated page.",
+    "scope": "Small equipment is unannotated. Additional left, robot and cross passages are excluded, not false positives. Upper/lower cubicle rows can legitimately be grouped; use grouped fixture when evaluating row grouping.",
+    "limitations": [
+      "Coarse reviewed boxes, not exact expert segmentation.",
+      "Partial coverage: no document-wide precision or complete recall claim.",
+      "SEPARATKA extents include its ten-cubicle strip and adjacent internal passage; geometry is coarse.",
+      "Grouping granularity must match evaluation: grouped12-region fixture merges upper/lower cubicle blocks as multipart footprints.",
+      "Repeated GRUPA106KRÓW labels are not independent additive herds.",
+      "Native lengths do not include the outlined dimension chains; units are explicitly meters or centimeters."
+    ]
+  },
+  "areas": [
+    {
+      "id": "ref-feed-upper",
+      "kind": "feeding_area",
+      "label": "Futtertisch oben",
+      "originalLabel": "STÓŁ PASZOWY",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.128,
+        "y": 0.186,
+        "width": 0.753,
+        "height": 0.064
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-feed-lower",
+      "kind": "feeding_area",
+      "label": "Futtertisch unten",
+      "originalLabel": "STÓŁ PASZOWY",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.128,
+        "y": 0.682,
+        "width": 0.753,
+        "height": 0.064
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-calving-upper",
+      "kind": "calving",
+      "label": "Abkalbebereich oben links",
+      "originalLabel": "PORODÓWKA",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.145,
+        "y": 0.251,
+        "width": 0.154,
+        "height": 0.061
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-calving-main",
+      "kind": "calving",
+      "label": "Abkalbebucht links",
+      "originalLabel": "PORODÓWKA - 78,90m² - 8 KRÓW",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.145,
+        "y": 0.313,
+        "width": 0.126,
+        "height": 0.103
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-isolation",
+      "kind": "isolation",
+      "label": "Separationsbereich unten links",
+      "originalLabel": "SEPARATKA - 10 LEGOWISK",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.145,
+        "y": 0.577,
+        "width": 0.154,
+        "height": 0.105
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-upper-left",
+      "kind": "cubicles",
+      "label": "Liegeboxen oben links",
+      "originalLabel": "Liegeboxen oben links",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.378,
+        "y": 0.311,
+        "width": 0.202,
+        "height": 0.073
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-upper-right",
+      "kind": "cubicles",
+      "label": "Liegeboxen oben rechts",
+      "originalLabel": "Liegeboxen oben rechts",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.625,
+        "y": 0.311,
+        "width": 0.213,
+        "height": 0.073
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-middle",
+      "kind": "cubicles",
+      "label": "Liegeboxen mittlere durchgehende Reihe",
+      "originalLabel": "Liegeboxen mittlere durchgehende Reihe",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.378,
+        "y": 0.429,
+        "width": 0.503,
+        "height": 0.074
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-lower-left",
+      "kind": "cubicles",
+      "label": "Liegeboxen unten links",
+      "originalLabel": "Liegeboxen unten links",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.378,
+        "y": 0.548,
+        "width": 0.202,
+        "height": 0.074
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-cubicles-lower-right",
+      "kind": "cubicles",
+      "label": "Liegeboxen unten rechts",
+      "originalLabel": "Liegeboxen unten rechts",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.625,
+        "y": 0.548,
+        "width": 0.213,
+        "height": 0.074
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-upper",
+      "kind": "alley",
+      "label": "Mist-/Laufgang upper",
+      "originalLabel": "GANEK GNOJOWY - GRUPA 106 KRÓW",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.378,
+        "y": 0.251,
+        "width": 0.503,
+        "height": 0.06
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-middle-upper",
+      "kind": "alley",
+      "label": "Mist-/Laufgang middle-upper",
+      "originalLabel": "GANEK GNOJOWY - GRUPA 106 KRÓW",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.378,
+        "y": 0.384,
+        "width": 0.503,
+        "height": 0.045
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-middle-lower",
+      "kind": "alley",
+      "label": "Mist-/Laufgang middle-lower",
+      "originalLabel": "GANEK GNOJOWY - GRUPA 106 KRÓW",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.378,
+        "y": 0.503,
+        "width": 0.503,
+        "height": 0.045
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    },
+    {
+      "id": "ref-alley-lower",
+      "kind": "alley",
+      "label": "Mist-/Laufgang lower",
+      "originalLabel": "GANEK GNOJOWY - GRUPA 106 KRÓW",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.378,
+        "y": 0.622,
+        "width": 0.503,
+        "height": 0.06
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent"
+    }
+  ],
+  "excludedAreas": [
+    {
+      "id": "exclude-alley-left-upper",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.126,
+        "y": 0.311,
+        "width": 0.019,
+        "height": 0.105
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-left-middle",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.126,
+        "y": 0.416,
+        "width": 0.019,
+        "height": 0.084
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-left-lower",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.126,
+        "y": 0.622,
+        "width": 0.019,
+        "height": 0.061
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-service-horizontal",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.144,
+        "y": 0.475,
+        "width": 0.155,
+        "height": 0.025
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-robot-waiting",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.322,
+        "y": 0.311,
+        "width": 0.056,
+        "height": 0.311
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-robot-left-access",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.271,
+        "y": 0.311,
+        "width": 0.031,
+        "height": 0.311
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-cross-upper-middle",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.58,
+        "y": 0.311,
+        "width": 0.045,
+        "height": 0.073
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-cross-upper-right",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.838,
+        "y": 0.311,
+        "width": 0.043,
+        "height": 0.073
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-cross-lower-middle",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.58,
+        "y": 0.548,
+        "width": 0.045,
+        "height": 0.074
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    },
+    {
+      "id": "exclude-alley-cross-lower-right",
+      "kind": "alley",
+      "label": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "originalLabel": "Zusätzlicher Durchgang außerhalb der Teilreferenz",
+      "pageNumber": 1,
+      "bbox": {
+        "x": 0.838,
+        "y": 0.548,
+        "width": 0.043,
+        "height": 0.074
+      },
+      "geometryQuality": "independently-reviewed-coarse-extent",
+      "exclusionReason": "Valid auxiliary or connecting passage, outside the four principal manure-alley strips measured in this partial reference."
+    }
+  ]
+}
