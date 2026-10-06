@@ -71,7 +71,7 @@ test("fallback only retries known model errors, not malformed input, auth, quota
   assert.equal(result.model, "gpt-6.1-sol");
 });
 
-test("vector pages never enter vision digit recognition", () => {
+test("sparse vector pages do not trigger image digit recognition; raster and mixed fallback remain compatible", () => {
   assert.deepEqual(selectRasterMeasurementPages([page()]), []);
   assert.equal(selectRasterMeasurementPages([page({ documentKind: "raster" })]).length, 1);
   assert.equal(selectRasterMeasurementPages([page({ documentKind: "mixed", textItems: Array(4).fill({ text: "Footer", bbox: box }) })]).length, 1);

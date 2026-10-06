@@ -3,14 +3,14 @@ import { AREA_RULES } from "../rules";
 import { detectCubiclePatterns } from "../geometry/cubicle-patterns";
 
 const LABELS: Array<{ kind: AreaType; pattern: RegExp }> = [
-  { kind: "feeding_area", pattern: /\b(futtertisch|fressbereich|fressachse|futtergang|korytarz paszowy|stol paszowy)\b/ },
-  { kind: "cubicles", pattern: /\b(liegebox(?:en)?|liegeboxenreihe|legowisk[ao]?)\b/ },
-  { kind: "alley", pattern: /\b(laufgang|treibgang|komunikacja|korytarz spacerowy|korytarz gnojowy|ganek gnojowy|ganek spacerowy)\b/ },
-  { kind: "calving", pattern: /\b(abkalbe(?:bereich|bucht|buchten|box|boxen)?|porodowka|calving pen)\b/ },
+  { kind: "feeding_area", pattern: /\b(futtertisch|fressbereich|fressachse|futtergang|korytarz paszowy|stol paszowy|etetout)\b/ },
+  { kind: "cubicles", pattern: /\b(liegebox(?:en)?|liegeboxenreihe|legowisk[ao]?|piheno box(?:ok)?)\b/ },
+  { kind: "alley", pattern: /\b(laufgang|treibgang|komunikacja|korytarz spacerowy|korytarz gnojowy|ganek gnojowy|ganek spacerowy|tragyaut|felhajtout|atjaro|athajto)\b/ },
+  { kind: "calving", pattern: /\b(abkalbe(?:bereich|bucht|buchten|box|boxen)?|porodowka|calving pen|elleto box(?:ok)?)\b/ },
   { kind: "isolation", pattern: /\b(kranken(?:bucht|buchten|box|boxen|bereich)|separations(?:bucht|bereich)|isolation(?:sbereich|sbucht)?|izolatka|isolatka|separatka|separatki|izolacja|kwarantanna|hospital pen|sick pen)\b/ },
-  { kind: "pens", pattern: /\b(rinder(?:bucht|buchten|box|boxen)|jungvieh(?:bucht|buchten|box|boxen|bereich|stall)|kalber(?:bucht|buchten|box|boxen|bereich|stall)|tier(?:bucht|buchten)|gruppen(?:bucht|buchten)|mast(?:bucht|buchten)|jalownik|cieletnik|cattle pen|youngstock pen|calf pen)\b/ },
+  { kind: "pens", pattern: /\b(rinder(?:bucht|buchten|box|boxen)|jungvieh(?:bucht|buchten|box|boxen|bereich|stall)|kalber(?:bucht|buchten|box|boxen|bereich|stall)|tier(?:bucht|buchten)|gruppen(?:bucht|buchten)|mast(?:bucht|buchten)|jalownik|cieletnik|cattle pen|youngstock pen|calf pen|borjunevelo box(?:ok)?)\b/ },
   { kind: "gate", pattern: /\b(tor|tore|tur|turen|door|gate|drzwi|stalltor|toranlage|tierdurchgang|maschinendurchfahrt|personendurchgang|brama|furtka)\b/ },
-  { kind: "drinker", pattern: /\b(tranke(?:n|becken|trog)?|poidlo|poidla|poidelko|drinker|waterer|drinking trough)\b/ },
+  { kind: "drinker", pattern: /\b(tranke(?:n|becken|trog)?|poidlo|poidla|poidelko|drinker|waterer|drinking trough|itato)\b/ },
   { kind: "brush", pattern: /\b(kuhburste|viehburste|scheuerburste|burste|szczotka|szczotki|cow brush|cattle brush)\b/ },
 ];
 
@@ -104,20 +104,29 @@ function coverage(edges: Edge[], axis: number, from: number, to: number, toleran
   return covered / (to - from);
 }
 
-function repeatedStripLabels(page: PdfPageData, label: PdfTextItem, otherLabels: PdfTextItem[]): PdfTextItem[] {
+function repeatedStripLabels(page: PdfPageData, label: PdfTextItem, otherLabels: PdfTextItem[], edges: EdgeIndex): PdfTextItem[] {
   const kind = classifyAreaLabel(label.text);
   if (kind !== "feeding_area" && kind !== "alley") return [label];
   const cy = label.bbox.y + label.bbox.height / 2;
   const sameRow = otherLabels.filter((other) => normalizedLabel(other.text) === normalizedLabel(label.text)
     && Math.abs((other.orientation ?? 0) - (label.orientation ?? 0)) <= 5
     && Math.abs(other.bbox.y + other.bbox.height / 2 - cy) * page.height <= Math.max(8, label.bbox.height * page.height * 1.5));
-  if (!sameRow.some((other) => other !== label && Math.abs(other.bbox.x - label.bbox.x) * page.width >= Math.max(60, label.bbox.width * page.width * 1.5))) return [label];
-  return sameRow;
+  const cx = label.bbox.x + label.bbox.width / 2;
+  const connected = sameRow.filter((other) => {
+    const ox = other.bbox.x + other.bbox.width / 2;
+    const halfSpan = Math.max(30 / page.height, Math.max(label.bbox.height, other.bbox.height) * 2);
+    // Identical labels on opposite sides of a long native partition describe
+    // separate strips. Repetition alone cannot fill a crossing circulation lane.
+    return !edges.vertical.some((edge) => edge.axis > Math.min(cx, ox) && edge.axis < Math.max(cx, ox)
+      && edge.from <= cy - halfSpan && edge.to >= cy + halfSpan);
+  });
+  if (!connected.some((other) => other !== label && Math.abs(other.bbox.x - label.bbox.x) * page.width >= Math.max(60, label.bbox.width * page.width * 1.5))) return [label];
+  return connected;
 }
 
 function enclosingBox(page: PdfPageData, label: PdfTextItem, otherLabels: PdfTextItem[], edges: EdgeIndex): NormalizedBox | null {
   const { horizontal, vertical } = edges;
-  const repeated = repeatedStripLabels(page, label, otherLabels);
+  const repeated = repeatedStripLabels(page, label, otherLabels, edges);
   const peers = new Set(repeated);
   const cx = label.bbox.x + label.bbox.width / 2;
   const cy = label.bbox.y + label.bbox.height / 2;
@@ -168,7 +177,7 @@ export function detectStructuralAreas(pages: PdfPageData[]): DetectedArea[] {
       const bbox = enclosingBox(page, item, labels, edges);
       if (!bbox) continue;
       if (result.some((area) => area.pageNumber === page.pageNumber && Math.abs(area.bbox.x - bbox.x) < 0.003 && Math.abs(area.bbox.y - bbox.y) < 0.003)) continue;
-      const repeated = repeatedStripLabels(page, item, labels);
+      const repeated = repeatedStripLabels(page, item, labels, edges);
       const labelDominated = bbox.width < item.bbox.width * 2.5 && bbox.height < item.bbox.height * 8;
       result.push({
         id: `structure-area-${page.pageNumber}-${item.id ?? result.length + 1}`,
@@ -240,12 +249,20 @@ export function mergeDetectedAreas(structural: DetectedArea[], semantic: Detecte
     }
     if (!handled) merged.push(area);
   }
-  // A regular cubicle row and a text-proven manure alley are exclusive primary
-  // functions. Do not keep a second, coincident furnishing row on that lane.
+  // A regular cubicle row and a text-proven manure/feeding lane are exclusive
+  // primary functions. Never discard reviewed or customer-shaped geometry.
   // This never discards gates, equipment, customer areas or crossing zones.
-  return merged.filter((area) => !(area.source === "ai" && !area.geometryCorrections?.length && area.kind === "cubicles" && merged.some((other) => {
-    if (other === area || other.kind !== "alley" || other.pageNumber !== area.pageNumber || !other.hasBbox) return false;
-    const supported = (nativeSupport.get(other) ?? []).some((support) => /\b(?:ganek gnojowy|korytarz gnojowy)\b/.test(normalizedLabel(support.originalLabel ?? "")));
+  return merged.filter((area) => !(area.source === "ai" && area.status === "unconfirmed" && !area.removedAt
+    && !area.geometryCorrections?.length && !area.footprint && !area.contourProvenance
+    && area.kind === "cubicles" && merged.some((other) => {
+    if (other === area || !["alley", "feeding_area"].includes(other.kind) || other.pageNumber !== area.pageNumber || !other.hasBbox) return false;
+    const supported = (nativeSupport.get(other) ?? []).some((support) => {
+      if (support.status === "rejected" || support.removedAt || support.geometryCorrections?.length) return false;
+      const labelKind = classifyUnambiguousAreaLabel(support.originalLabel ?? "");
+      return other.kind === "feeding_area"
+        ? (support.confidence ?? 0) >= .9 && labelKind === "feeding_area"
+        : labelKind === "alley" && /\b(?:ganek gnojowy|korytarz gnojowy|tragyaut)\b/.test(normalizedLabel(support.originalLabel ?? ""));
+    });
     if (!supported) return false;
     const overlap = boxOverlap(area.bbox, other.bbox);
     return overlap.first > 0 && overlap.intersection / overlap.first >= 0.8;

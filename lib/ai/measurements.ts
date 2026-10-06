@@ -19,10 +19,23 @@ export const measurementPayloadSchema = z.object({
   })).max(200),
 });
 
-/** Only supplement pages whose dimension texts are unavailable as native text. */
+const nativeDimensionNumber = /^\d{1,6}(?:[.,]\d{1,3})?(?:\s+\d{1,6}(?:[.,]\d{1,3})?)*(?:\s*(?:mm|cm|m))?$/i;
+
+/** Only supplement pages whose dimension texts are unavailable as native text.
+ * Outlined CAD glyphs are vector ink, so a page need not contain a raster image
+ * to require image reading. Existing native numeric drawing text takes priority.
+ */
 export function selectRasterMeasurementPages(pages: PdfPageData[], structuralMeasurements = extractDeterministicMeasurements(pages)): PdfPageData[] {
-  return pages.filter((page) => Boolean(page.imageDataUrl) && (page.documentKind === "raster" || (page.documentKind === "mixed"
-    && !structuralMeasurements.some((measurement) => measurement.pageNumber === page.pageNumber && measurement.dimensionLine && measurement.sources?.includes("geometry"))))).slice(0, 4);
+  return pages.filter((page) => {
+    if (!page.imageDataUrl) return false;
+    if (page.documentKind === "raster") return true;
+    const pageMeasurements = structuralMeasurements.filter((measurement) => measurement.pageNumber === page.pageNumber);
+    if (page.documentKind === "mixed") return !pageMeasurements.some((measurement) => measurement.dimensionLine && measurement.sources?.includes("geometry"));
+    // Conservative vector fallback: enough ink for an actual drawing, no
+    // extracted measures, and no available numeric dimension text to re-read.
+    return page.documentKind === "vector" && (page.lines?.length ?? 0) >= 1_000 && pageMeasurements.length === 0
+      && !page.textItems.some((item) => nativeDimensionNumber.test(item.text.trim()));
+  }).slice(0, 4);
 }
 
 export function validateRasterMeasurements(input: unknown, pages: PdfPageData[]): { warnings: string[]; measurements: Measurement[] } {
@@ -38,13 +51,15 @@ export function validateRasterMeasurements(input: unknown, pages: PdfPageData[])
     && hasLocatedDimensionInk(pages.find((page) => page.pageNumber === measurement.pageNumber)!, measurement.bbox)
     && !/(?:\bDJP\b|\bszt\b|\bm(?:[²³]|[23]\b)|\bm\s*\^\s*[23]\b|\b(?:volumen|volume|flache|fläche|tieranzahl|hohenkote|höhenkote|elevation|zeichnung(?:snummer)?|raum(?:nummer)?|achsnummer|datum|date|maßstab|massstab)\b|n\.?\s*p\.?\s*m\.?|m\s*[üu]\.?\s*(?:nn|nhn)\b|1\s*:\s*\d+)/i.test(`${measurement.label} ${measurement.evidence}`)
     && !pages.find((page) => page.pageNumber === measurement.pageNumber)?.textItems.some((item) => {
-      if (!/^\d+(?:[.,]\d+)?\s*(?:mm|cm|m)?$/i.test(item.text.trim())) return false;
+      // Numeric PDF objects include combined dimension chains and identifiers.
+      // None of their existing values/coordinates may be replaced by vision.
+      if (!/\d/.test(item.text)) return false;
       const intersection = Math.max(0, Math.min(item.bbox.x + item.bbox.width, measurement.bbox.x + measurement.bbox.width) - Math.max(item.bbox.x, measurement.bbox.x))
         * Math.max(0, Math.min(item.bbox.y + item.bbox.height, measurement.bbox.y + measurement.bbox.height) - Math.max(item.bbox.y, measurement.bbox.y));
       const smallerArea = Math.min(item.bbox.width * item.bbox.height, measurement.bbox.width * measurement.bbox.height);
       return smallerArea > 0 && intersection / smallerArea >= 0.5;
     }));
-  const warnings = payload.warnings.length ? ["Einzelne Rastermaße sind unsicher. Die Fachplanung prüft diese Werte."] : [];
+  const warnings = payload.warnings.length ? ["Einzelne Bildmaße sind unsicher. Die Fachplanung prüft diese Werte."] : [];
   if (valid.length < payload.measurements.length) warnings.push("Nichtlineare oder nicht ausreichend lokalisierbare Maßvorschläge wurden verworfen.");
   return {
     warnings,
@@ -66,8 +81,8 @@ export async function analyzeRasterMeasurements(client: OpenAI, model: string, f
   const selectedPages = selectRasterMeasurementPages(pages);
   const prompt = `Extrahiere aus den ausgewählten Planbildern des technischen Plans ${JSON.stringify(fileName)} ausschließlich schriftliche lineare Maßwerte.
 Die gesamte Ausgabe ist immer Deutsch, auch bei fremdsprachigen Plänen. Originaltext ausschließlich als deutlich gekennzeichnetes Dokumentzitat in evidence.
-Dies ist die Ersatzanalyse für Scans oder Mischseiten, deren Maßziffern als Vektorpfade statt als PDF-Text vorliegen. Vorhandene Zahlen und Koordinaten aus PDF-Text niemals ersetzen.
-Zahlen mit vorhandenen PDF-Textkoordinaten niemals aus dem Bild neu lesen. Diese werden separat direkt aus dem PDF übernommen. Nur zusätzliche Rastermaßtexte ohne entsprechendes PDF-Textobjekt extrahieren.
+Dies ist die ergänzende Bildanalyse für Scans sowie Misch- und Vektorseiten, deren Maßziffern als Vektorpfade statt als PDF-Text vorliegen. Vorhandene Zahlen und Koordinaten aus PDF-Text niemals ersetzen.
+Zahlen mit vorhandenen PDF-Textkoordinaten niemals aus dem Bild neu lesen. Diese werden separat direkt aus dem PDF übernommen. Nur zusätzliche schriftliche Maßtexte ohne entsprechendes PDF-Textobjekt extrahieren.
 Lies Maßtexte mit ihren Positionen. Niemals Längen aus Pixelabständen schätzen. Unklare Ziffern weglassen.
 Prüfe Einheiten separat. Teilmaß+Gesamtmaß belegen eine Kette, aber allein keine Einheit. Nur Titelblock/eindeutige Einheit/maßstäblich konsistente Evidenz kann eine Einheit begründen. Wenn der Titelblock mehrere mögliche Einheiten nennt (z. B. Meter ODER Zentimeter), ist dies keine eindeutige globale Einheit: unitBasis=unknown.
 Wenn die Einheit nicht sicher ist: unknown, Zahl unverändert. Keine Umrechnung oder blindes Raten.
@@ -81,7 +96,7 @@ ${positionedTextContext(selectedPages)}`;
       model: selectedModel,
       max_output_tokens: 6_000,
       ...(selectedModel.startsWith("gpt-6") ? { reasoning: { effort: "low" as const } } : {}),
-      input: [{ role: "system", content: "Extrahiere belegte lineare Bemaßungen aus Rasterzeichnungen konservativ." }, { role: "user", content: withPageImages(prompt, selectedPages) }],
+      input: [{ role: "system", content: "Extrahiere belegte schriftliche lineare Bemaßungen aus Planbildern konservativ." }, { role: "user", content: withPageImages(prompt, selectedPages) }],
       text: { format: { type: "json_schema", name: "stallplan_raster_measurements", strict: true, schema: z.toJSONSchema(measurementPayloadSchema) } },
     });
     if (!response.output_text) throw new Error("empty_measurement_result");

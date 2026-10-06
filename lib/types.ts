@@ -31,6 +31,12 @@ export interface PdfDetailImage {
   sourceLineCount: number;
   rowCount: number;
 }
+export interface PdfAreaDetailImage {
+  bbox: NormalizedBox;
+  imageDataUrl: string;
+  pixelWidth: number;
+  pixelHeight: number;
+}
 export interface UnitInference { unit: LengthUnit; confidence: number; evidence: string }
 
 export interface NormalizedBox {
@@ -50,6 +56,7 @@ export interface PdfTextItem {
 }
 
 export interface PdfPageData {
+  areaDetailImages?: PdfAreaDetailImage[];
   semanticDetails?: PdfDetailImage[];
   semanticAreaImage?: { imageDataUrl: string; hiddenLayers: string[] };
   pageNumber: number;
@@ -266,6 +273,10 @@ export interface PlanningHandoff {
   documents?: Array<{ fileName: string; pages: Array<{
     pageNumber: number; width: number; height: number; documentKind?: DocumentKind;
     textObjects: PdfTextItem[]; geometryObjects: PdfLine[]; extractionWarnings?: string[];
+    rasterImages?: NormalizedBox[]; rasterGeometryComplete?: boolean;
+    curveInkBounds?: NormalizedBox[]; vectorInkComplete?: boolean;
+    semanticAreaView?: { hiddenLayers: string[] };
+    areaDetailViews?: Array<Omit<PdfAreaDetailImage, "imageDataUrl">>;
   }> }>;
   areaReviews?: DetectedArea[];
   relationships?: Array<{ measurementId: string; areaId: string; relation: "inside"; confidence: number }>;

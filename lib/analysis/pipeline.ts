@@ -69,15 +69,15 @@ export async function analyzePlan(payload: AnalysisRequest, options: PipelineOpt
     result.warnings.push(...measurements.value.result.warnings);
     result.actualModels.measurements = measurements.value.model;
     if (measurements.value.result.usage) result.usage.push(measurements.value.result.usage);
-    if (measurements.value.fallback) result.warnings.push("Rastermaße mit Ersatzmodell geprüft.");
+    if (measurements.value.fallback) result.warnings.push("Bildmaße mit Ersatzmodell geprüft.");
   } else if (measurements.status === "rejected") {
     reportStepFailure("raster-measurements", measurements.reason);
-    result.warnings.push("Rastermaße nicht vollständig erkannt. PDF-Maße bleiben nutzbar.");
+    result.warnings.push("Bildmaße nicht vollständig erkannt. PDF-Maße bleiben nutzbar.");
   }
   const visualCount = imagePages(payload.pages).length;
   if (payload.pages.length > visualCount) result.warnings.push(`Bereiche visuell auf ${visualCount} von ${payload.pages.length} Seiten geprüft.`);
-  const rasterCount = payload.pages.filter((page) => page.imageDataUrl && (page.documentKind === "raster" || (page.documentKind === "mixed" && !structuralMeasurements.some((measurement) => measurement.pageNumber === page.pageNumber && measurement.dimensionLine && measurement.sources?.includes("geometry"))))).length;
-  if (rasterCount > rasterPages.length) result.warnings.push(`Rastermaße auf ${rasterPages.length} von ${rasterCount} Seiten geprüft.`);
+  const imageMeasurementCount = payload.pages.filter((page) => selectRasterMeasurementPages([page], structuralMeasurements).length > 0).length;
+  if (imageMeasurementCount > rasterPages.length) result.warnings.push(`Bildmaße auf ${rasterPages.length} von ${imageMeasurementCount} Seiten geprüft.`);
   const models = Object.values(result.actualModels);
   result.documentSummary = `${payload.pages.length} ${payload.pages.length === 1 ? "Seite" : "Seiten"} · ${result.areas.length} Bereiche · ${result.measurements.length} Maße`;
   result.model = models.length === 0 ? "none" : [...new Set(models)].join("; ");

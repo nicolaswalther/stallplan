@@ -1,6 +1,6 @@
 import type { LengthUnit, Measurement, PdfPageData, PdfTextItem } from "../types";
 import { axisOf, endpointSupport, indexAxisLines, nearbyDimensionLines, type LineAssociation } from "../geometry/dimension-lines";
-import { drawingScale, inferDrawingUnit, scaleAgreement } from "./unit-detection";
+import { drawingScale, drawingUnitDeclaration, inferDrawingUnit, scaleAgreement, supportedScaleUnits } from "./unit-detection";
 import { detectOpeningAnnotations } from "../geometry/opening-annotations";
 
 interface Candidate { inlineUnit?: boolean; item: PdfTextItem; value: number; explicitUnit?: LengthUnit; associations: LineAssociation[]; chainSupport: number; chainId?: string }
@@ -43,6 +43,20 @@ function isUnitExponent(exponent: PdfTextItem, base: PdfTextItem, page: PdfPageD
 
 function nonLengthContext(item: PdfTextItem, page: PdfPageData): boolean {
   if (excludedContext.test(item.text)) return true;
+  // Architectural room labels often stack 04 / ROOM NAME / floor / area.
+  // A zero-padded ID is excluded only with this native label+area context;
+  // explicitly unit-bearing lengths and ordinary numbers are unaffected.
+  if (/^0\d{1,2}$/.test(item.text)) {
+    const font = item.fontSize ?? Math.min(item.bbox.width * page.width, item.bbox.height * page.height);
+    const center = (item.bbox.x + item.bbox.width / 2) * page.width;
+    const below = (other: PdfTextItem) => (other.bbox.y - item.bbox.y) * page.height;
+    const aligned = (other: PdfTextItem) => Math.abs((other.bbox.x + other.bbox.width / 2) * page.width - center) < font * 3;
+    const roomName = page.textItems.some((other) => other !== item && aligned(other) && below(other) > font * .5 && below(other) < font * 2.5
+      && /^[\p{L}\s.-]{4,}$/u.test(other.text.trim()));
+    const roomArea = page.textItems.some((other) => other !== item && aligned(other) && below(other) > font * 2 && below(other) < font * 6
+      && (/\d.*m[²2]/i.test(other.text) || /\d.*m\s*$/i.test(other.text) && page.textItems.some((exponent) => isUnitExponent(exponent, other, page))));
+    if (roomName && roomArea) return true;
+  }
   if (/^[²³23]$/.test(item.text) && page.textItems.some((other) => other !== item && isUnitExponent(item, other, page))) return true;
   const box = item.bbox;
   const nearby = page.textItems.filter((other) => {
@@ -93,7 +107,7 @@ function associateInlineUnit(item: PdfTextItem, page: PdfPageData): PdfTextItem 
 
 function classifyCandidates(page: PdfPageData): Candidate[] {
   const lines = indexAxisLines(page);
-  return page.textItems.flatMap(splitNumericItems).flatMap((rawItem) => {
+  const candidates: Candidate[] = page.textItems.flatMap(splitNumericItems).flatMap((rawItem) => {
     const item = associateInlineUnit(rawItem, page);
     const match = item.text.match(numberWithUnit);
     if (!match || nonLengthContext(item, page)) return [];
@@ -102,10 +116,70 @@ function classifyCandidates(page: PdfPageData): Candidate[] {
     if (!Number.isFinite(value) || value <= 0) return [];
     return [{ item, inlineUnit: item !== rawItem, value, explicitUnit, associations: nearbyDimensionLines(item, page, lines), chainSupport: 0 }];
   });
+  const axisIdentifiers = detectAxisIdentifiers(candidates, page);
+  return candidates.filter((candidate) => !axisIdentifiers.has(candidate));
 }
-function assignChains(candidates: Candidate[], page: PdfPageData, unit: LengthUnit, supportCache: Map<string, number>) {
+
+/** Consecutive aligned labels are axis identifiers when native typography is
+ * larger than dimension text, or the printed scale contradicts every unit.
+ * Repeated modules and ordinary, scale-consistent 1/2/3 dimensions remain valid.
+ */
+function detectAxisIdentifiers(candidates: Candidate[], page: PdfPageData): Set<Candidate> {
+  const result = new Set<Candidate>();
+  const integers = candidates.filter((c) => !c.explicitUnit && /^\d{1,3}$/.test(c.item.text) && c.value < 1000);
+  const decimalFonts = candidates.filter((c) => /^\d+[.,]\d+$/.test(c.item.text) && (c.item.fontSize ?? 0) > 0)
+    .map((c) => c.item.fontSize!).sort((a, b) => a - b);
+  const dimensionFont = decimalFonts.length ? decimalFonts[Math.floor(decimalFonts.length / 2)] : undefined;
+  const scale = drawingScale(page);
+  for (const horizontal of [true, false]) {
+    const groups: Array<{ cross: number; font: number; members: Candidate[] }> = [];
+    for (const candidate of integers) {
+      const b = candidate.item.bbox;
+      const cross = horizontal ? (b.y + b.height / 2) * page.height : (b.x + b.width / 2) * page.width;
+      const font = candidate.item.fontSize ?? Math.min(b.width * page.width, b.height * page.height);
+      const group = groups.find((g) => Math.abs(g.cross - cross) <= Math.max(1, font * .55) && Math.abs(g.font - font) <= Math.max(.2, font * .15));
+      if (group) group.members.push(candidate); else groups.push({ cross, font, members: [candidate] });
+    }
+    for (const group of groups) {
+      if (group.members.length < 4) continue;
+      const along = (c: Candidate) => horizontal ? (c.item.bbox.x + c.item.bbox.width / 2) * page.width : (c.item.bbox.y + c.item.bbox.height / 2) * page.height;
+      const ordered = group.members.sort((a, b) => along(a) - along(b));
+      let start = 0;
+      while (start < ordered.length - 3) {
+        const direction = ordered[start + 1].value - ordered[start].value;
+        if (Math.abs(direction) !== 1) { start++; continue; }
+        let end = start + 2;
+        while (end < ordered.length && ordered[end].value - ordered[end - 1].value === direction) end++;
+        const run = ordered.slice(start, end);
+        if (run.length >= 4) {
+          const gaps = run.slice(1).map((c, i) => along(c) - along(run[i])).sort((a, b) => a - b);
+          const typicalGap = gaps[Math.floor(gaps.length / 2)];
+          const regular = typicalGap > group.font && gaps.every((gap) => gap <= typicalGap * 2.5);
+          const larger = dimensionFont != null && group.font >= dimensionFont * 1.3;
+          const contradictory = scale != null && run.every((c) => !c.associations.some((a) => a.line.length >= group.font * .5
+            && ["mm", "cm", "m"].some((u) => scaleAgreement(a.line.length, c.value, u as Exclude<LengthUnit, "unknown">, scale) >= .55)));
+          const measuredRun = scale != null && ["mm", "cm", "m"].some((u) => {
+            const rails = new Set<string>();
+            return run.every((candidate) => {
+              const actual = candidate.associations.find((a) => a.centered >= .7 && a.line.length >= group.font * .5
+                && scaleAgreement(a.line.length, candidate.value, u as Exclude<LengthUnit, "unknown">, scale) >= .8
+                && endpointSupport(a.line, page) === 2 && !rails.has(a.line.sourceLineIds?.[0] ?? a.line.source.id));
+              if (!actual) return false;
+              rails.add(actual.line.sourceLineIds?.[0] ?? actual.line.source.id); return true;
+            });
+          });
+          if (regular && !measuredRun && (larger || contradictory)) for (const candidate of run) result.add(candidate);
+        }
+        start = end - 1;
+      }
+    }
+  }
+  return result;
+}
+
+function assignChains(candidates: Candidate[], page: PdfPageData, unit: LengthUnit, supportCache: Map<string, number>, localUnits: (candidate: Candidate) => Exclude<LengthUnit, "unknown">[]) {
   const supported = candidates.flatMap((candidate) => {
-    const selected = selectAssociation(candidate, page, candidate.explicitUnit ?? unit, supportCache);
+    const selected = selectAssociation(candidate, page, candidate.explicitUnit ?? unit, supportCache, localUnits(candidate));
     if (!selected || (selected.agreement < 0.55 && !(selected.association.endpointSupport === 2 && selected.association.centered > 0.55))) return [];
     return [{ candidate, line: selected.association.line }];
   }).sort((a, b) => a.line.axis.localeCompare(b.line.axis) || a.line.cross - b.line.cross || a.line.from - b.line.from);
@@ -124,7 +198,7 @@ function assignChains(candidates: Candidate[], page: PdfPageData, unit: LengthUn
   });
 }
 
-function selectAssociation(candidate: Candidate, page: PdfPageData, unit: LengthUnit, supportCache: Map<string, number>): { association: LineAssociation; agreement: number } | null {
+function selectAssociation(candidate: Candidate, page: PdfPageData, unit: LengthUnit, supportCache: Map<string, number>, localUnits: Exclude<LengthUnit, "unknown">[]): { association: LineAssociation; agreement: number; unit: LengthUnit } | null {
   const scale = drawingScale(page);
   const font = candidate.item.fontSize ?? Math.min(candidate.item.bbox.width * page.width, candidate.item.bbox.height * page.height);
   const ranked = candidate.associations.filter((association) => {
@@ -133,12 +207,16 @@ function selectAssociation(candidate: Candidate, page: PdfPageData, unit: Length
     // short wall dimensions remain eligible when independent scale/unit data
     // proves their physical length (for example 6 cm on a 1:100 drawing).
     if (association.line.length >= Math.max(1, font * .5)) return true;
-    return !!scale && unit !== "unknown" && scaleAgreement(association.line.length, candidate.value, unit, scale) >= .65;
+    return !!scale && (unit !== "unknown" ? scaleAgreement(association.line.length, candidate.value, unit, scale) >= .65
+      : localUnits.some((u) => scaleAgreement(association.line.length, candidate.value, u, scale) >= .65));
   }).map((a) => {
-    const agreement = scale && unit !== "unknown" ? scaleAgreement(a.line.length, candidate.value, unit, scale) : 0;
+    const alternatives = unit === "unknown" ? localUnits : [unit];
+    const agreements = scale ? alternatives.map((u) => ({ unit: u, agreement: scaleAgreement(a.line.length, candidate.value, u, scale) })).sort((x, y) => y.agreement - x.agreement) : [];
+    const agreement = agreements[0]?.agreement ?? 0;
+    const selectedUnit: LengthUnit = unit !== "unknown" ? unit : agreement >= .65 ? agreements[0].unit : "unknown";
     const support = supportCache.get(a.line.source.id) ?? endpointSupport(a.line, page);
     supportCache.set(a.line.source.id, support);
-    return { association: { ...a, endpointSupport: support }, agreement,
+    return { association: { ...a, endpointSupport: support }, agreement, unit: selectedUnit,
       score: agreement * 1.8 + a.score * 0.55 + support * 0.2 };
   }).sort((a, b) => b.score - a.score);
   return ranked[0] ?? null;
@@ -147,33 +225,57 @@ function selectAssociation(candidate: Candidate, page: PdfPageData, unit: Length
 export function analyzeMeasurements(page: PdfPageData): Measurement[] {
   const candidates = classifyCandidates(page);
   const inferredUnit = inferDrawingUnit(page, candidates);
+  const declaration = drawingUnitDeclaration(page);
+  // A mixed-notation sheet can use decimal metres and integer centimetres.
+  // Otherwise a tiny device stroke can appear to prove "4,00 cm" merely
+  // because unrelated integer wall dimensions established centimetres.
+  const notationUnits = (decimal: boolean) => declaration?.unit === "unknown" ? []
+    : supportedScaleUnits(page, candidates.filter((candidate) => /[.,]/.test(candidate.item.text) === decimal))
+      .filter((item) => item.count >= 3).map((item) => item.unit);
+  const decimalUnits = notationUnits(true), integerUnits = notationUnits(false);
+  const localUnits = (candidate: Candidate) => /[.,]/.test(candidate.item.text) ? decimalUnits : integerUnits;
   const result: Measurement[] = [];
   const supportCache = new Map<string, number>();
-  assignChains(candidates, page, inferredUnit.unit, supportCache);
+  assignChains(candidates, page, inferredUnit.unit, supportCache, localUnits);
   for (const candidate of candidates) {
-    const unit = candidate.explicitUnit ?? inferredUnit.unit;
-    const selected = selectAssociation(candidate, page, unit, supportCache);
+    let unit = candidate.explicitUnit ?? inferredUnit.unit;
+    let selected = selectAssociation(candidate, page, unit, supportCache, localUnits(candidate));
+    const geometryConflict = !!selected && drawingScale(page) != null && unit !== "unknown" && selected.agreement < .2;
+    // Resized drawings can retain their printed dimension unit. Preserve the
+    // native text only if a declared unit and a real dimension's end markers
+    // establish its class; omit the contradictory line from provenance.
+    const declaredDimension = geometryConflict && declaration != null && declaration.unit !== "unknown"
+      && selected!.association.endpointSupport === 2 && selected!.association.centered > .55;
+    // A known scale/unit is independent evidence. Incidental wall or glyph
+    // crossings cannot make a contradictory native segment the measured span.
+    if (geometryConflict) selected = null;
+    if (selected) unit = selected.unit;
     const a = selected?.association, agreement = selected?.agreement ?? 0;
+    const localInference = unit !== "unknown" && !candidate.explicitUnit && inferredUnit.unit === "unknown" && agreement >= .65
+      ? { unit, confidence: Math.min(.97, .88 + agreement * .09), evidence: `Maßstab 1:${drawingScale(page)} und diese native Vektorstrecke belegen ${unit}; mehrere unabhängige Maße bestätigen diese Schreibweise.` } : inferredUnit;
     const strongGeometry = !!a && a.endpointSupport === 2 && a.centered > 0.55;
     const structural = !!a && (agreement >= 0.55 || strongGeometry || (a.endpointSupport >= 1 && candidate.chainSupport >= 0.6 && a.centered >= 0.65));
-    if (!candidate.explicitUnit && !structural) continue;
+    if (!candidate.explicitUnit && !structural && !declaredDimension) continue;
     // An unsigned small decimal without positive geometric agreement is usually an elevation.
     if (!candidate.explicitUnit && candidate.value < 1 && agreement < 0.6) continue;
-    const confidence = candidate.explicitUnit ? (structural ? 0.99 : 0.93)
-      : Math.min(0.99, 0.6 + agreement * 0.23 + (a?.endpointSupport ?? 0) * 0.035 + candidate.chainSupport * 0.065 + (unit !== "unknown" ? inferredUnit.confidence * 0.025 : 0));
+    const confidence = candidate.explicitUnit ? (structural ? 0.99 : 0.93) : declaredDimension ? .82
+      : Math.min(0.99, 0.6 + agreement * 0.23 + (a?.endpointSupport ?? 0) * 0.035 + candidate.chainSupport * 0.065 + (unit !== "unknown" ? localInference.confidence * 0.025 : 0));
     const source = structural ? "geometry" : "pdf-text";
     const evidence = [`PDF-Text „${candidate.item.text}“`,
       ...(a ? [`${axisOf(candidate.item) === "horizontal" ? "Horizontale" : "Vertikale"} Vektorstrecke ${a.line.length.toFixed(2)} pt; ${a.endpointSupport}/2 Endbegrenzungen`] : []),
+      ...(a?.line.sourceLineIds ? [`Maßlinie aus ${a.line.sourceLineIds.length} unmittelbar verbundenen PDF-Vektorsegmenten`] : []),
       ...(agreement > 0.55 ? ["Wert und Vektorstrecke stimmen im Zeichnungsmaßstab überein"] : []),
       ...(candidate.chainId ? ["Teil einer geometrisch zusammenhängenden Maßkette"] : []),
-      ...(candidate.explicitUnit ? ["Einheit direkt am Maßtext"] : [inferredUnit.evidence])].join(". ");
+      ...(declaredDimension ? ["PDF-Maßtext mit expliziter Zeichnungseinheit erhalten; widersprüchliche Vektorzuordnung verworfen"] : []),
+      ...(candidate.explicitUnit ? ["Einheit direkt am Maßtext"] : [localInference.evidence])].join(". ");
     result.push({ id: `pdf-${page.pageNumber}-${candidate.item.id ?? result.length}`, key: `dimension_${page.pageNumber}_${result.length + 1}`, label: "Planmaß", value: candidate.value, unit,
       source, kind: "plan-length", status: confidence >= 0.9 && unit !== "unknown" ? "confirmed" : "unconfirmed", confidence,
       pageNumber: page.pageNumber, bbox: candidate.item.bbox, textObjectId: candidate.item.id?.replace(/-split-\d+$/, ""), orientation: axisOf(candidate.item), evidence,
       sources: ["pdf-text", ...(candidate.inlineUnit ? ["unit-text"] : []), ...(candidate.item.id?.includes("-split-") ? ["text-layout"] : []), ...(a ? ["geometry"] : []), ...(candidate.chainId ? ["dimension-chain"] : [])],
       ...(a ? { dimensionLine: { start: a.line.source.start, end: a.line.source.end }, startReference: a.line.source.start, endReference: a.line.source.end } : {}),
-      chainId: candidate.chainId, unitInference: candidate.explicitUnit ? { unit, confidence: 1, evidence: "Einheit am Maßtext." } : inferredUnit,
-      signals: { textExtraction: 1, geometryAssociation: a?.score ?? 0, endpointSupport: (a?.endpointSupport ?? 0) / 2, dimensionChain: candidate.chainSupport, scaleAgreement: agreement, unitInference: candidate.explicitUnit ? 1 : inferredUnit.confidence, finalConfidence: confidence } });
+      chainId: candidate.chainId, unitInference: candidate.explicitUnit ? { unit, confidence: 1, evidence: "Einheit am Maßtext." } : localInference,
+      signals: { textExtraction: 1, geometryAssociation: a?.score ?? 0, endpointSupport: (a?.endpointSupport ?? 0) / 2, dimensionChain: candidate.chainSupport, scaleAgreement: agreement, unitInference: candidate.explicitUnit ? 1 : localInference.confidence,
+        ...(a?.line.sourceLineIds ? { nativeRailAssembly: 1 } : {}), finalConfidence: confidence } });
   }
   const openings = detectOpeningAnnotations(candidates.map((c) => c.item), page, inferredUnit.unit, drawingScale(page));
   for (const opening of openings) {

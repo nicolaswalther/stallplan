@@ -1,5 +1,6 @@
 import type { PdfPageData } from "../types";
 import { detectRoomNumberAnchors } from "../geometry/semantic-regions";
+import { MAX_AREA_DETAIL_IMAGES } from "../pdf/analysis-tiles";
 
 export type InputPart = { type: "input_text"; text: string } | { type: "input_image"; image_url: string; detail: "high" };
 
@@ -54,8 +55,15 @@ export function withAreaImages(prompt: string, pages: PdfPageData[]): InputPart[
     content.push({ type: "input_text", text: `Seite ${page.pageNumber}: Nur ausdrücklich benannte Schraffurlayer wurden im Bereichsbild ausgeblendet. Wände, Einrichtungen, Maßlinien und native Textkoordinaten bleiben erhalten. Dieses vereinfachte Bild dient der Bereichsklassifikation; fehlende Bodenschraffuren belegen keinen Bodenbelag.` });
   }
   let details = 0;
+  for (const page of imagePages(pages)) for (const crop of (page.areaDetailImages ?? []).slice(0, MAX_AREA_DETAIL_IMAGES)) {
+    if (details >= MAX_AREA_DETAIL_IMAGES) break;
+    details++;
+    content.push({ type: "input_text", text: `Bereichsdetail ${details} auf Seite ${page.pageNumber}: direkt aus dem ursprünglichen PDF gerenderter überlappender Ausschnitt (${crop.pixelWidth}×${crop.pixelHeight} Pixel). Globale Seitenbox=${JSON.stringify(crop.bbox)}. Der Ausschnitt ist KEIN eigener Stallbereich und KEINE zusätzliche Seite. Ergebnisboxen bleiben immer in den globalen Koordinaten der vollständigen Seite: x_global=box.x+x_lokal*box.width, y_global=box.y+y_lokal*box.height, Breite_global=Breite_lokal*box.width, Höhe_global=Höhe_lokal*box.height. Überlappende Ausschnitte zeigen dieselben Objekte; Bereiche nicht doppelt zählen. Bereits vorhandene PDF-Texte, Textkoordinaten, Maßwerte, Einheiten und Vektorgeometrien nicht aus Bildpixeln schätzen oder ersetzen. Diese Bilder ergänzen ausschließlich die semantische Bereichsanalyse.` });
+    content.push({ type: "input_image", image_url: crop.imageDataUrl, detail: "high" });
+  }
   for (const page of imagePages(pages)) for (const crop of (page.semanticDetails ?? []).slice(0, 2)) {
-    if (details++ >= 4) break;
+    if (details >= MAX_AREA_DETAIL_IMAGES) break;
+    details++;
     content.push({ type: "input_text", text: `Hochauflösender Beschriftungsausschnitt auf Seite ${page.pageNumber}, automatisch anhand kurzer PDF-Vektorzüge gefunden. Ursprüngliche Seitenbox=${JSON.stringify(crop.bbox)}. Dies ist KEINE Stallfläche. Alle Ergebnisboxen bleiben globale Koordinaten der vollständigen Seite.` });
     content.push({ type: "input_image", image_url: crop.imageDataUrl, detail: "high" });
   }

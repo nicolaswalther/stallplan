@@ -3,6 +3,7 @@ import { extractTextObjects } from "./pdf/text-extraction";
 import { classifyDocument, extractVectorLines } from "./pdf/vector-extraction";
 import { detectOutlineTextRegions } from "./geometry/semantic-regions";
 import { hideNamedHatching } from "./pdf/semantic-view";
+import { areaDetailRenderGeometry, MAX_AREA_DETAIL_IMAGES, MAX_AREA_DETAIL_IMAGE_LENGTH, planAreaDetailTiles } from "./pdf/analysis-tiles";
 
 export async function parsePdf(file: File): Promise<PdfPageData[]> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
@@ -10,6 +11,7 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
   const data = new Uint8Array(await file.arrayBuffer());
   const loadingTask = pdfjs.getDocument({ data, useWasm: false });
   const pages: PdfPageData[] = [];
+  let remainingAreaDetails = MAX_AREA_DETAIL_IMAGES;
   try {
     const pdf = await loadingTask.promise;
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
@@ -55,6 +57,31 @@ export async function parsePdf(file: File): Promise<PdfPageData[]> {
               }
             }
           } catch { pageData.extractionWarnings?.push("Vereinfachte Planansicht nicht verfügbar; die Erkennung nutzt den Originalplan."); }
+        }
+        // Wide sheets lose useful detail in the full-page overview. Render
+        // bounded overlapping tiles directly from the original PDF, without
+        // changing the displayed plan or the dedicated measurement input.
+        if (pageNumber <= 4) {
+          const tileBoxes = planAreaDetailTiles(rawViewport.width, rawViewport.height, remainingAreaDetails);
+          // Reserve the complete set, also if a render fails. No unbounded retry
+          // work on subsequent pages and never a single partial-page tile.
+          remainingAreaDetails -= tileBoxes.length;
+          for (const box of tileBoxes) {
+            const detail = areaDetailRenderGeometry(rawViewport.width, rawViewport.height, box);
+            if (!detail) continue;
+            const detailCanvas = document.createElement("canvas");
+            try {
+              detailCanvas.width = detail.pixelWidth; detailCanvas.height = detail.pixelHeight;
+              await page.render({ canvas: detailCanvas, viewport: page.getViewport({ scale: detail.scale }),
+                transform: detail.transform }).promise;
+              let imageDataUrl = detailCanvas.toDataURL("image/jpeg", 0.88);
+              if (imageDataUrl.length > MAX_AREA_DETAIL_IMAGE_LENGTH) imageDataUrl = detailCanvas.toDataURL("image/jpeg", 0.65);
+              if (imageDataUrl.length > MAX_AREA_DETAIL_IMAGE_LENGTH) throw new Error("area_detail_image_too_large");
+              (pageData.areaDetailImages ??= []).push({ bbox: detail.bbox, imageDataUrl,
+                pixelWidth: detail.pixelWidth, pixelHeight: detail.pixelHeight });
+            } catch { pageData.extractionWarnings?.push("Ein Detailbild ist nicht verfügbar; die Erkennung nutzt weiterhin den Gesamtplan."); }
+            finally { detailCanvas.width = 0; detailCanvas.height = 0; }
+          }
         }
         const semanticDetails: PdfDetailImage[] = [];
         // Re-render actual native vector regions; enlarging the small JPEG would

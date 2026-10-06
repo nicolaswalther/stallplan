@@ -5,7 +5,7 @@ function normalize(text: string) {
 }
 
 const SPECIES: Array<{ value: string; pattern: RegExp }> = [
-  { value: "Rind", pattern: /\b(?:rind(?:er|ern)?|milchkuh(?:e)?|kuh(?:e)?|kuhen|k[uü]he|kalb(?:er)?|kalber|jungvieh|mast(?:rind(?:er)?|bullen)|mutterkuh(?:e)?|trockensteher|cattle|cow(?:s)?|calf|calves|heifer(?:s)?|youngstock|bull(?:s)?|steer(?:s)?|bydlo|krow(?:a|y|om|ami)?|krow|krowek|ciele(?:ta|tnik)?|cielat|jalow(?:ka|ki|ek|nik)|bovin(?:s)?|vache(?:s)?|genisse(?:s)?|veaux|vaca(?:s)?|ternero(?:s)?|koeien|runderen|kalveren)\b/ },
+  { value: "Rind", pattern: /\b(?:rind(?:er|ern)?|milchkuh(?:e)?|kuh(?:e)?|kuhen|k[uü]he|kalb(?:er)?|kalber|jungvieh|mast(?:rind(?:er)?|bullen)|mutterkuh(?:e)?|trockensteher|cattle|cow(?:s)?|calf|calves|heifer(?:s)?|youngstock|bull(?:s)?|steer(?:s)?|bydlo|krow(?:a|y|om|ami)?|krow|krowek|ciele(?:ta|tnik)?|cielat|jalow(?:ka|ki|ek|nik)|bovin(?:s)?|vache(?:s)?|genisse(?:s)?|veaux|vaca(?:s)?|ternero(?:s)?|koeien|runderen|kalveren|szarvasmarha(?:k)?|s\s+z\s+a\s+r\s+v\s+a\s+s\s+m\s+a\s+r\s+h\s+a|borju(?:k|nevelo)?|borjak|tehen(?:ek)?|liellop(?:i|u)|govs|govis|govju|tel(?:s|i|u))\b/ },
   { value: "Pferd", pattern: /\b(?:pferd(?:e|en)?|horse(?:s)?|equine|kon(?:ie|i)?|cheva(?:l|ux)|caballo(?:s)?|paard(?:en)?)\b/ },
   { value: "Schaf / Ziege", pattern: /\b(?:schaf(?:e|en)?|ziege(?:n)?|sheep|goat(?:s)?|owc(?:a|e|y)|koz(?:a|y)|mouton(?:s)?|chevre(?:s)?|oveja(?:s)?|cabra(?:s)?|schapen|geiten)\b/ },
   { value: "Schwein", pattern: /\b(?:schwein(?:e|en)?|sau(?:en)?|ferkel|pig(?:s)?|sow(?:s)?|swini(?:a|e)|prosiak(?:i)?|porc(?:s)?|cochon(?:s)?|cerdo(?:s)?|varkens)\b/ },
@@ -82,7 +82,7 @@ interface Headcount { value: number; total: boolean }
 /** A literal animal noun must be adjacent to the integer; capacities and DJP never qualify. */
 function headcounts(text: string): Headcount[] {
   const normalized = normalize(text);
-  if (/\b(?:djp|gve|gv|lu|livestock units?|vieheinheiten?|grossvieheinheiten?|plätze|platze|liegeplatze|boxen|cubicles?|stalls?|capacity|kapazitat|stanowisk(?:a|o)?|miejsc(?:a)?|datum|date|zeichnungsnummer|drawing|projekt[- ]?id)\b/.test(normalized)) return [];
+  if (/\b(?:djp|gve|gv|lu|livestock units?|vieheinheiten?|grossvieheinheiten?|plätze|platze|liegeplatze|boxen|cubicles?|stalls?|capacity|kapazitat|stanowisk(?:a|o)?|miejsc(?:a)?|ferohely(?:ek)?|db|darab(?:ok)?|viet(?:a|as|u)|boks(?:i|u)|datum|date|zeichnungsnummer|drawing|projekt[- ]?id)\b/.test(normalized)) return [];
   const noun = "(?:milchkuhe|milchkuhen|mutterkuhe|mutterkuhen|trockensteher|rinder|kuhe|kuhen|kalber|jungvieh|mastrinder|mastbullen|tiere|dairy cows?|dry cows?|suckler cows?|cattle|cows?|calves|heifers?|bulls?|steers?|animals?|krowy|krow|bydlo|cielat|cieleta|jalowki|jalowek|sztuk|szt\\.?|vaches|bovins|veaux|vacas|terneros|koeien|runderen|kalveren)";
   const patterns = [
     new RegExp(`(?:^|[^\\d.,])([1-9]\\d{0,4})\\s+(?:(?:head(?:s)?(?: of)?|szt\\.?)\\s+)?${noun}\\b`, "g"),

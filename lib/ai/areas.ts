@@ -44,14 +44,15 @@ function equipmentHasDocumentEvidence(kind: "drinker" | "brush", evidence: strin
   const labelReference = /\bbeschrift|\btext\b|\blabel\b|\blegende|\blegend|\bopis\b|\boznaczen/.test(text)
     && !/\b(?:keine?|ohne|nicht|no|without|not)\b[^.;]{0,45}(?:beschrift|\btext\b|\blabel\b|legende|legend)/.test(text);
   const namedEquipment = kind === "drinker"
-    ? /tranke|poidl|poidel|drinker|waterer|drinking trough/.test(text)
+    ? /tranke|poidl|poidel|drinker|waterer|drinking trough|\bitato\b/.test(text)
     : /burste|szczotk|\bbrush\b/.test(text);
+  const combinedZoneLegend = kind === "drinker" && /\bitato\s*[,/]\s*athajto\b/.test(text);
   const characteristicGeometry = (kind === "drinker"
     ? /wasseranschluss|wasserleitung|schwimmerventil|water connection|water supply|water inlet/.test(text) && /becken|trog|trough|basin|symbol|kontur|outline/.test(text)
     : /borsten|burstenkopf|burstenwalze|bristles|brush head|brush roller/.test(text))
     && !/\b(?:keine?|ohne|nicht|no|without|not)\b[^.;]{0,45}(?:wasseranschluss|wasserleitung|schwimmerventil|water connection|water supply|water inlet|borsten|burstenkopf|burstenwalze|bristles|brush head|brush roller)/.test(text);
   // "Blue rectangle" and a model-generated equipment label are insufficient.
-  return (labelReference && namedEquipment) || characteristicGeometry;
+  return (labelReference && namedEquipment && !combinedZoneLegend) || characteristicGeometry;
 }
 
 export function validateSemanticAreas(input: unknown, pages: PdfPageData[]): { documentSummary: string; warnings: string[]; areas: DetectedArea[]; projectFacts?: ProjectFacts; originalAnalysis?: { documentSummary: string; warnings: string[] } } {
@@ -112,14 +113,19 @@ Lies außerdem eindeutige Tierangaben in projectFacts: Tierart, Tiergruppe und g
 Zulässige Typen: ${AREA_TYPES.join(", ")}.
 feeding_area=Fressbereich/Futtertisch; cubicles=Liegeboxenreihen; alley=Lauf-/Treibgang; calving=Abkalbebucht; pens=Gruppenbuchten für Rinder, Jungvieh oder Kälber; isolation=Kranken-/Separationsbucht; gate=Tor oder eindeutig dargestellter Durchgang; drinker=Tränke; brush=Vieh-/Kuhbürste; unknown=unklare Stallnutzung.
 Erkenne vollständige zusammenhängende Nutzungsbereiche. Verwende Beschriftungen, Stallgeometrie und wiederkehrende Einrichtungen.
+Prüfe den gesamten Grundriss auf Tierbuchten/Liegeboxen, Futtertische und verbindende Laufgänge. Eine Erkennung nur der eingezeichneten Liegeboxen ist unvollständig. Geometrisch eindeutige Funktionsflächen benötigen keine eigene Beschriftung: etwa ein durchgehender Futtertisch an Fressfronten oder ein freier Gang zwischen Liegeboxenreihen. Konkrete sichtbare Geometrie als Beleg nennen; leere Rechtecke allein reichen nicht. Rückwärtig durch eine Trennwand getrennte Tierbuchtenreihen bleiben getrennte Bereiche.
+Ein Blatt kann mehrere Grundrisse, Keller, Schnitte, Ansichten, Legenden und Tabellen enthalten. Nur echte Stallnutzungsflächen im Grundriss markieren; Schnitte/Ansichten, technische Keller und Legenden sind keine zusätzlichen Stallbereiche. Eine Gebäudebezeichnung oder eine Tabellenüberschrift beschreibt den Kontext, nicht automatisch die Nutzung jedes einzelnen Bereichs. Identische Nutzungen auf gleicher Höhe bleiben getrennt, wenn eine Trennwand oder ein quer verlaufender Gang dazwischen liegt. Einzelne verbundene Liegeboxenblöcke markieren; dazwischenliegende Querpassagen freihalten.
 Bounding-Boxen müssen die echten Bereiche umschließen (0..1, Ursprung links oben), nicht nur Beschriftungen oder Raumtabellen.
 Bei komplexen Bereichen mit Aussparungen beschreibe die geometrische Unsicherheit und senke die Confidence.
 Keine Maße, Produkte, Fachfragen oder Planung erzeugen. Fehlende Daten nicht ergänzen. DJP ist Vieheinheit, keine wörtliche Kopfzahl.
 Jungvieh/Kälber nicht pauschal als Liegeboxen einstufen: einzelne Liegeboxen=cubicles, offene Gruppenbuchten=pens. Abkalbung und Isolation getrennt halten.
+Wiederholte, durch Abtrennungen und Tore eingefasste Tierbuchten im Stallgrundriss auch ohne ausgeschriebenen Raumnamen als pens erkennen, wenn die tatsächliche Tierbuchtengeometrie eindeutig ist. Die vollständige Buchtinnenfläche markieren, nicht nur ihre schmale Abtrennung. Daraus keine Tierart oder Tiergruppe erfinden. Tore sind ergänzende lokale Objekte und ersetzen keine Markierung der angrenzenden Tierbuchten. Allgemeine Rechtecke, Keller- oder Nebenräume ohne Tiernutzungsbeleg sind keine Tierbuchten.
 gate umfasst innere Tierdurchgänge und äußere Stallöffnungen: verlange sichtbare Öffnungsgeometrie mit Tor-/Türzeichen oder ausdrücklicher Durchgangsbeschriftung. Eine Wandlücke allein belegt weder ein Tor noch einen gewünschten Einbau. Nur die Öffnung markieren, nicht den angrenzenden Raum.
 drinker/brush nur bei konkretem Text-/Legendenbeleg oder charakteristischer Symbolgeometrie. Für Tränken z.B. Becken-/Trogkontur mit erkennbarem Wasseranschluss, für Bürsten Borsten-/Bürstenkopf-Geometrie. Blaue Farbe, ein beliebiges Rechteck oder ein Kreis allein reichen nicht. Den tatsächlich sichtbaren kleinen Gegenstand markieren, nie den ganzen Raum. Konkreten Beleg in evidence nennen; Confidence höchstens 0.89. Nicht eingezeichnete Wünsche sind keine erkannten Objekte.
 Wenn Geometrie nicht belastbar bestimmbar ist: hasBbox=false. Jede Entscheidung benötigt konkrete Dokumentevidenz.
 Bekannte polnische Beschriftungen: korytarz paszowy=Futtergang/feeding_area, ausdrücklich kein alley; legowiska=Liegeboxen; komunikacja=Laufgang/alley; ganek gnojowy=Entmistungs-/Laufgang/alley, ausdrücklich kein feeding_area; porodówka=Abkalbung; izolatka/separatka=Isolation. SEPARATKA - 10 LEGOWISK bezeichnet eine Separationsbucht/isolation mit zehn Liegeplätzen, keine reguläre cubicles-Reihe. Eine Anzahl von Liegeplätzen ändert die ausdrücklich bezeichnete Hauptnutzung nicht; getrennte benachbarte Nutzungen trotzdem getrennt erkennen; jałownik=Jungviehbereich; cielętnik=Kälberbereich; poidło=Tränke; szczotka=Bürste. WC, Büro und Melkhalle nicht als Liegeboxen klassifizieren.
+Ungarisch: Etetőút=Futtergang/feeding_area; Trágyaút=Mistgang/alley; Felhajtóút=Viehtreibgang/alley; átjáró=Querpassage/alley; pihenő boxok=Liegeboxen/cubicles; Ellető boxok=Abkalbeboxen/calving; Borjúnevelő boxok kifutóval=Kälberboxen mit Auslauf/pens. Ellető istálló ist eine Gebäudebezeichnung und macht nicht alle Liegeplätze zu Abkalbeboxen. Pince ist ein Keller. szarvasmarha bezeichnet Rind; db, 2X16db und férőhely sind Stück-/Platzanzahlen, keine ausdrücklich bezeichnete tatsächliche Gesamttierzahl. Eine kombinierte Legende itató, áthajtó bezeichnet Tränken-/Querpassagenzonen und belegt kein raumfüllendes Tränkenprodukt.
+Lettisch: Kūts plāns=Stallgrundriss; Dzemdību bloks bezeichnet den Geburts-/Abkalbeblock im Gebäudekontext. Sichtbare große Tierbuchten innerhalb eines ausdrücklich benannten Abkalbeblocks können als calving klassifiziert werden; Gänge und Nebenräume bleiben eigene Funktionen. Eine solche Gesamtraum- oder Tabellenbezeichnung ersetzt keine Einzelbereichsgeometrie und darf nicht den gesamten Grundriss als eine Abkalbebucht markieren. teļu bezeichnet Kälber und kann die Tierart Rind belegen; daraus keine gesamte Tiergruppe oder Tieranzahl ableiten. Raumtabellen, Materiallegenden und Zeichnungstitel sind keine zusätzlichen Flächen.
 Vergrößerte Beschriftungsausschnitte können Raumtabellen enthalten. Lies deren tatsächliche Bezeichnungen und ordne ausschließlich wirklich gelesene Raumnummern den direkten PDF-Raumkennzeichen im Grundriss zu. Eine eindeutige Raumtabellen-Bezeichnung hat Vorrang vor einer bloßen optischen Ähnlichkeit. Pro Nutzungsfläche genau ein Bereich; WC/Büro/Technik/Melkräume nicht als Stall-Nutzungsbereiche ausgeben. originalLabel enthält bei gelesener Nummer die wortgetreue Nummer und Bezeichnung. Die Ergebnisbox muss den zugehörigen PDF-Raumanker enthalten. Tabellen sind keine Planbereiche. Gänge können mehrere Arme und Aussparungen haben: keine fremden Räume als Gang markieren, einen vorhandenen Gang auch nicht auf den Bereich unmittelbar um seine Nummer verkürzen.
 ${roomNumberContext(pages)}
 PDF-TEXTOBJEKTE (direkt ausgelesen, nicht neu schätzen):
@@ -128,7 +134,7 @@ ${areaTextContext(pages)}`;
     const started = performance.now();
     const response = await client.responses.create({
       model: selectedModel,
-      max_output_tokens: 4_500,
+      max_output_tokens: imagePages(pages).reduce((count, page) => count + (page.areaDetailImages?.length ?? 0), 0) >= 2 ? 8_000 : 4_500,
       ...(selectedModel.startsWith("gpt-6") ? { reasoning: { effort: "low" as const } } : {}),
       input: [{ role: "system", content: "Klassifiziere funktionale Stallbereiche anhand belastbarer Dokumentevidenz. Antworte ausschließlich auf Deutsch. Originaltext aus dem Plan darf nur als Dokumentzitat erscheinen." }, { role: "user", content: withAreaImages(prompt, pages) }],
       text: { format: { type: "json_schema", name: "stallplan_areas", strict: true, schema: z.toJSONSchema(areaResponseSchema) } },

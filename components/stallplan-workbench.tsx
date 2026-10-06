@@ -258,7 +258,8 @@ export function StallplanWorkbench() {
         documentKind: page.documentKind, textObjects: page.textItems, geometryObjects: page.lines ?? [], extractionWarnings: page.extractionWarnings,
         rasterImages: page.rasterImages, rasterGeometryComplete: page.rasterGeometryComplete,
         curveInkBounds: page.curveInkBounds, vectorInkComplete: page.vectorInkComplete,
-        semanticAreaView: page.semanticAreaImage ? { hiddenLayers: page.semanticAreaImage.hiddenLayers } : undefined })) }],
+        semanticAreaView: page.semanticAreaImage ? { hiddenLayers: page.semanticAreaImage.hiddenLayers } : undefined,
+        areaDetailViews: page.areaDetailImages?.map(({ bbox, pixelWidth, pixelHeight }) => ({ bbox, pixelWidth, pixelHeight })) })) }],
       areas: confirmedAreas.map((area) => ({ id: area.id, kind: area.kind, label: area.label, pageNumber: area.pageNumber,
         bbox: area.hasBbox ? area.bbox : null, source: area.source, confidence: area.confidence, evidence: area.evidence,
         originalLabel: area.originalLabel, originalEvidence: area.originalEvidence, boundaryRefinement: area.boundaryRefinement, boundaryAssessment: area.boundaryAssessment, footprint: area.footprint, contourProvenance: area.contourProvenance,
@@ -298,7 +299,8 @@ export function StallplanWorkbench() {
           lines: page.lines, documentKind: page.documentKind, imageCount: page.imageCount, extractionWarnings: page.extractionWarnings,
           rasterImages: page.rasterImages, rasterGeometryComplete: page.rasterGeometryComplete,
           curveInkBounds: page.curveInkBounds, vectorInkComplete: page.vectorInkComplete,
-          ...(index < 4 ? { imageDataUrl: page.imageDataUrl, semanticDetails: page.semanticDetails, semanticAreaImage: page.semanticAreaImage } : {}),
+          ...(index < 4 ? { imageDataUrl: page.imageDataUrl, semanticDetails: page.semanticDetails, semanticAreaImage: page.semanticAreaImage,
+            areaDetailImages: page.areaDetailImages } : {}),
         })) });
       const response = await fetch("/api/analyze", { method: "POST", signal: controller.signal, ...encoded });
       if (!response.headers.get("content-type")?.includes("application/json")) {

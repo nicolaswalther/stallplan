@@ -1,4 +1,5 @@
 import type { DetectedArea, NormalizedBox, PdfPageData } from "../types";
+import { classifyUnambiguousAreaLabel } from "./areas";
 
 interface NativeBand { area: DetectedArea; page: PdfPageData; label: string }
 
@@ -50,6 +51,38 @@ function isNativeLabelFragment(area: DetectedArea, structural: DetectedArea[]) {
   });
 }
 
+/** A collection rectangle cannot reconnect two equally named feeding strips
+ * whose independently enclosed native geometry leaves a passage between them.
+ * Keep those exact native proposals; do not manufacture a replacement split. */
+function isSeparatedFeedingCollection(area: DetectedArea, structural: DetectedArea[], pages: PdfPageData[]) {
+  if (area.kind !== "feeding_area") return false;
+  const label = normalize(area.originalLabel ?? "");
+  const page = pages.find((candidate) => candidate.pageNumber === area.pageNumber);
+  if (!label || !page || page.width <= 0 || page.height <= 0) return false;
+  const native = structural.filter((candidate) => {
+    if (candidate.pageNumber !== area.pageNumber || candidate.kind !== "feeding_area" || candidate.source !== "geometry"
+      || candidate.status !== "unconfirmed" || candidate.removedAt || candidate.geometryCorrections?.length
+      || candidate.footprint || candidate.contourProvenance || !candidate.hasBbox || !validBox(candidate.bbox)
+      || (candidate.confidence ?? 0) < .9 || normalize(candidate.originalLabel ?? "") !== label
+      || classifyUnambiguousAreaLabel(candidate.originalLabel ?? "") !== "feeding_area"
+      || candidate.bbox.width * page.width < 4 * candidate.bbox.height * page.height) return false;
+    const box = candidate.bbox;
+    if (overlap(area.bbox.x, area.bbox.x + area.bbox.width, box.x, box.x + box.width) < .9 * box.width
+      || overlap(area.bbox.y, endY(area.bbox), box.y, endY(box)) < .8 * Math.min(area.bbox.height, box.height)) return false;
+    return page.textItems.some((item) => normalize(item.text) === label && Math.abs(item.orientation ?? 0) <= 5
+      && item.bbox.x >= box.x && item.bbox.x + item.bbox.width <= box.x + box.width
+      && item.bbox.y >= box.y && item.bbox.y + item.bbox.height <= endY(box)
+      && item.bbox.x >= area.bbox.x && item.bbox.x + item.bbox.width <= area.bbox.x + area.bbox.width
+      && item.bbox.y >= area.bbox.y && item.bbox.y + item.bbox.height <= endY(area.bbox));
+  });
+  return native.some((first, index) => native.slice(index + 1).some((second) => {
+    const left = first.bbox.x <= second.bbox.x ? first.bbox : second.bbox;
+    const right = first.bbox.x <= second.bbox.x ? second.bbox : first.bbox;
+    return right.x - left.x - left.width >= 4 / page.width
+      && overlap(left.y, endY(left), right.y, endY(right)) >= .85 * Math.min(left.height, right.height);
+  }));
+}
+
 /** Only native, horizontally labelled manure lanes provide exclusion bands.
  * Generic corridors, model-generated labels and small label enclosures cannot
  * partition a larger room. Geometry and its actual PDF text must agree. */
@@ -61,7 +94,8 @@ function nativeBands(structural: DetectedArea[], pages: PdfPageData[]): NativeBa
     if (!page || page.width <= 0 || page.height <= 0 || area.kind !== "alley" || area.source !== "geometry"
       || area.status !== "unconfirmed" || area.removedAt || area.geometryCorrections?.length
       || !area.hasBbox || !validBox(area.bbox) || (area.confidence ?? 0) < .8
-      || !/\b(?:ganek gnojowy|korytarz gnojowy)\b/.test(label)
+      || !/\b(?:ganek gnojowy|korytarz gnojowy|tragyaut)\b/.test(label)
+      || classifyUnambiguousAreaLabel(area.originalLabel ?? "") !== "alley"
       || area.bbox.width * page.width <= 4 * area.bbox.height * page.height) continue;
     const anchored = page.textItems.some((item) => normalize(item.text) === label
       && Math.abs(item.orientation ?? 0) <= 5
@@ -115,6 +149,7 @@ export function reconcileAreaConsistency(semantic: DetectedArea[], structural: D
       || area.footprint || area.contourProvenance || !area.hasBbox || !validBox(area.bbox)) return [area];
     if (!hasNativeLabelAnchor(area, structural, pages)) return [];
     if (isNativeLabelFragment(area, structural)) return [];
+    if (isSeparatedFeedingCollection(area, structural, pages)) return [];
     if (area.kind !== "cubicles" && area.kind !== "alley") return [area];
     const covered = coveredBands(area, bands);
     const independent = covered.filter((band, index) => index === 0

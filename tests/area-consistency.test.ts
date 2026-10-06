@@ -92,6 +92,28 @@ test("duplicate labels on the same native strip are not independent row evidence
   assert.equal(reconcileAreaConsistency([cube], repeated, [page])[0], cube);
 });
 
+test("Hungarian manure lanes split collection boxes only with independent native and unambiguous label proof", () => {
+  const { structural, page, cube } = fixture();
+  const labels = ["Trágyaút", "Trágyaút (vízöblítés nélkül)"];
+  const native = structural.slice(0, 2).map((area, index) => ({ ...area, originalLabel: labels[index] }));
+  const plan = { ...page, textItems: page.textItems.slice(0, 2).map((item, index) => ({ ...item, text: labels[index] })) };
+  const rows = reconcileAreaConsistency([cube], native, [plan]);
+  assert.equal(rows.length, 3);
+  assert.ok(rows.every((row) => row.source === "ai" && row.confidence! <= .82));
+  for (const row of rows) for (const band of native) {
+    const intersection = Math.max(0, Math.min(row.bbox.y + row.bbox.height, band.bbox.y + band.bbox.height)
+      - Math.max(row.bbox.y, band.bbox.y));
+    assert.ok(intersection < 1e-10, "model rows must not fill the independently labelled manure lanes");
+  }
+  for (const originalLabel of ["Felhajtóút", "átjáró", "Trágyaút / Etetőút", "Trágyaút + Ellető boxok"]) {
+    const combined = native.map((area) => ({ ...area, originalLabel }));
+    const combinedPlan = { ...plan, textItems: plan.textItems.map((item) => ({ ...item, text: originalLabel })) };
+    assert.equal(reconcileAreaConsistency([cube], combined, [combinedPlan])[0], cube, originalLabel);
+  }
+  assert.equal(reconcileAreaConsistency([cube], native.slice(0, 1), [plan])[0], cube);
+  assert.equal(reconcileAreaConsistency([cube], native, [{ ...plan, textItems: [] }])[0], cube);
+});
+
 test("an exact native plan label rejects a spatially conflicting AI box without relocating it", () => {
   const { structural, page, cube } = fixture();
   const misplaced: DetectedArea = { ...cube, id: "shifted-lane", kind: "alley", originalLabel: "ganek gnojowy - grupa 106 krow",
@@ -150,4 +172,32 @@ test("a mostly contained smaller AI fragment cannot duplicate a strongly labelle
   ] as Array<[DetectedArea, DetectedArea]>) assert.equal(reconcileAreaConsistency([modelArea], [nativeArea], [plan])[0], modelArea);
   const full = { ...fragment, bbox: { ...fragment.bbox, height: .095 } };
   assert.equal(reconcileAreaConsistency([full], [native], [plan])[0], full);
+});
+
+test("a same-labelled feeding collection cannot reconnect two independently enclosed strips across their gap", () => {
+  const { structural, page, cube } = fixture();
+  const native: DetectedArea[] = [.1, .55].map((x, index) => ({ ...structural[index],
+    kind: "feeding_area", originalLabel: "Etetőút", bbox: { x, y: .4, width: .35, height: .1 } }));
+  const plan: PdfPageData = { ...page, textItems: [.2, .65].map((x) => ({ text: "Etetőút", orientation: 0,
+    bbox: { x, y: .43, width: .07, height: .01 } })) };
+  const collection: DetectedArea = { ...cube, kind: "feeding_area", originalLabel: "Etetőút",
+    bbox: { x: .08, y: .42, width: .84, height: .06 } };
+  assert.deepEqual(reconcileAreaConsistency([collection], native, [plan]), []);
+  assert.equal(native.length, 2);
+  assert.equal(native[0].bbox.width, .35, "native geometry remains untouched instead of fabricating new split boxes");
+  const cases: Array<[DetectedArea, DetectedArea[], PdfPageData]> = [
+    [collection, native.slice(0, 1), plan],
+    [collection, native.map((area) => ({ ...area, source: "ai" })), plan],
+    [collection, native.map((area) => ({ ...area, confidence: .89 })), plan],
+    [collection, native, { ...plan, textItems: [] }],
+    [{ ...collection, originalLabel: "Futtergang" }, native, plan],
+    [{ ...collection, source: "manual" }, native, plan],
+    [{ ...collection, status: "confirmed" }, native, plan],
+    [{ ...collection, geometryCorrections: [{ at: "2026-10-06", bbox: collection.bbox, source: "customer" }] }, native, plan],
+    [{ ...collection, bbox: { ...collection.bbox, width: .49 } }, native, plan],
+    [collection, [native[0], { ...native[1], bbox: { ...native[1].bbox, x: .45 } }], plan],
+  ];
+  for (const [candidate, supports, document] of cases) {
+    assert.equal(reconcileAreaConsistency([candidate], supports, [document])[0], candidate);
+  }
 });
